@@ -6,5 +6,10 @@ Neovim configuration optimised for Robotics Engineers.
 
 | ID | Requirement | Value | MoSCoW | Comments |
 | --- | --- | --- | --- | --- |
-| R1 | Be installable on common computer boards used in Robotics | Based on the Raspberry Pi with a simple SD card of 32GB, the total size of the installation (including dependencies) is < 100MB (less than 1% of storage capacity) | MUST | Restriction in terms of space is pretty strict |
-| R2 | Be installable on common operating systems | Common operating systems include: Windows, Linux, MacOS | MUST | Priority given to Linux because that is the preferred OS in Robotics |
+| R1 | Be installable on common computer boards used in Robotics | Based on the Raspberry Pi with a simple SD card of 32GB, the total size of the neovim installation (including dependencies) is < 100MB (i.e. less than 1% of storage capacity) | MUST | Strict storage space limits |
+| R2 | Be installable on common operating systems | Common operating systems include: Linux, Windows, MacOS | MUST | Priority given to Linux (and particularly Ubuntu) because that is the preferred OS in Robotics. Focus on Windows as well because sensor interfaces are usually distributed as Windows applications. |
+| R3 | Manipulate large files efficiently | Open and edit large log files of max 2GB (i.e. half of RAM available on standard computer board for Robotics) | MUST | Log files in ROS can get heavy pretty quickly and quick debugging is essential |
+| R4 | Be highly customisable by users | Customisable = format, style, layout, shortcuts, language specifics | MUST | Every engineer is different and has a different way of working. Installation can be done through a commonly used language for Robotics Engineers: `bash`. |
+| R5 | Handle common Robotics Programming entities | Minimum Robotics Programming entities = `ros`, `python`, `cpp` | MUST | |
+| R6 | Integrate convenient terminal access | Access to terminal is directly in the environment of development and one window can handle a maximum of 4 terminals at once | MUST | Terminals are commonly used to interact with Robotics Systems |
+| R7 | Search efficiently through large folders | Size of large folder is max 16GB (i.e. half of the space available on common computer boards) | MUST | Robotics environments are usually centred around a unique folder architecture. This folder contains the source code of the various applications and can take up space depending on coding practices |
