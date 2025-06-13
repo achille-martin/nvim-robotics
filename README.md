@@ -17,7 +17,7 @@ Neovim configuration optimised for Robotics Engineers.
 
 ## Compatibility matrix
 
-| Entity | OS | Flavour | Min requirements <br>(for a functional entity) | Default version | Max version <br>(entity is not functional after that) |
+| Entity | OS | Flavour | Min requirements for OS <br>(for a functional entity) | Default version of entity | Max version of entity <br>(not functional after that) |
 | --- | --- | --- | --- | --- | --- |
 | `neovim` | Linux | `Ubuntu18.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.12 | \* stable neovim [version 0.2.2](https://github.com/neovim/neovim/releases/tag/v0.2.2) provided by apt package | \* last stable neovim [version 0.9.5]() because glibc = 2.27 on the OS Flavour<br><br>For the latest unsupported releases of neovim (working on OS Flavour), refer to [neovim-releases](https://github.com/neovim/neovim-releases/releases)  |
 
