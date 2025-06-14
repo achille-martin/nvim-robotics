@@ -1,4 +1,4 @@
-# Robotics Nvim
+# Nvim Robotics
 
 Neovim configuration optimised for Robotics Engineers.
 
