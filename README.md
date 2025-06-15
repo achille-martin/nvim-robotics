@@ -14,6 +14,7 @@ Neovim configuration optimised for Robotics Engineers.
 | R6 | Integrate convenient terminal access | Access to terminal is directly in the environment of development and one window can handle a maximum of 4 terminals at once | MUST | Terminals are commonly used to interact with Robotics Systems |
 | R7 | Search efficiently through large folders | Size of large folder is max 16GB (i.e. half of the space available on common computer boards) | MUST | Robotics environments are usually centred around a unique folder architecture. This folder contains the source code of the various applications and can take up space depending on coding practices |
 | R8 | Withstand long periods of programming sessions | Long programming session = 4 hours (i.e. half a working day) | SHOULD | Usually a text editor is used for short periods of time, but if we want a robust IDE, we need to make sure that it will remain reliable for a long time |
+| R9 | Display information reliably and with limited lag | Acceptable startup time < 2 seconds; Maximum lag acceptable for inputs < 0.1 second | SHOULD | The reliability and lag of the display might be a limitation of the specifications of the machine, but still, the editor should be capable to meet the startup and max lag requirements for smooth enough interaction in the worst case. |
 
 ## Compatibility matrix
 
