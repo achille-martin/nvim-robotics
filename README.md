@@ -2,6 +2,21 @@
 
 Neovim configuration optimised for Robotics Engineers.
 
+### What is Neovim?
+
+[Neovim](https://github.com/neovim/neovim) is a text editor engineered for extensibility and usability.
+
+The main motivations of Neovim are:
+* Encourage new applications on any platform while focusing on modularity (thanks to native [Lua](https://www.lua.org/about.html) support for plugin development)
+* Promote contributions from new and seasoned authors
+* Retain the character and philosophy of [Vim](https://github.com/vim/vim) editor: speed, versatility, minimalism.
+
+Neovim is indeed a continuation and extension of Vim editor, which is an "improved" version of the [Vi](https://man7.org/linux/man-pages/man1/vi.1p.html) editor, which itself is an accessible and ubiquitous character-based screen editor without a Graphical User Interface (GUI).
+
+### Is it only for Robotics Engineers?
+
+[nvim-robotics](https://github.com/achille-martin/nvim-robotics) provides an optimised configuration of Neovim for Robotics Engineers (based on the following [requirements](#requirements)), but the repo can be used by anyone who wants to discover Neovim editor and develop their personal "coding environment".
+
 ## Requirements
 
 | ID | Requirement | Value | MoSCoW | Comments |
