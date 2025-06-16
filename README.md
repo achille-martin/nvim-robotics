@@ -66,7 +66,7 @@ printf "...Done\n"
 
 If the word "Done" appeared in your terminal, you can now launch nvim with the robotics config using the default alias set:
 
-```
+```bash
 nvim-robotics
 ```
 
@@ -76,7 +76,7 @@ If you prefer working on your own nvim configuration (non-git folder), while usi
 
 As an example, with alias `nvim-me`:
 
-```
+```bash
 [[ $(which nvim) ]] &&
 DEFAULT_CONFIG_FOLDER="$HOME/.config" &&
 DEFAULT_CONFIG_NAME="nvim-me" &&
