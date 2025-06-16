@@ -20,7 +20,7 @@
 # Set the default custom config name
 # of a folder existing in the default config folder
 # for update-alternatives and default nvim behaviour
-DEFAULT_CUSTOM_CONFIG_NAME="nvim-achille"
+DEFAULT_CUSTOM_CONFIG_NAME="nvim-robotics"
 CUSTOM_CONFIG_NAME="$DEFAULT_CUSTOM_CONFIG_NAME"
 
 # Set the default config folder and executable folder
