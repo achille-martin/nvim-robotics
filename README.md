@@ -90,3 +90,15 @@ cd "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME" &&
 rm -rf ".git" &&
 printf "Done\n"
 ```
+
+You can then setup a generic alias for the vim loader and use it to switch to different custom configurations:
+
+```bash
+# Set the generic alias
+GENERIC_ALIAS="neovim" &&
+[[ ! ${BASH_ALIASES[$GENERIC_ALIAS]} ]] &&
+echo "alias $GENERIC_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME\"" >> $HOME/.bash_aliases &&
+printf "Done\n" &&
+# Launch a custom config from the generic alias
+neovim --custom-config "nvim-me"
+```
