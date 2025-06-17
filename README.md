@@ -41,30 +41,52 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 
 ### Quick setup
 
-Once neovim is installed and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal:
+Once [Neovim is installed](https://github.com/neovim/neovim/blob/master/INSTALL.md) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (this will not affect your existing configurations):
+
+* Define a handy function to setup the nvim config:
 
 ```bash
-# Warn the user that the process is starting
-printf "Quick setup of nvim robotics configuration...\n" &&
-# Confirm the installation of nvim
-[[ $(which nvim) ]] &&
-# Define handy variables
-DEFAULT_CONFIG_FOLDER="$HOME/.config" &&
-DEFAULT_CONFIG_NAME="nvim-robotics" &&
-DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh" &&
-DEFAULT_ALIAS="$DEFAULT_CONFIG_NAME" &&
-# Store the configuration in a specific folder for nvim to find it
-git clone git@github.com:achille-martin/nvim-robotics.git "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME" &&
-# Create a link to the nvim loader script
-ln -s "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME/scripts/$DEFAULT_LOADER_SCRIPT_NAME" "$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME" &&
-# Create the alias for the nvim robotics config (making sure it does not exist already)
-[[ ! ${BASH_ALIASES[$DEFAULT_ALIAS]} ]] &&
-echo "alias $DEFAULT_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$DEFAULT_ALIAS'\"" >> $HOME/.bash_aliases &&
-# Warn the user that the process is done
-printf "...Done\n"
+nvim_quick_config_setup() {
+
+    # Warn the user that the process is starting
+    printf "Quick setup of nvim robotics configuration...\n" &&
+    
+    # Confirm the installation of nvim
+    [[ $(which nvim) ]] &&
+    
+    # Define handy variables
+    DEFAULT_CONFIG_FOLDER="$HOME/.config" &&
+    if [[ -z "$1" ]]
+    then
+        DEFAULT_CONFIG_NAME="nvim-robotics" &&
+    else
+        DEFAULT_CONFIG_NAME="$1" &&
+    DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh" &&
+    DEFAULT_ALIAS="$DEFAULT_CONFIG_NAME" &&
+    
+    # Store the configuration in a specific folder for nvim to find it
+    git clone git@github.com:achille-martin/nvim-robotics.git "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME" &&
+    
+    # Create a link to the nvim loader script (force overwrite if existing)
+    ln -sf "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME/scripts/$DEFAULT_LOADER_SCRIPT_NAME" "$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME" &&
+    
+    # Create the alias for the nvim robotics config (making sure it does not exist already)
+    [[ ! ${BASH_ALIASES[$DEFAULT_ALIAS]} ]] &&
+    echo "alias $DEFAULT_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$DEFAULT_ALIAS'\"" >> $HOME/.bash_aliases &&
+    
+    # Warn the user that the process is done
+    printf "...Done\n"
+
+}
 ```
 
-If the word "Done" appeared in your terminal, you can now launch nvim with the robotics config using the default alias set:
+* Launch the config setup process with:
+
+```bash
+nvim_quick_config_setup
+```
+
+* If the word "Done" appeared in your terminal, you can now launch nvim with the robotics config using the default alias set:
 
 ```bash
 nvim-robotics
@@ -72,33 +94,74 @@ nvim-robotics
 
 ### Custom setup
 
-If you prefer working on your own nvim configuration (non-git folder), while using the nvim robotics configuration as a base, get inspiration from [Quick setup](#quick-setup) and adapt the variables / steps.
+If you prefer working on your own nvim configuration (non-git folder or custom git management), while using the nvim robotics configuration as a base, get inspiration from [Quick setup](#quick-setup) and adapt the variables / steps.
 
 As an example, with alias `nvim-me`:
 
+* Define an adjusted version of the function to setup the nvim config:
+
 ```bash
-[[ $(which nvim) ]] &&
-DEFAULT_CONFIG_FOLDER="$HOME/.config" &&
-DEFAULT_CONFIG_NAME="nvim-me" &&
-DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh" &&
-DEFAULT_ALIAS="$DEFAULT_CONFIG_NAME" &&
-git clone git@github.com:achille-martin/nvim-robotics.git "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME" &&
-ln -sf "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME/scripts/$DEFAULT_LOADER_SCRIPT_NAME" "$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME" &&
-[[ ! ${BASH_ALIASES[$DEFAULT_ALIAS]} ]] &&
-echo "alias $DEFAULT_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$DEFAULT_ALIAS'\"" >> $HOME/.bash_aliases &&
-cd "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME" &&
-rm -rf ".git" &&
-printf "Done\n"
+nvim_custom_config_setup() {
+
+    # Warn the user that the process is starting
+    printf "Custom setup of nvim robotics configuration...\n" &&
+
+    # Setup quick config as a start
+    nvim_quick_config_setup "$1"
+  
+    # Remove .git elements to replace with own versioning tool
+    cd "$DEFAULT_CONFIG_FOLDER/$DEFAULT_CONFIG_NAME" &&
+    rm -rf ".git" &&
+    
+    # Warn the user that the process is done
+    printf "...Done\n"
+
+}
 ```
 
-You can then setup a generic alias for the vim loader and use it to switch to different custom configurations:
+* Launch the config setup process with:
 
 ```bash
-# Set the generic alias
-GENERIC_ALIAS="neovim" &&
-[[ ! ${BASH_ALIASES[$GENERIC_ALIAS]} ]] &&
-echo "alias $GENERIC_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME\"" >> $HOME/.bash_aliases &&
-printf "Done\n" &&
-# Launch a custom config from the generic alias
+nvim_custom_config_setup "nvim-me"
+```
+
+* If the word "Done" appeared in your terminal (twice), you can now launch nvim with the robotics config using the default alias set:
+
+```bash
+nvim-me
+```
+
+### Config management
+
+If you want to switch easily between different custom configurations, you can setup a generic alias for the nvim loader:
+
+* Define a handy function to set a generic alias for the nvim loader:
+
+```bash
+set_alias_for_nvim_loader() {
+
+    # Warn the user that the process is starting
+    printf "Generic alias setup for management of nvim robotics configuration...\n" &&
+    
+    # Set the generic alias
+    GENERIC_ALIAS="$1" &&
+    [[ ! ${BASH_ALIASES[$GENERIC_ALIAS]} ]] &&
+    echo "alias $GENERIC_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME\"" >> $HOME/.bash_aliases &&
+    
+    # Warn the user that the process is done
+    printf "...Done\n"
+
+}
+```
+
+* Launch the config setup process with:
+
+```bash
+set_alias_for_nvim_loader "neovim"
+```
+
+* If the word "Done" appeared in your terminal, you can now launch any custom nvim config (placed in `$HOME/.config`) using the generic alias set:
+
+```bash
 neovim --custom-config "nvim-me"
 ```
