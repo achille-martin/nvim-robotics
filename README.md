@@ -59,7 +59,7 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 <a id="quick-config-setup"></a>
 ### 3.1. Quick setup
 
-Once [Neovim is installed](https://github.com/neovim/neovim/blob/master/INSTALL.md) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (**this step will not affect your existing configurations**):
+Once Neovim is installed (refer to [neovim repo](https://github.com/neovim/neovim/blob/master/INSTALL.md) or use the [custom utility](scripts/nvim_installer.sh)) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (**this step will not affect your existing configurations**):
 
 * Define a handy function to setup the nvim config:
 
