@@ -27,7 +27,7 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 * [3. Configuration setup](#config-setup)
     * [3.1. Quick setup](#quick-config-setup)
     * [3.2. Custom setup](#custom-config-setup)
-    * [3.3. Config management](#custom-config-setup)
+    * [3.3. Config management](#custom-config-management)
 
 <a id="requirements"></a>
 ## 1. Requirements
@@ -150,7 +150,7 @@ nvim_custom_config_setup "nvim-me"
 nvim-me
 ```
 
-<a id="custom-config-setup"></a>
+<a id="custom-config-management"></a>
 ### 3.3. Config management
 
 If you want to switch easily between different custom configurations, you can setup a generic alias for the nvim loader:
