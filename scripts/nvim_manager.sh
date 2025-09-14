@@ -26,7 +26,7 @@
 # ---- HANDY VARIABLES ---- 
 
 NEOVIM_TAG="latest"
-INSTALL_UNSUPPORTED_BUILD="n"
+BUILD_DESIRED="supported"
 OS_DETECTED="unknown"
 OS_DISTRIBUTION_DETECTED="unknown"
 OS_ARCHITECTURE_DETECTED="unknown"
@@ -52,10 +52,10 @@ print_usage() {
              on various OS platforms (supported platforms: Linux)
 	
     CMD:
-        install            Install latest neovim version
+        install [BUILD]    Install latest neovim version
                            for the current OS platform
                            (supported platforms: Linux Ubuntu x86_64)
-                           Extra optional arg: <unsupported_build> (y/[n])
+                           Optional argument: BUILD ([supported]/unsupported)
         
         uninstall          Remove neovim from current OS platform
 
@@ -72,35 +72,39 @@ source_changes() {
 
 check_os_type() {
     # Check OS specifications to determine support
-    if [[ -z "$OSTYPE" ]];
+    if [[ -n "$OSTYPE" ]];
     then
-        if [[ "$OSTYPE" =~ "[linux|Linux|LINUX]" ]];
+        if [[ "$OSTYPE" =~ [\s\S]*(linux|Linux|LINUX)[\s\S]* ]];
         then
             OS_DETECTED="linux"
             distribution_detected="$(lsb_release -i)"
-            if [[ "$distribution_detected" =~ "[ubuntu|Ubuntu|UBUNTU]" ]];
+            if [[ "$distribution_detected" =~ [\s\S]*(ubuntu|Ubuntu|UBUNTU)[\s\S]* ]];
             then
                 OS_DISTRIBUTION_DETECTED="ubuntu"
-                architecture_detected="$(uname -r)"
-                if [[ "$architecture_detected" =~ "x86_64" ]];
+                architecture_detected="$(uname -i)"
+                if [[ "$architecture_detected" =~ [\s\S]*(x86_64)[\s\S]* ]];
                 then
                     OS_ARCHITECTURE_DETECTED="x86_64"
                 else
                     printf "ERROR: the architecture \`$architecture_detected\` is not supported.\n"
                     print_usage
+                    exit 1
                 fi
             else
                 printf "ERROR: the distribution \`$distribution_detected\` is not supported.\n"
                 print_usage
+                exit 1
             fi
         else
             printf "ERROR: the current OS \`$OSTYPE\` is not supported.\n"
             print_usage
+            exit 1
         fi
     else
         printf "ERROR: the current OS platform cannot be determined.\n"
         printf "Please verify the supported platforms.\n"
         print_usage
+        exit 1
     fi
 }
 
@@ -108,7 +112,7 @@ perform_install() {
     # Check and update extra arguments
     if [[ -z "$1" ]];
     then
-        INSTALL_UNSUPPORTED_BUILD="$1"
+        BUILD_DESIRED="$1"
     fi
 
     # Update user about action
@@ -125,10 +129,11 @@ perform_install() {
                 printf "ERROR: a neovim version has been detected.\n"
                 printf "Make sure to remove existing versions of neovim before installation.\n"
                 print_usage
+                exit 1
             fi
 
             # Download and install the latest neovim version
-            downloads_folder="$HOME/Downloads"
+            local downloads_folder="$HOME/Downloads"
             if [[ ! -d "$downloads_folder"  ]];
             then
                 mkdir -p "$downloads_folder"
@@ -140,15 +145,24 @@ perform_install() {
             case "$OS_ARCHITECTURE" in
 
                 x84_64)
-                    curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+                    if [[ "$BUILD_DESIRED" == "supported" ]];
+                    then
+                        curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+                    elif [[ "$BUILD_DESIRED" == "unsupported" ]];
+                    then
+                        curl -LO "https://github.com/neovim/neovim-releases/releases/latest/download/nvim-linux-x86_64.tar.gz"
+                    else
+                        printf "ERROR: build desired "$BUILD_DESIRED" cannot be processed.\n"
+                        print_usage
+                        exit 1
+                    fi
                     # Install neovim in /opt
                     sudo tar -C "/opt" -xzf "nvim-linux-x86_64.tar.gz"
                     sudo mv "/opt/nvim-linux-x86_64" "/opt/nvim"
-                    cd -
                     # Add neovim path to bashrc (if not there already)
-                    bashrc_path="$HOME/.bashrc"
-                    bashrc_content=$(sed '' "$bashrc_path")
-                    source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
+                    local bashrc_path="$HOME/.bashrc"
+                    local bashrc_content=$(sed '' "$bashrc_path")
+                    local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
                     if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
                     then
                         printf "# Load neovim"
@@ -158,8 +172,8 @@ perform_install() {
 
                 *)
                     printf "ERROR: the current OS architecture \`$OS_ARCHITECTURE\` is not supported.\n"
-                    cd -
                     print_usage
+                    exit 1
                     ;;
 
             esac
@@ -209,6 +223,8 @@ then
 	exit 1
 fi
 
+# TOOD: add setting neovim as default editor
+
 # Perform action depending on command entered
 case "$1" in
     --help|-h)
@@ -217,7 +233,7 @@ case "$1" in
         ;;
 
     install)
-        perform_install "$2" "$3"
+        perform_install "$2"
         ;;
 
     uninstall)
