@@ -2,6 +2,7 @@
 
 Neovim configuration optimised for Robotics Engineers.
 
+<a id="overview"></a>
 ### What is Neovim?
 
 [Neovim](https://github.com/neovim/neovim) is a text editor engineered for extensibility and usability.
@@ -17,7 +18,19 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 
 [nvim-robotics](https://github.com/achille-martin/nvim-robotics) provides an optimised configuration of Neovim for Robotics Engineers (based on the following [requirements](README.md#requirements)), but the repo can be used by anyone who wants to discover Neovim editor and develop their personal "coding environment".
 
-## Requirements
+<a id="toc"></a>
+## Table of Contents
+
+* [Overview](#overview)
+* [1. Requirements](#requirements)
+* [2. Compatibility matrix](#compatibility-matrix)
+* [3. Configuration setup](#config-setup)
+    * [3.1. Quick setup](#quick-config-setup)
+    * [3.2. Custom setup](#custom-config-setup)
+    * [3.3. Config management](#custom-config-setup)
+
+<a id="requirements"></a>
+## 1. Requirements
 
 | ID | Requirement | Value | MoSCoW | Comments |
 | --- | --- | --- | --- | --- |
@@ -31,7 +44,8 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 | R8 | Withstand long periods of programming sessions | Long programming session = 4 hours (i.e. half a working day) | SHOULD | Usually a text editor is used for short periods of time, but if we want a robust IDE, we need to make sure that it will remain reliable for a long time |
 | R9 | Display information reliably and with limited lag | Acceptable startup time < 2 seconds; Maximum lag acceptable for inputs < 0.1 second | SHOULD | The reliability and lag of the display might be a limitation of the specifications of the machine, but still, the editor should be capable to meet the startup and max lag requirements for smooth enough interaction in the worst case. |
 
-## Compatibility matrix
+<a id="compatibility-matrix"></a>
+## 2. Compatibility matrix
 
 | Entity | OS | Flavour | Min requirements for OS <br>(for a functional neovim) | Default version of neovim | Max version of neovim <br>(not functional after that) |
 | --- | --- | --- | --- | --- | --- |
@@ -39,9 +53,11 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 | `neovim` | Linux | `Ubuntu22.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.35 | \* stable neovim [version 0.6.1](https://github.com/neovim/neovim/releases/tag/v0.6.1) provided by apt package | \* latest stable neovim accessible from [the neovim releases page](https://github.com/neovim/neovim/releases) because glibc >= 2.31 requirement is satisfied (for now)  |
 | `neovim` | Linux | `Ubuntu24.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.35 | \* stable neovim [version 0.9.5](https://github.com/neovim/neovim/releases/tag/v0.9.5/) provided by apt package | \* latest stable neovim accessible from [the neovim releases page](https://github.com/neovim/neovim/releases) because glibc >= 2.31 requirement is satisfied (for now)  |
 
-## Configuration setup
+<a id="config-setup"></a>
+## 3. Configuration setup
 
-### Quick setup
+<a id="quick-config-setup"></a>
+### 3.1. Quick setup
 
 Once [Neovim is installed](https://github.com/neovim/neovim/blob/master/INSTALL.md) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (**this step will not affect your existing configurations**):
 
@@ -94,7 +110,8 @@ nvim_quick_config_setup
 nvim-robotics
 ```
 
-### Custom setup
+<a id="custom-config-setup"></a>
+### 3.2. Custom setup
 
 If you prefer working on your own nvim configuration (non-git folder or custom git management), while using the nvim robotics configuration as a base, get inspiration from [Quick setup](#quick-setup) and adapt the variables / steps.
 
@@ -133,7 +150,8 @@ nvim_custom_config_setup "nvim-me"
 nvim-me
 ```
 
-### Config management
+<a id="custom-config-setup"></a>
+### 3.3. Config management
 
 If you want to switch easily between different custom configurations, you can setup a generic alias for the nvim loader:
 
