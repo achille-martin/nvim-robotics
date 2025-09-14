@@ -26,8 +26,10 @@
 # ---- HANDY VARIABLES ---- 
 
 NEOVIM_TAG="latest"
-FORCE_NEOVIM_OVERWRITE="n"
-
+INSTALL_UNSUPPORTED_BUILD="n"
+OS_DETECTED="unknown"
+OS_DISTRIBUTION_DETECTED="unknown"
+OS_ARCHITECTURE_DETECTED="unknown"
 
 # REPO_NAME="bashrc-am-config"
 # REPO_PATH="$HOME/.config/$REPO_NAME"
@@ -50,10 +52,10 @@ print_usage() {
              on various OS platforms (supported platforms: Linux)
 	
     CMD:
-        install            Install neovim for the current OS platform
-                           Extra arguments: <nvim_tag> <force_overwrite>
-                           * Neovim tag (x.x.x/[latest])
-                           * Force overwrite of existing neovim (y/[n])
+        install            Install latest neovim version
+                           for the current OS platform
+                           (supported platforms: Linux Ubuntu x86_64)
+                           Extra optional arg: <unsupported_build> (y/[n])
         
         uninstall          Remove neovim from current OS platform
 
@@ -64,17 +66,35 @@ print_usage() {
 }
 
 source_changes() {
-    printf "\nTIP: Refresh the state of the config with the following command\n"
+    printf "\nTIP: Refresh the state of the terminal with the following command\n"
     printf "source $STANDARD_BASHRC_PATH\n"
 }
 
 check_os_type() {
-    # Check OS type to determine support
+    # Check OS specifications to determine support
     if [[ -z "$OSTYPE" ]];
     then
-        if [[ ! $OSTYPE =~ "linux" ]];
+        if [[ "$OSTYPE" =~ "[linux|Linux|LINUX]" ]];
         then
-            printf "ERROR: the current OS platform is not supported.\n"
+            OS_DETECTED="linux"
+            distribution_detected="$(lsb_release -i)"
+            if [[ "$distribution_detected" =~ "[ubuntu|Ubuntu|UBUNTU]" ]];
+            then
+                OS_DISTRIBUTION_DETECTED="ubuntu"
+                architecture_detected="$(uname -r)"
+                if [[ "$architecture_detected" =~ "x86_64" ]];
+                then
+                    OS_ARCHITECTURE_DETECTED="x86_64"
+                else
+                    printf "ERROR: the architecture \`$architecture_detected\` is not supported.\n"
+                    print_usage
+                fi
+            else
+                printf "ERROR: the distribution \`$distribution_detected\` is not supported.\n"
+                print_usage
+            fi
+        else
+            printf "ERROR: the current OS \`$OSTYPE\` is not supported.\n"
             print_usage
         fi
     else
@@ -88,47 +108,70 @@ perform_install() {
     # Check and update extra arguments
     if [[ -z "$1" ]];
     then
-        NEOVIM_TAG="$1"
-        if [[ -z "$2" ]];
-        then
-            FORCE_NEOVIM_OVERWRITE="$2"
-        fi
+        INSTALL_UNSUPPORTED_BUILD="$1"
     fi
 
     # Update user about action
-    printf "Starting installation of neovim with extra arguments:\n"
-    printf "* neovim tag ($NEOVIM_TAG)\n"
-    printf "* force neovim overwrite ($FORCE_NEOVIM_OVERWRITE)\n"
+    printf "Starting installation of neovim with extra optional argument:\n"
+    printf "* Install unsupported build ($INSTALL_UNSUPPORTED_BUILD)\n"
 
-    # Download apt packages
-    sudo apt-get install wget \
-                         git \
-                         tar \
-                         ack-grep
+    # Handle the different OS platforms supported
+    case "$OS_DETECTED" in
 
-    # Install git-graph from Github (latest versions target amd64 only)
-    TMP_PATH="/tmp" &&
-    wget https://github.com/mlange-42/git-graph/releases/download/0.5.0/git-graph-0.5.0-linux.tar.gz -P "$TMP_PATH" &&
-    sudo tar -xf "$TMP_PATH/git-graph-0.5.0-linux.tar.gz" -C "$TMP_PATH" &&
-    sudo cp $TMP_PATH/git-graph/git-graph /usr/bin/ 
-    sudo rm -rf "$TMP_PATH/git-graph-0.5.0-linux.tar.gz" &&
-    sudo rm -rf "$TMP_PATH/git-graph"
+        linux)
+            # Ensure there is no neovim version clash
+            if [[ ! $(which "nvim") ]];
+            then
+                printf "ERROR: a neovim version has been detected.\n"
+                printf "Make sure to remove existing versions of neovim before installation.\n"
+                print_usage
+            fi
 
-    # Install fzf fuzzy finder or update it if it was already installed
-    FZF_FOLDER="$HOME/.fzf"
-    if [[ ! -d "$FZF_FOLDER" ]]
-    then
-        git clone --depth 1 https://github.com/junegunn/fzf.git "$FZF_FOLDER" &&
-        $FZF_FOLDER/install --key-bindings --completion --no-update-rc
-    else
-        cd "$FZF_FOLDER" && git pull && ./install --key-bindings --completion --no-update-rc
-    fi
+            # Download and install the latest neovim version
+            downloads_folder="$HOME/Downloads"
+            if [[ ! -d "$downloads_folder"  ]];
+            then
+                mkdir -p "$downloads_folder"
+            fi
+            cd $downloads_folder
 
-    # Create symlinks to custom config files
-    ln -sf "$REPO_PATH/$CUSTOM_BASHRC_FILE_NAME" "$CUSTOM_BASHRC_PATH"
-    ln -sf "$REPO_PATH/$CUSTOM_BASH_ALIASES_FILE_NAME" "$CUSTOM_BASH_ALIASES_PATH"
-    mkdir -p "$GIT_GRAPH_MODELS_FOLDER_PATH"
-    ln -sf "$REPO_PATH/$CUSTOM_GIT_GRAPH_MODEL_FILE_NAME" "$GIT_GRAPH_MODELS_FOLDER_PATH/$CUSTOM_GIT_GRAPH_MODEL_FILE_NAME"
+            sudo apt-get install curl
+
+            case "$OS_ARCHITECTURE" in
+
+                x84_64)
+                    curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+                    # Install neovim in /opt
+                    sudo tar -C "/opt" -xzf "nvim-linux-x86_64.tar.gz"
+                    sudo mv "/opt/nvim-linux-x86_64" "/opt/nvim"
+                    cd -
+                    # Add neovim path to bashrc (if not there already)
+                    bashrc_path="$HOME/.bashrc"
+                    bashrc_content=$(sed '' "$bashrc_path")
+                    source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
+                    if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
+                    then
+                        printf "# Load neovim"
+                        printf 'export PATH="$PATH:/opt/nvim/bin"' >> "$bashrc_path"
+                    fi
+                    ;;
+
+                *)
+                    printf "ERROR: the current OS architecture \`$OS_ARCHITECTURE\` is not supported.\n"
+                    cd -
+                    print_usage
+                    ;;
+
+            esac
+
+            ;;
+
+        *)
+            printf "ERROR: the current OS \`$OS_DETECTED\` is not supported.\n"
+            print_usage
+            ;;
+
+    esac
 }
 
 perform_uninstall() {
@@ -154,6 +197,9 @@ perform_uninstall() {
 }
 
 # ---- MAIN ----
+
+# Ensure that the OS platform is supported
+check_os_type
 
 # Ensure that there is at least one required argument entered
 if [[ "$#" -lt 1 ]]
