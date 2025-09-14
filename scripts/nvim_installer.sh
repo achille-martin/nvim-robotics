@@ -31,17 +31,6 @@ OS_DETECTED="unknown"
 OS_DISTRIBUTION_DETECTED="unknown"
 OS_ARCHITECTURE_DETECTED="unknown"
 
-# REPO_NAME="bashrc-am-config"
-# REPO_PATH="$HOME/.config/$REPO_NAME"
-# STANDARD_BASHRC_NAME=".bashrc"
-# STANDARD_BASHRC_PATH="$HOME/$STANDARD_BASHRC_NAME"
-# CUSTOM_BASHRC_FILE_NAME=".bashrc_am"
-# CUSTOM_BASHRC_PATH="$HOME/$CUSTOM_BASHRC_FILE_NAME"
-# CUSTOM_BASH_ALIASES_FILE_NAME=".bash_aliases_am"
-# CUSTOM_BASH_ALIASES_PATH="$HOME/$CUSTOM_BASH_ALIASES_FILE_NAME"
-# CUSTOM_GIT_GRAPH_MODEL_FILE_NAME="git_graph_model_am.toml"
-# GIT_GRAPH_MODELS_FOLDER_PATH="$HOME/.config/git-graph/models"
-
 # ---- HANDY FUNCTIONS ----
 
 print_usage() {
@@ -67,7 +56,15 @@ print_usage() {
 
 source_changes() {
     printf "\nTIP: Refresh the state of the terminal with the following command\n"
-    printf "source $STANDARD_BASHRC_PATH\n"
+    case "$OS_DETECTED" in
+        linux)
+            local bashrc_path="$HOME/.bashrc"
+            printf "source $bashrc_path\n"
+            ;;
+        *)
+            printf "Not applicable.\n"
+            ;;
+    esac
 }
 
 check_os_type() {
@@ -122,11 +119,13 @@ perform_install() {
     case "$OS_DETECTED" in
 
         linux)
+
             printf "\nEnsuring that there is no neovim version clash...\n"
-            if [[ $(which "nvim") ]];
+            if [[ $(which nvim) ]];
             then
                 printf "ERROR: a neovim version has been detected.\n"
-                printf "Make sure to remove existing versions of neovim before installation.\n"
+                printf "Make sure to remove existing versions of neovim before installation\n"
+                printf "to avoid clashes.\n"
                 print_usage
                 exit 1
             fi
@@ -160,8 +159,8 @@ perform_install() {
                     fi
                     
                     printf "\nInstalling neovim in the add-on software location...\n"
-                    sudo tar -C "/opt" -xzf "nvim-linux-x86_64.tar.gz"
-                    sudo mv "/opt/nvim-linux-x86_64" "/opt/nvim"
+                    sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+                    sudo mv /opt/nvim-linux-x86_64 /opt/nvim
                     
                     printf "\nAdding neovim path to bashrc (if not there already)...\n"
                     local bashrc_path="$HOME/.bashrc"
@@ -169,7 +168,7 @@ perform_install() {
                     local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
                     if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
                     then
-                        printf "# Load neovim"
+                        printf "# Make neovim visible"
                         printf 'export PATH="$PATH:/opt/nvim/bin"' >> "$bashrc_path"
                     fi
                     ;;
@@ -181,37 +180,49 @@ perform_install() {
                     ;;
 
             esac
-
             ;;
 
         *)
             printf "ERROR: the current OS \`$OS_DETECTED\` is not supported.\n"
             print_usage
+            exit 1
             ;;
 
     esac
+
+    source_changes
 }
 
 perform_uninstall() {
-    # Leave apt packages and other utilities
-    # Note: could remove all of them but might be at risk
-    # of removing important dependencies
+    case "$OS_DETECTED" in
 
-    # Remove symlinks
-    rm "$CUSTOM_BASHRC_PATH"
-    rm "$CUSTOM_BASH_ALIASES_PATH"
-    rm "$GIT_GRAPH_MODELS_FOLDER_PATH/$CUSTOM_GIT_GRAPH_MODEL_FILE_NAME"
+        linux)
 
-    # Disable config
-    perform_disable
+            # Remove application added from source
+            printf "Removing application installed from source...\n"
+            sudo rm -rf /opt/nvim*
 
-    # Remove git folder
-    cd "$REPO_PATH" &&
-    cd ".." &&
-    rm -rf "$REPO_PATH"
+            case "$OS_DISTRIBUTION_DETECTED" in
+
+                ubuntu)
+
+                    # Remove application installed from apt
+                    printf "Removing application installed from apt...\n"
+                    sudo apt-get remove neovim
+
+                    ;;
+
+                *)
+                    ;;
+            esac
+            ;;
+
+        *)
+            ;;
     
-    # Deleted folder message
-    printf "\nTIP: make sure that you are not currently in the repo that has been deleted\n"
+    esac
+
+    source_changes
 }
 
 # ---- MAIN ----
@@ -226,8 +237,6 @@ then
 	print_usage
 	exit 1
 fi
-
-# TOOD: add setting neovim as default editor
 
 # Perform action depending on command entered
 case "$1" in
