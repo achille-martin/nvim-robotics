@@ -15,7 +15,7 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 
 ### Is it only for Robotics Engineers?
 
-[nvim-robotics](https://github.com/achille-martin/nvim-robotics) provides an optimised configuration of Neovim for Robotics Engineers (based on the following [requirements](#requirements)), but the repo can be used by anyone who wants to discover Neovim editor and develop their personal "coding environment".
+[nvim-robotics](https://github.com/achille-martin/nvim-robotics) provides an optimised configuration of Neovim for Robotics Engineers (based on the following [requirements](README.md#requirements)), but the repo can be used by anyone who wants to discover Neovim editor and develop their personal "coding environment".
 
 ## Requirements
 
@@ -33,15 +33,17 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 
 ## Compatibility matrix
 
-| Entity | OS | Flavour | Min requirements for OS <br>(for a functional entity) | Default version of entity | Max version of entity <br>(not functional after that) |
+| Entity | OS | Flavour | Min requirements for OS <br>(for a functional neovim) | Default version of neovim | Max version of neovim <br>(not functional after that) |
 | --- | --- | --- | --- | --- | --- |
-| `neovim` | Linux | `Ubuntu18.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.12 | \* stable neovim [version 0.2.2](https://github.com/neovim/neovim/releases/tag/v0.2.2) provided by apt package | \* last stable neovim [version 0.9.5](https://github.com/neovim/neovim/releases/tag/v0.9.5/) because glibc = 2.27 on the OS Flavour<br><br>For the latest unsupported releases of neovim (working on OS Flavour), refer to [neovim-releases](https://github.com/neovim/neovim-releases/releases)  |
+| `neovim` | Linux | `Ubuntu18.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.12 | \* stable neovim [version 0.2.2](https://github.com/neovim/neovim/releases/tag/v0.2.2) provided by apt package | \* last stable neovim [version 0.9.5](https://github.com/neovim/neovim/releases/tag/v0.9.5/) because glibc = 2.27 on `Ubuntu18.04`<br><br>For the latest unsupported releases of neovim (working on `Ubuntu18.04` and normally requiring glibc >= 2.31), refer to [neovim-releases](https://github.com/neovim/neovim-releases/releases)  |
+| `neovim` | Linux | `Ubuntu22.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.35 | \* stable neovim [version 0.6.1](https://github.com/neovim/neovim/releases/tag/v0.6.1) provided by apt package | \* latest stable neovim accessible from [the neovim releases page](https://github.com/neovim/neovim/releases) because glibc >= 2.31 requirement is satisfied (for now)  |
+| `neovim` | Linux | `Ubuntu24.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.35 | \* stable neovim [version 0.9.5](https://github.com/neovim/neovim/releases/tag/v0.9.5/) provided by apt package | \* latest stable neovim accessible from [the neovim releases page](https://github.com/neovim/neovim/releases) because glibc >= 2.31 requirement is satisfied (for now)  |
 
 ## Configuration setup
 
 ### Quick setup
 
-Once [Neovim is installed](https://github.com/neovim/neovim/blob/master/INSTALL.md) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (this will not affect your existing configurations):
+Once [Neovim is installed](https://github.com/neovim/neovim/blob/master/INSTALL.md) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (**this step will not affect your existing configurations**):
 
 * Define a handy function to setup the nvim config:
 
