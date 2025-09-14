@@ -167,7 +167,7 @@ set_alias_for_nvim_loader() {
     # Set the generic alias
     GENERIC_ALIAS="$1" &&
     [[ ! ${BASH_ALIASES[$GENERIC_ALIAS]} ]] &&
-    echo "alias $GENERIC_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME\"" >> $HOME/.bash_aliases &&
+    printf "alias $GENERIC_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME\"" >> $HOME/.bash_aliases &&
     
     # Warn the user that the process is done
     printf "...Done\n"
