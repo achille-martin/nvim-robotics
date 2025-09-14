@@ -91,7 +91,7 @@ nvim_quick_config_setup() {
     
     # Create the alias for the nvim robotics config (making sure it does not exist already)
     [[ ! ${BASH_ALIASES[$DEFAULT_ALIAS]} ]] &&
-    echo "alias $DEFAULT_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$DEFAULT_ALIAS'\"" >> $HOME/.bash_aliases &&
+    printf "alias $DEFAULT_ALIAS=\"$DEFAULT_CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$DEFAULT_ALIAS'\"" >> $HOME/.bash_aliases &&
     
     # Warn the user that the process is done
     printf "...Done\n"
