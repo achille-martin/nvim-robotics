@@ -48,16 +48,16 @@ print_usage() {
     multiline_usage_txt="
     Usage: bash $(basename "$0") CMD
     
-    Purpose: Manage the installation and removal of neovim
-             on various OS platforms (supported platforms: Linux)
+    Purpose: Manage the installation and uninstallation of neovim
+             on various OS platforms 
+             (supported platforms: Linux Ubuntu x86_64)
 	
     CMD:
         install [BUILD]    Install latest neovim version
                            for the current OS platform
-                           (supported platforms: Linux Ubuntu x86_64)
                            Optional argument: BUILD ([supported]/unsupported)
         
-        uninstall          Remove neovim from current OS platform
+        uninstall          Remove all neovim versions from current OS platform
 
         --help, -h         Show this help
     "
@@ -110,21 +110,20 @@ check_os_type() {
 
 perform_install() {
     # Check and update extra arguments
-    if [[ -z "$1" ]];
+    if [[ -n "$1" ]];
     then
         BUILD_DESIRED="$1"
     fi
 
     # Update user about action
-    printf "Starting installation of neovim with extra optional argument:\n"
-    printf "* Install unsupported build ($INSTALL_UNSUPPORTED_BUILD)\n"
+    printf "Starting installation of neovim...\n"
 
     # Handle the different OS platforms supported
     case "$OS_DETECTED" in
 
         linux)
-            # Ensure there is no neovim version clash
-            if [[ ! $(which "nvim") ]];
+            printf "\nEnsuring that there is no neovim version clash...\n"
+            if [[ $(which "nvim") ]];
             then
                 printf "ERROR: a neovim version has been detected.\n"
                 printf "Make sure to remove existing versions of neovim before installation.\n"
@@ -133,18 +132,21 @@ perform_install() {
             fi
 
             # Download and install the latest neovim version
+            printf "\nMoving to the downloads folder...\n"
             local downloads_folder="$HOME/Downloads"
             if [[ ! -d "$downloads_folder"  ]];
             then
                 mkdir -p "$downloads_folder"
             fi
             cd $downloads_folder
-
+            
+            printf "\nInstalling necessary dependencies...\n"
             sudo apt-get install curl
 
-            case "$OS_ARCHITECTURE" in
+            case "$OS_ARCHITECTURE_DETECTED" in
 
-                x84_64)
+                x86_64)
+                    printf "\nDownloading neovim archive...\n"
                     if [[ "$BUILD_DESIRED" == "supported" ]];
                     then
                         curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
@@ -156,10 +158,12 @@ perform_install() {
                         print_usage
                         exit 1
                     fi
-                    # Install neovim in /opt
+                    
+                    printf "\nInstalling neovim in the add-on software location...\n"
                     sudo tar -C "/opt" -xzf "nvim-linux-x86_64.tar.gz"
                     sudo mv "/opt/nvim-linux-x86_64" "/opt/nvim"
-                    # Add neovim path to bashrc (if not there already)
+                    
+                    printf "\nAdding neovim path to bashrc (if not there already)...\n"
                     local bashrc_path="$HOME/.bashrc"
                     local bashrc_content=$(sed '' "$bashrc_path")
                     local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
@@ -171,7 +175,7 @@ perform_install() {
                     ;;
 
                 *)
-                    printf "ERROR: the current OS architecture \`$OS_ARCHITECTURE\` is not supported.\n"
+                    printf "ERROR: the current OS architecture \`$OS_ARCHITECTURE_DETECTED\` is not supported.\n"
                     print_usage
                     exit 1
                     ;;
