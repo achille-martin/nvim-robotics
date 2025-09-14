@@ -76,9 +76,10 @@ nvim_quick_config_setup() {
     DEFAULT_CONFIG_FOLDER="$HOME/.config" &&
     if [[ -z "$1" ]]
     then
-        DEFAULT_CONFIG_NAME="nvim-robotics" &&
+        DEFAULT_CONFIG_NAME="nvim-robotics";
     else
-        DEFAULT_CONFIG_NAME="$1" &&
+        DEFAULT_CONFIG_NAME="$1";
+    fi &&
     DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh" &&
     DEFAULT_ALIAS="$DEFAULT_CONFIG_NAME" &&
     
