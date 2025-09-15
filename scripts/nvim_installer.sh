@@ -55,7 +55,7 @@ print_usage() {
 }
 
 source_changes() {
-    printf "\nTIP: Refresh the state of the terminal with the following command\n"
+    printf "\nTIP: Refresh the state of the environment with the following command\n"
     case "$OS_DETECTED" in
         linux)
             local bashrc_path="$HOME/.bashrc"
@@ -71,15 +71,15 @@ check_os_type() {
     # Check OS specifications to determine support
     if [[ -n "$OSTYPE" ]];
     then
-        if [[ "$OSTYPE" =~ [\s\S]*(linux|Linux|LINUX)[\s\S]* ]];
+        if [[ "$OSTYPE" =~ linux|Linux|LINUX ]];
         then
             OS_DETECTED="linux"
             distribution_detected="$(lsb_release -i)"
-            if [[ "$distribution_detected" =~ [\s\S]*(ubuntu|Ubuntu|UBUNTU)[\s\S]* ]];
+            if [[ "$distribution_detected" =~ ubuntu|Ubuntu|UBUNTU ]];
             then
                 OS_DISTRIBUTION_DETECTED="ubuntu"
                 architecture_detected="$(uname -i)"
-                if [[ "$architecture_detected" =~ [\s\S]*(x86_64)[\s\S]* ]];
+                if [[ "$architecture_detected" =~ x86_64 ]];
                 then
                     OS_ARCHITECTURE_DETECTED="x86_64"
                 else
@@ -119,7 +119,6 @@ perform_install() {
     case "$OS_DETECTED" in
 
         linux)
-
             printf "\nEnsuring that there is no neovim version clash...\n"
             if [[ $(which nvim) ]];
             then
@@ -139,42 +138,54 @@ perform_install() {
             fi
             cd $downloads_folder
             
-            printf "\nInstalling necessary dependencies...\n"
-            sudo apt-get install curl
+            case "$OS_DISTRIBUTION_DETECTED" in
 
-            case "$OS_ARCHITECTURE_DETECTED" in
+                ubuntu)
+                    printf "\nInstalling necessary dependencies...\n"
+                    sudo apt-get install curl
 
-                x86_64)
-                    printf "\nDownloading neovim archive...\n"
-                    if [[ "$BUILD_DESIRED" == "supported" ]];
-                    then
-                        curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
-                    elif [[ "$BUILD_DESIRED" == "unsupported" ]];
-                    then
-                        curl -LO "https://github.com/neovim/neovim-releases/releases/latest/download/nvim-linux-x86_64.tar.gz"
-                    else
-                        printf "ERROR: build desired "$BUILD_DESIRED" cannot be processed.\n"
-                        print_usage
-                        exit 1
-                    fi
-                    
-                    printf "\nInstalling neovim in the add-on software location...\n"
-                    sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-                    sudo mv /opt/nvim-linux-x86_64 /opt/nvim
-                    
-                    printf "\nAdding neovim path to bashrc (if not there already)...\n"
-                    local bashrc_path="$HOME/.bashrc"
-                    local bashrc_content=$(sed '' "$bashrc_path")
-                    local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
-                    if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
-                    then
-                        printf "# Make neovim visible"
-                        printf 'export PATH="$PATH:/opt/nvim/bin"' >> "$bashrc_path"
-                    fi
+                    case "$OS_ARCHITECTURE_DETECTED" in
+
+                        x86_64)
+                            printf "\nDownloading neovim archive...\n"
+                            if [[ "$BUILD_DESIRED" == "supported" ]];
+                            then
+                                curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+                            elif [[ "$BUILD_DESIRED" == "unsupported" ]];
+                            then
+                                curl -LO "https://github.com/neovim/neovim-releases/releases/latest/download/nvim-linux-x86_64.tar.gz"
+                            else
+                                printf "ERROR: build desired "$BUILD_DESIRED" cannot be processed.\n"
+                                print_usage
+                                exit 1
+                            fi
+
+                            printf "\nInstalling neovim in the add-on software location...\n"
+                            sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+                            sudo mv /opt/nvim-linux-x86_64 /opt/nvim
+
+                            printf "\nAdding neovim path to bashrc (if not there already)...\n"
+                            local bashrc_path="$HOME/.bashrc"
+                            local bashrc_content=$(sed '' "$bashrc_path")
+                            local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
+                            if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
+                            then
+                                printf "# Make neovim visible"
+                                printf 'export PATH="$PATH:/opt/nvim/bin"' >> "$bashrc_path"
+                            fi
+                            ;;
+
+                        *)
+                            printf "ERROR: the current OS architecture \`$OS_ARCHITECTURE_DETECTED\` is not supported.\n"
+                            print_usage
+                            exit 1
+                            ;;
+
+                    esac
                     ;;
 
                 *)
-                    printf "ERROR: the current OS architecture \`$OS_ARCHITECTURE_DETECTED\` is not supported.\n"
+                    printf "ERROR: the distribution \`$OS_DISTRIBUTION_DETECTED\` is not supported.\n"
                     print_usage
                     exit 1
                     ;;
@@ -197,15 +208,13 @@ perform_uninstall() {
     case "$OS_DETECTED" in
 
         linux)
-
-            # Remove application added from source
-            printf "Removing application installed from source...\n"
+            # Remove application added from downloaded package
+            printf "Removing application installed from downloaded package...\n"
             sudo rm -rf /opt/nvim*
 
             case "$OS_DISTRIBUTION_DETECTED" in
 
                 ubuntu)
-
                     # Remove application installed from apt
                     printf "Removing application installed from apt...\n"
                     sudo apt-get remove neovim
@@ -213,11 +222,19 @@ perform_uninstall() {
                     ;;
 
                 *)
+                    printf "ERROR: the distribution \`$OS_DISTRIBUTION_DETECTED\` is not supported.\n"
+                    print_usage
+                    exit 1
                     ;;
+
             esac
             ;;
 
+
         *)
+            printf "ERROR: the current OS \`$OS_DETECTED\` is not supported.\n"
+            print_usage
+            exit 1
             ;;
     
     esac
