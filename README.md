@@ -25,7 +25,7 @@ Neovim is a continuation and extension of the Vim editor, which is an "improved"
 * [1. Project requirements](#requirements)
 * [2. Compatibility matrix](#compatibility-matrix)
 * [3. Configuration](#config)
-   * [3.1. Neovim setup](neovim-setup)
+   * [3.1. Neovim setup](#neovim-setup)
    * [3.2. Quick configuration setup](#quick-config-setup)
    * [3.3. Custom configuration setup](#custom-config-setup)
    * [3.4. Configuration management](#config-management)
