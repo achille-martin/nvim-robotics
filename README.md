@@ -8,11 +8,11 @@ Neovim configuration optimised for Robotics Engineers.
 [Neovim](https://github.com/neovim/neovim) is a text editor engineered for extensibility and usability.
 
 The main motivations of Neovim are:
+* Retain the character and philosophy of [Vim](https://github.com/vim/vim) editor: speed, versatility, minimalism.
 * Encourage new applications on any platform while focusing on modularity (thanks to native [Lua](https://www.lua.org/about.html) support for plugin development)
 * Promote contributions from new and seasoned authors
-* Retain the character and philosophy of [Vim](https://github.com/vim/vim) editor: speed, versatility, minimalism.
 
-Neovim is indeed a continuation and extension of Vim editor, which is an "improved" version of the [Vi](https://man7.org/linux/man-pages/man1/vi.1p.html) editor, which itself is an accessible and ubiquitous character-based screen editor without a Graphical User Interface (GUI).
+Neovim is a continuation and extension of the Vim editor, which is an "improved" version of the [Vi](https://man7.org/linux/man-pages/man1/vi.1p.html) editor, which itself is an accessible and ubiquitous character-based screen editor without a Graphical User Interface (GUI).
 
 ### Is it only for Robotics Engineers?
 
@@ -22,15 +22,20 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 ## Table of Contents
 
 * [Overview](#overview)
-* [1. Requirements](#requirements)
+* [1. Project requirements](#requirements)
 * [2. Compatibility matrix](#compatibility-matrix)
-* [3. Configuration setup](#config-setup)
-    * [3.1. Quick setup](#quick-config-setup)
-    * [3.2. Custom setup](#custom-config-setup)
-    * [3.3. Config management](#custom-config-management)
+* [3. Configuration](#config)
+   * [3.1. Neovim setup](neovim-setup)
+   * [3.2. Quick configuration setup](#quick-config-setup)
+   * [3.3. Custom configuration setup](#custom-config-setup)
+   * [3.4. Configuration management](#config-management)
 
 <a id="requirements"></a>
-## 1. Requirements
+## 1. Project requirements
+
+The following requirements have been decided for the [nvim-robotics](https://github.com/achille-martin/nvim-robotics) project.
+
+They highlight the purpose and limitations of this repo.
 
 | ID | Requirement | Value | MoSCoW | Comments |
 | --- | --- | --- | --- | --- |
@@ -47,21 +52,42 @@ Neovim is indeed a continuation and extension of Vim editor, which is an "improv
 <a id="compatibility-matrix"></a>
 ## 2. Compatibility matrix
 
+The following compatibility matrix introduces the version limitations for the core components required for this repo.
+
 | Entity | OS | Flavour | Min requirements for OS <br>(for a functional neovim) | Default version of neovim | Max version of neovim <br>(not functional after that) |
 | --- | --- | --- | --- | --- | --- |
 | `neovim` | Linux | `Ubuntu18.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.12 | \* stable neovim [version 0.2.2](https://github.com/neovim/neovim/releases/tag/v0.2.2) provided by apt package | \* last stable neovim [version 0.9.5](https://github.com/neovim/neovim/releases/tag/v0.9.5/) because glibc = 2.27 on `Ubuntu18.04`<br><br>For the latest unsupported releases of neovim (working on `Ubuntu18.04` and normally requiring glibc >= 2.31), refer to [neovim-releases](https://github.com/neovim/neovim-releases/releases)  |
 | `neovim` | Linux | `Ubuntu22.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.35 | \* stable neovim [version 0.6.1](https://github.com/neovim/neovim/releases/tag/v0.6.1) provided by apt package | \* latest stable neovim accessible from [the neovim releases page](https://github.com/neovim/neovim/releases) because glibc >= 2.31 requirement is satisfied (for now)  |
 | `neovim` | Linux | `Ubuntu24.04` | \* kernel >= 2.6.32<br>\* glibc >= 2.35 | \* stable neovim [version 0.9.5](https://github.com/neovim/neovim/releases/tag/v0.9.5/) provided by apt package | \* latest stable neovim accessible from [the neovim releases page](https://github.com/neovim/neovim/releases) because glibc >= 2.31 requirement is satisfied (for now)  |
 
-<a id="config-setup"></a>
-## 3. Configuration setup
+<a id="config"></a>
+## 3. Configuration
+
+<a id="neovim-setup"></a>
+### 3.1. Neovim setup
+
+This repo is focused on providing a reviewed, reliable and performant configuration for Robotics Engineer users of Neovim.
+
+The installation of Neovim is normally left to the user, who can refer to the [official Neovim github repo](https://github.com/neovim/neovim/blob/master/INSTALL.md) for instructions.
+
+However, for practicality, a [custom utility](scripts/nvim_installer.sh) is provided for the most commonly used operating systems.
+
+Download the utility in your downloads folder, then run the following command in a terminal:
+
+```bash
+bash nvim_installer.sh install
+```
 
 <a id="quick-config-setup"></a>
-### 3.1. Quick setup
+### 3.2. Quick configuration setup
 
-Once Neovim is installed (refer to [neovim repo](https://github.com/neovim/neovim/blob/master/INSTALL.md) or use the [custom utility](scripts/nvim_installer.sh)) and working, you can use the nvim robotics configuration straight away by typing the following commands in your terminal (**this step will not affect your existing configurations**):
+Follow the steps below to easily get started with this repo:
 
-* Define a handy function to setup the nvim config:
+* Please ensure that your Neovim version is operational by typing `nvim` in a terminal. If not, refer to [Neovim setup](#neovim-setup).
+
+**NOTE: if you have already defined a personal configuration for Neovim, rest assured that this quick setup will not affect it.**
+
+* Define a handy function in your terminal to setup the nvim config:
 
 ```bash
 nvim_quick_config_setup() {
@@ -99,22 +125,22 @@ nvim_quick_config_setup() {
 }
 ```
 
-* Launch the config setup process with:
+* Launch the config setup process with the following command:
 
 ```bash
 nvim_quick_config_setup
 ```
 
-* If the word "Done" appeared in your terminal, you can now launch nvim with the robotics config using the default alias set:
+* If the word "Done" appears in your terminal, you can now launch nvim with the robotics config using the default alias set:
 
 ```bash
 nvim-robotics
 ```
 
 <a id="custom-config-setup"></a>
-### 3.2. Custom setup
+### 3.3. Custom configuration setup
 
-If you prefer working on your own nvim configuration (non-git folder or custom git management), while using the nvim robotics configuration as a base, get inspiration from [Quick setup](#quick-setup) and adapt the variables / steps.
+If you prefer working with your own nvim configuration (non-git folder or custom git management), while using the nvim robotics configuration as a base, get inspiration from [Quick configuration setup](#quick-config-setup) and adapt the variables / steps.
 
 As an example, with alias `nvim-me`:
 
@@ -139,20 +165,20 @@ nvim_custom_config_setup() {
 }
 ```
 
-* Launch the config setup process with:
+* Launch the config setup process with the following command:
 
 ```bash
 nvim_custom_config_setup "nvim-me"
 ```
 
-* If the word "Done" appeared in your terminal (twice), you can now launch nvim with the robotics config using the default alias set:
+* If the word "Done" appears in your terminal (twice), you can now launch nvim with the robotics config using the default alias set:
 
 ```bash
 nvim-me
 ```
 
-<a id="custom-config-management"></a>
-### 3.3. Config management
+<a id="config-management"></a>
+### 3.4. Configuration management
 
 If you want to switch easily between different custom configurations, you can setup a generic alias for the nvim loader:
 
@@ -175,13 +201,13 @@ set_alias_for_nvim_loader() {
 }
 ```
 
-* Launch the config setup process with:
+* Launch the config setup process with the following command:
 
 ```bash
 set_alias_for_nvim_loader "neovim"
 ```
 
-* If the word "Done" appeared in your terminal, you can now launch any custom nvim config (placed in `$HOME/.config`) using the generic alias set:
+* If the word "Done" appears in your terminal, you can now launch any custom nvim config (placed in `$HOME/.config`) using the generic alias set:
 
 ```bash
 neovim --custom-config "nvim-me"
