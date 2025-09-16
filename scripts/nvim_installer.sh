@@ -259,7 +259,7 @@ fi
 case "$1" in
     --help|-h)
         print_usage
-	exit 1
+	    exit 1
         ;;
 
     install)
