@@ -78,12 +78,14 @@ Download the utility in your downloads folder, then run the following command in
 bash nvim_installer.sh install
 ```
 
+If you are new to Neovim, check out [this tutorial](https://github.com/rcallaby/Learn-Vim-and-NeoVim) from Richard Callaby.
+
 <a id="quick-config-setup"></a>
 ### 3.2. Quick configuration setup
 
 Follow the steps below to easily get started with this repo:
 
-* Please ensure that your Neovim version is operational by typing `nvim` in a terminal. If not, refer to [Neovim setup](#neovim-setup).
+* Ensure that your Neovim version is operational by typing `nvim` in a terminal. If not, refer to [Neovim setup](#neovim-setup).
 
 **NOTE: if you have already defined a personal configuration for Neovim, rest assured that this quick setup will not affect it.**
 
