@@ -28,12 +28,57 @@
 
 # ---- HANDY FUNCTIONS ----
 
+print_usage() {
+    multiline_usage_txt="
+    Usage: bash $(basename "$0") CMD
+
+    Purpose: Manage the neovim configuration operations
+
+    CMD:
+        quick-setup        Setup the nvim-robotics configuration
+                           as it is provided in the repo
+
+        --help, -h         Show this help
+    "
+
+    printf "%s" "$multiline_usage_txt"
+}
+
+perform_quick_setup() {
+    printf "Function not defined yet.\n"
+}
 
 # ---- MAIN ----
 
 # TODO:
 # * Handle quick setup
-# * Handle custom setup
-# * Handle config management?
+# * Handle custom setup (will be done via a fork and loading side config files)
+# * Handle config management? (should not be needed if fork used and loader duplicated)
 # * Handle setting neovim as default editor
 # * Handle config cleanup / refresh
+
+# Ensure that there is at least one required argument entered
+if [[ "$#" -lt 1 ]]
+then
+    printf "ERROR: one argument required\n"
+	print_usage
+	exit 1
+fi
+
+# Perform action depending on command entered
+case "$1" in
+    --help|-h)
+        print_usage
+	    exit 1
+        ;;
+
+    quick-setup)
+        perform_quick_setup
+        ;;
+
+    *)
+        printf "ERROR: first argument not valid\n"
+        print_usage
+        exit 1
+        ;;
+esac
