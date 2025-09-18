@@ -170,8 +170,8 @@ perform_cleanup() {
 
     # Remove configuration aliases
     printf "\nRemoving alias configuration in \`$DEFAULT_BASH_ALIASES_FILE\`...\n"
-    grep -v "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bashrc" &&
-    mv "/tmp/.bashrc" "$DEFAULT_BASH_ALIASES_FILE"
+    grep -v "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bash_aliases"
+    mv "/tmp/.bash_aliases" "$DEFAULT_BASH_ALIASES_FILE"
     printf "...done\n"
 
 	source_changes
