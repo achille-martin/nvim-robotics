@@ -43,6 +43,8 @@ DEFAULT_BASHRC_FILE="$HOME/.bashrc"
 
 INSTALLER_UTILITY_NAME="nvim_installer.sh"
 
+DEFAULT_LOCAL_FOLDER="$HOME/.local"
+
 # ---- HANDY FUNCTIONS ----
 
 print_usage() {
@@ -56,6 +58,11 @@ print_usage() {
                                       as it is provided in the repo
                                       Optional argument: CONFIG-NAME
                                       (default = nvim-robotics)
+
+        cleanup [CONFIG-NAME]         Clean up the nvim-robotics configuration
+                                      Optional argument: CONFIG-NAME
+                                      If opt arg provided, only cleans up
+                                      the configuration related to CONFIG-NAME
 
         --help, -h                    Show this help
     "
@@ -135,6 +142,39 @@ perform_quick_setup() {
     source_changes
 }
 
+perform_cleanup() {
+    # Update variables depending on arguments
+    printf "\nReading optional arguments...\n"
+    if [[ -n "$1" ]]
+    then
+        CONFIG_NAME="$1";
+        ALIAS="$CONFIG_NAME"
+    fi
+    printf "...done\n"
+
+    # Moving to a neutral folder
+    printf "\nMoving to a neutral folder...\n"
+    cd "$HOME"
+    printf "...done\n"
+
+    # Remove the configuration from the config folder
+    printf "\nRemoving configuration located in config folder \`$CONFIG_FOLDER\`...\n"
+    rm "$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME"
+    rm -rf "$CONFIG_FOLDER/$CONFIG_NAME"
+    printf "...done\n"
+
+    # Remove the user data from the local folder
+    printf "\nRemoving user data from the local folder \`$DEFAULT_LOCAL_FOLDER\`...\n"
+    rm -rf "$DEFAULT_LOCAL_FOLDER/$CONFIG_NAME"
+    printf "...done\n"
+
+    # Remove configuration aliases
+    printf "\nRemoving alias configuration in \`$DEFAULT_BASH_ALIASES_FILE\`...\n"
+    grep -v "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bashrc" &&
+    mv "/tmp/.bashrc" "$DEFAULT_BASH_ALIASES_FILE"
+    printf "...done\n"
+}
+
 # ---- MAIN ----
 
 # TODO:
@@ -161,6 +201,10 @@ case "$1" in
 
     quick-setup)
         perform_quick_setup "$2"
+        ;;
+
+    cleanup)
+        perform_cleanup "$2"
         ;;
 
     *)
