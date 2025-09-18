@@ -107,13 +107,12 @@ check_os_type() {
 
 perform_install() {
     # Check and update extra arguments
+    printf "Checking extra arguments...\n"
     if [[ -n "$1" ]];
     then
         BUILD_DESIRED="$1"
     fi
-
-    # Update user about action
-    printf "Starting installation of neovim...\n"
+    printf "...done\n"
 
     # Handle the different OS platforms supported
     case "$OS_DETECTED" in
@@ -128,6 +127,7 @@ perform_install() {
                 print_usage
                 exit 1
             fi
+            printf "...done\n"
 
             # Download and install the latest neovim version
             printf "\nMoving to the downloads folder...\n"
@@ -137,12 +137,14 @@ perform_install() {
                 mkdir -p "$downloads_folder"
             fi
             cd $downloads_folder
+            printf "...done\n"
             
             case "$OS_DISTRIBUTION_DETECTED" in
 
                 ubuntu)
                     printf "\nInstalling necessary dependencies...\n"
                     sudo apt-get install curl
+                    printf "...done\n"
 
                     case "$OS_ARCHITECTURE_DETECTED" in
 
@@ -159,10 +161,12 @@ perform_install() {
                                 print_usage
                                 exit 1
                             fi
+                            printf "...done\n"
 
                             printf "\nInstalling neovim in the add-on software location...\n"
                             sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
                             sudo mv /opt/nvim-linux-x86_64 /opt/nvim
+                            printf "...done\n"
 
                             printf "\nAdding neovim path to bashrc (if not there already)...\n"
                             local bashrc_path="$HOME/.bashrc"
@@ -173,6 +177,7 @@ perform_install() {
                                 printf "# Make neovim visible"
                                 printf 'export PATH="$PATH:/opt/nvim/bin"' >> "$bashrc_path"
                             fi
+                            printf "...done\n"
                             ;;
 
                         *)
@@ -211,14 +216,15 @@ perform_uninstall() {
             # Remove application added from downloaded package
             printf "Removing application installed from downloaded package...\n"
             sudo rm -rf /opt/nvim*
+            printf "...done\n"
 
             case "$OS_DISTRIBUTION_DETECTED" in
 
                 ubuntu)
                     # Remove application installed from apt
-                    printf "Removing application installed from apt...\n"
+                    printf "\nRemoving application installed from apt...\n"
                     sudo apt-get remove neovim
-
+                    printf "...done\n"
                     ;;
 
                 *)

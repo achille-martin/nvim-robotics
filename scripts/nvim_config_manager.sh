@@ -39,6 +39,7 @@ DEFAULT_ALIAS="$DEFAULT_CONFIG_NAME"
 ALIAS="$DEFAULT_ALIAS"
 
 DEFAULT_BASH_ALIASES_FILE="$HOME/.bash_aliases"
+DEFAULT_BASHRC_FILE="$HOME/.bashrc"
 
 INSTALLER_UTILITY_NAME="nvim_installer.sh"
 
@@ -62,10 +63,12 @@ print_usage() {
     printf "%s" "$multiline_usage_txt"
 }
 
-perform_quick_setup() {
-    # Warn the user that the process is starting
-    printf "\nStarting quick setup of \`$GIT_REPO_NAME\` configuration...\n" &&
+source_changes() {
+    printf "TIP: Refresh the state of the environment with the following command"
+    printf "source $DEFAULT_BASHRC_FILE"
+}
 
+perform_quick_setup() {
     # Confirm the installation of nvim
     printf "\nChecking the presence of neovim...\n"
     if [[ ! $(which nvim) ]];
@@ -75,6 +78,7 @@ perform_quick_setup() {
         printf "Please refer to the installer utility: \`$INSTALLER_UTILITY_NAME\`\n"
         exit 1
     fi
+    printf "...done\n"
 
     # Update variables depending on arguments
     printf "\nReading optional arguments...\n"
@@ -83,10 +87,12 @@ perform_quick_setup() {
         CONFIG_NAME="$1";
         ALIAS="$CONFIG_NAME"
     fi
+    printf "...done\n"
 
     # Install necessary dependencies
     printf "\nInstalling necessary dependencies...\n"
     sudo apt-get install git
+    printf "...done\n"
 
     # Store the configuration in a specific folder for nvim to find it
     # depending on the availability of SSH
@@ -101,6 +107,7 @@ perform_quick_setup() {
         git clone https://gist.github.com/achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?";
     fi
+    printf "...done\n"
 
     # Proceed with the installation or warn the user about git errors
     if [[ "$git_clone_cmd_status" -eq 0 ]];
@@ -108,6 +115,7 @@ perform_quick_setup() {
         # Create a link to the nvim loader script (force overwrite if existing)
         printf "\nLinking the nvim loader script for easy access...\n"
         ln -sf "$CONFIG_FOLDER/$CONFIG_NAME/scripts/$DEFAULT_LOADER_SCRIPT_NAME" "$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME"
+        printf "...done\n"
 
         # Create the alias for the nvim robotics config (making sure it does not exist already)
         printf "\nCreating the alias for the configuration...\n"
@@ -117,11 +125,14 @@ perform_quick_setup() {
         else
             printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
         fi
+        printf "...done\n"
 
     else
         printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
         exit 1
     fi
+
+    source_changes
 }
 
 # ---- MAIN ----
