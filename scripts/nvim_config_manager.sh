@@ -173,6 +173,8 @@ perform_cleanup() {
     grep -v "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bashrc" &&
     mv "/tmp/.bashrc" "$DEFAULT_BASH_ALIASES_FILE"
     printf "...done\n"
+
+	source_changes
 }
 
 # ---- MAIN ----
