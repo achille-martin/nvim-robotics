@@ -131,7 +131,7 @@ perform_quick_setup() {
 # * Handle custom setup (will be done via a fork and loading side config files)
 # * Handle config management? (should not be needed if fork used and loader duplicated)
 # * Handle setting neovim as default editor
-# * Handle config cleanup / refresh
+# * Handle config cleanup / refresh (for cleanup, also include bash_aliases cleanup potentially)
 
 # Ensure that there is at least one required argument entered
 if [[ "$#" -lt 1 ]]
