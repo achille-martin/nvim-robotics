@@ -40,6 +40,8 @@ ALIAS="$DEFAULT_ALIAS"
 
 DEFAULT_BASH_ALIASES_FILE="$HOME/.bash_aliases"
 
+INSTALLER_UTILITY_NAME="nvim_installer.sh"
+
 # ---- HANDY FUNCTIONS ----
 
 print_usage() {
@@ -62,7 +64,7 @@ print_usage() {
 
 perform_quick_setup() {
     # Warn the user that the process is starting
-    printf "\nStarting quick setup of nvim-robotics configuration...\n" &&
+    printf "\nStarting quick setup of \`$GIT_REPO_NAME\` configuration...\n" &&
 
     # Confirm the installation of nvim
     printf "\nChecking the presence of neovim...\n"
@@ -70,7 +72,7 @@ perform_quick_setup() {
     then
         printf "ERROR: no neovim version has been detected.\n"
         printf "Make sure to install neovim before setting up the configuration.\n"
-        printf "Please refer to the installer utility.\n"
+        printf "Please refer to the installer utility: \`$INSTALLER_UTILITY_NAME\`\n"
         exit 1
     fi
 
@@ -83,7 +85,7 @@ perform_quick_setup() {
     fi
 
     # Install necessary dependencies
-    printf "\nInstalling dependencies...\n"
+    printf "\nInstalling necessary dependencies...\n"
     sudo apt-get install git
 
     # Store the configuration in a specific folder for nvim to find it
@@ -113,7 +115,7 @@ perform_quick_setup() {
         then
             printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" >> "$DEFAULT_BASH_ALIASES_FILE"
         else
-            printf "WARNING: alias \`$DEFAULT_ALIAS\` is already in use, so not replaced.\n"
+            printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
         fi
 
     else
