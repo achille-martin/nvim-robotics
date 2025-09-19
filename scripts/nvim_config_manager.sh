@@ -71,8 +71,8 @@ print_usage() {
 }
 
 source_changes() {
-    printf "TIP: Refresh the state of the environment with the following command"
-    printf "source $DEFAULT_BASHRC_FILE"
+    printf "\nTIP: Refresh the state of the environment with the following command:\n"
+    printf "source $DEFAULT_BASHRC_FILE\n"
 }
 
 perform_quick_setup() {
