@@ -165,7 +165,7 @@ perform_cleanup() {
 
     # Remove the user data from the local folder
     printf "\nRemoving user data from the local folder \`$DEFAULT_LOCAL_FOLDER\`...\n"
-    rm -rf "$DEFAULT_LOCAL_FOLDER/$CONFIG_NAME"
+    rm -rf "$DEFAULT_LOCAL_FOLDER/share/$CONFIG_NAME"
     printf "...done\n"
 
     # Remove configuration aliases
