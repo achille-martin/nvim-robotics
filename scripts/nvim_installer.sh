@@ -31,6 +31,8 @@ OS_DETECTED="unknown"
 OS_DISTRIBUTION_DETECTED="unknown"
 OS_ARCHITECTURE_DETECTED="unknown"
 
+DEFAULT_LOCAL_FOLDER="$HOME/.local"
+
 # ---- HANDY FUNCTIONS ----
 
 print_usage() {
@@ -216,6 +218,11 @@ perform_uninstall() {
             # Remove application added from downloaded package
             printf "Removing application installed from downloaded package...\n"
             sudo rm -rf /opt/nvim*
+            printf "...done\n"
+
+   			# Remove user data related to neovim
+            printf "Removing user data related to neovim from local folder \`$DEFAULT_LOCAL_FOLDER\`...\n"
+            sudo rm -rf "$DEFAULT_LOCAL_FOLDER/share/nvim"
             printf "...done\n"
 
             case "$OS_DISTRIBUTION_DETECTED" in
