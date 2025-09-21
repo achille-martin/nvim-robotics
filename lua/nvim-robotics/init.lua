@@ -1,1 +1,1 @@
-require("nvim-robotics.mappings")
+require("nvim-robotics.key_mappings")
