@@ -131,8 +131,7 @@ perform_quick_setup() {
         printf "\nCreating the alias for the configuration...\n"
         if [[ ! ${BASH_ALIASES[$ALIAS]} ]];
         then
-            printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" >> "$DEFAULT_BASH_ALIASES_FILE"
-            printf "\n"
+            printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"\n" >> "$DEFAULT_BASH_ALIASES_FILE"
             printf "alias $SHORT_ALIAS=\"$ALIAS\"" >> "$DEFAULT_BASH_ALIASES_FILE"
         else
             printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
