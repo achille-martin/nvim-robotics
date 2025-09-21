@@ -37,6 +37,8 @@ DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh"
 
 DEFAULT_ALIAS="$DEFAULT_CONFIG_NAME"
 ALIAS="$DEFAULT_ALIAS"
+DEFAULT_SHORT_ALIAS="neo"
+SHORT_ALIAS="$DEFAULT_SHORT_ALIAS"
 
 DEFAULT_BASH_ALIASES_FILE="$HOME/.bash_aliases"
 DEFAULT_BASHRC_FILE="$HOME/.bashrc"
@@ -125,10 +127,12 @@ perform_quick_setup() {
         printf "...done\n"
 
         # Create the alias for the nvim robotics config (making sure it does not exist already)
+        # and create a practical alias for the launch of the custom nvim robotics config
         printf "\nCreating the alias for the configuration...\n"
         if [[ ! ${BASH_ALIASES[$ALIAS]} ]];
         then
             printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" >> "$DEFAULT_BASH_ALIASES_FILE"
+            printf "alias $SHORT_ALIAS=\"$ALIAS\"" >> "$DEFAULT_BASH_ALIASES_FILE"
         else
             printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
         fi
@@ -171,6 +175,7 @@ perform_cleanup() {
     # Remove configuration aliases
     printf "\nRemoving alias configuration in \`$DEFAULT_BASH_ALIASES_FILE\`...\n"
     grep -v "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bash_aliases"
+    grep -v "alias $SHORT_ALIAS=\"$ALIAS\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bash_aliases"
     mv "/tmp/.bash_aliases" "$DEFAULT_BASH_ALIASES_FILE"
     printf "...done\n"
 
@@ -180,11 +185,9 @@ perform_cleanup() {
 # ---- MAIN ----
 
 # TODO:
-# * Handle quick setup
 # * Handle custom setup (will be done via a fork and loading side config files)
-# * Handle config management? (should not be needed if fork used and loader duplicated)
+# * Handle config management (should not be needed if fork used and loader duplicated)
 # * Handle setting neovim as default editor
-# * Handle config cleanup / refresh (for cleanup, also include bash_aliases cleanup potentially)
 
 # Ensure that there is at least one required argument entered
 if [[ "$#" -lt 1 ]]
