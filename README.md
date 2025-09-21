@@ -96,6 +96,12 @@ You can now launch Neovim with the repo configuration by using the default alias
 nvim-robotics
 ```
 
+You can also launch Neovim with the repo configuration by using a practical alias set:
+
+```bash
+neo
+```
+
 <a id="custom-config-setup"></a>
 ### 3.3. Custom configuration setup
 
