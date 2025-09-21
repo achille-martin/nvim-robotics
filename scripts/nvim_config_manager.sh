@@ -132,6 +132,7 @@ perform_quick_setup() {
         if [[ ! ${BASH_ALIASES[$ALIAS]} ]];
         then
             printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" >> "$DEFAULT_BASH_ALIASES_FILE"
+            printf "\n"
             printf "alias $SHORT_ALIAS=\"$ALIAS\"" >> "$DEFAULT_BASH_ALIASES_FILE"
         else
             printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
@@ -175,6 +176,7 @@ perform_cleanup() {
     # Remove configuration aliases
     printf "\nRemoving alias configuration in \`$DEFAULT_BASH_ALIASES_FILE\`...\n"
     grep -v "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bash_aliases"
+    mv "/tmp/.bash_aliases" "$DEFAULT_BASH_ALIASES_FILE"
     grep -v "alias $SHORT_ALIAS=\"$ALIAS\"" "$DEFAULT_BASH_ALIASES_FILE" > "/tmp/.bash_aliases"
     mv "/tmp/.bash_aliases" "$DEFAULT_BASH_ALIASES_FILE"
     printf "...done\n"
