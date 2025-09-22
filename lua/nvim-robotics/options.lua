@@ -3,12 +3,12 @@
 -- ///// INDENTATION \\\\\
 -- # Enable the copy of indent from current line when starting a new line
 -- # Note: press `Ctrl + d` to delete the indent on the new line
+-- # General note: if the indentation includes a comment character / symbol from the previous line,
+-- # remove the added character / symbol by pressing `Ctrl + w` (deletes the previous word) in INSERT mode
 vim.opt.autoindent = true
 -- # Set the number of columns (or spaces) that make up one level of (auto)indentation
 -- # By default, 4 spaces is a good number across languages and file formats
 vim.opt.shiftwidth = 4
--- # General note: if the indentation includes a comment character / symbol from the previous line,
--- # remove the added character / symbol by pressing `Ctrl + w` (deletes the previous word)
 
 -- ///// TABULATION \\\\\
 -- # Set the number of column (or visual spaces) per tab character
