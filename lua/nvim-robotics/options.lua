@@ -38,7 +38,7 @@ vim.opt.expandtab = true
 
 -- ///// WINDOW DISPLAY \\\\\
 -- # Specify whether the window tab line (at the top of the screen)
--- # should be displayed, or under specific conditions
+-- # should be displayed, or only under specific conditions
 -- # By default, for a consistent window design, the window tab line is always displayed
 vim.opt.showtabline = 2
 
