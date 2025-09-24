@@ -31,16 +31,38 @@ vim.opt.expandtab = true
 -- #
 
 -- ///// SEARCH \\\\\
--- #
+-- # Ignore case of normal letters when searching
+vim.opt.ignorecase = true
+-- # Override the `ignorecase` option
+-- # if the search pattern contains upper case characters
+vim.opt.smartcase = true
+-- # Do not search as characters are entered
+vim.opt.incsearch = false
 
 -- ///// TEXT DISPLAY \\\\\
--- #
+-- # Highlight current horizontal cursor line
+-- # Might make screen redrawing slower though
+vim.opt.cursorline = true
+-- # Highlight all matches on previous search pattern
+vim.opt.hlsearch = true
+-- # Set the minimal number of screen lines to keep
+-- # above and below the cursor
+vim.opt.scrolloff = 5
 
 -- ///// WINDOW DISPLAY \\\\\
 -- # Specify whether the window tab line (at the top of the screen)
 -- # should be displayed, or only under specific conditions
 -- # By default, for a consistent window design, the window tab line is always displayed
 vim.opt.showtabline = 2
+-- # Show absolute number of each line
+-- # on the left side of the text area
+vim.opt.number = true
+-- # Do not show relative number of lines
+-- # around the current line
+-- # on the left side of the text area
+vim.opt.relativenumber = false
+-- # Set the number of screen lines to use for the command-line
+vim.opt.cmdheight = 1
 
 -- ///// MEMORY MANAGEMENT \\\\\
 -- # Clipboard
