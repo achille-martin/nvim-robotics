@@ -47,7 +47,8 @@ vim.opt.cursorline = true
 vim.opt.hlsearch = true
 -- # Set the minimal number of screen lines to keep
 -- # above and below the cursor
-vim.opt.scrolloff = 5
+-- # Keeping the vertical number consistent with the horizontal tab spacing
+vim.opt.scrolloff = 4
 
 -- ///// WINDOW DISPLAY \\\\\
 -- # Specify whether the window tab line (at the top of the screen)
