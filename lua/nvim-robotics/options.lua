@@ -47,6 +47,14 @@ vim.opt.incsearch = false
 -- # Highlight current horizontal cursor line
 -- # Might make screen redrawing slower though
 vim.opt.cursorline = true
+-- # Restrict the highlight of current cursor line
+-- # to only the number on the left
+vim.opt.cursorlineopt = "number"
+-- # Highlight the line number of the cursor
+-- # so that it is clearly visible
+vim.cmd([[
+    highlight CursorLineNr guibg=DarkGray guifg=Black
+]])
 -- # Highlight all matches on previous search pattern
 vim.opt.hlsearch = true
 -- # Set the minimal number of screen lines to keep
