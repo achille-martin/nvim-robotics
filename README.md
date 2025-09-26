@@ -1,6 +1,6 @@
 # Nvim Robotics
 
-Neovim configuration, optimised for Robotics Engineers.
+Neovim configuration. Optimised for Robotics Engineers.
 
 <a id="overview"></a>
 ## 1. Overview
