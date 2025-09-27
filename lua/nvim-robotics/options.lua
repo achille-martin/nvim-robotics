@@ -87,8 +87,15 @@ vim.opt.relativenumber = false
 vim.opt.cmdheight = 1
 
 -- ///// MEMORY MANAGEMENT \\\\\
--- # Clipboard
-
+-- # Share the system clipboard (`+` register)
+-- # with neovim default register (`unnamed` register)
+-- # so that copy, cut, and paste actions can be performed
+-- # within neovim (`y`, `d`, and `p`)
+-- # as well as outside neovim (`Ctrl + c`, `Ctrl + x`, and `Ctrl + v`)
+-- # seamlessly
+-- # Note that the neovim actions populate the `unnamed` and `+` registers
+-- # but the actions outside of neovim only populate the `+` register
+vim.opt.clipboard = "unnamedplus"
 -- # Keep swap files in the default location (defined in `vim.opt.directory`):
 -- # `~/.local/state/<nvim_name>/swap//`
 -- # Swap files are useful to retain latest unsaved changes to a file
