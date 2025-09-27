@@ -1,48 +1,5 @@
 -- GENERAL OPTIONS
 
--- ///// INDENTATION \\\\\
--- # Enable the copy of indent from current line when starting a new line
--- # Note: press `Ctrl + d` to delete the indent on the new line
--- # General note: if the indentation includes a comment character / symbol
--- # from the previous line,
--- # remove the added character / symbol
--- # by pressing `Ctrl + w` (deletes the previous word) in INSERT mode
-vim.opt.autoindent = true
--- # Set the number of columns that make up one level of (auto)indentation
--- # By default, 4 spaces is a good number across languages and file formats
-vim.opt.shiftwidth = 4
-
--- ///// TABULATION \\\\\
--- # Set the number of column (or visual spaces) per tab character
--- # Neovim recommends to keep the number at 8 for display purposes
--- # However, for consistency purposes, a good default is 4
-vim.opt.tabstop = 4
--- # Modify the behaviour of the tab and backspace keys
--- # Specify the amount of whitespace to be inserted
--- # when the tab key is pressed
--- # and the amount of whitespace to be removed
--- # when the backspace key is pressed
--- # By default, 4 spaces is consistent with the `shiftwidth` option
-vim.opt.softtabstop = 4
--- # Convert a tab into spaces
--- # when a whitespace command is executed or when the tab key is pressed
-vim.opt.expandtab = true
-
--- ///// FORMATTING \\\\\
--- # Command to remove all trailing whitespace (key maps?)
-
--- ///// AUTO-COMPLETION \\\\\
--- #
-
--- ///// SEARCH \\\\\
--- # Ignore case of normal letters when searching
-vim.opt.ignorecase = true
--- # Override the `ignorecase` option
--- # if the search pattern contains upper case characters
-vim.opt.smartcase = true
--- # Do not search as characters are entered
-vim.opt.incsearch = false
-
 -- ///// TEXT DISPLAY \\\\\
 -- # Highlight current horizontal cursor line
 -- # Might make screen redrawing slower though
@@ -59,8 +16,10 @@ vim.cmd([[
 vim.opt.hlsearch = true
 -- # Set the minimal number of screen lines to keep
 -- # above and below the cursor
--- # Keeping the vertical number consistent with the horizontal tab spacing
-vim.opt.scrolloff = 4
+-- # By default, setting the value to 2 lines
+-- # is optimal for any language
+-- # and does not disturb user experience much
+vim.opt.scrolloff = 2
 -- # Highlight the column 80
 -- # which corresponds to standard EMACS screen size
 -- # and is part of PEP8 style guide
@@ -93,6 +52,11 @@ vim.opt.splitbelow = false
 -- # When splitting window vertically,
 -- # show newest window to the right
 vim.opt.splitright = true
+
+-- ///// CONTROL \\\\\
+-- # Enable mouse controls in all modes
+-- # so that it can be used seamlessly alongside the keyboard
+vim.opt.mouse = "a"
 
 -- ///// MEMORY MANAGEMENT \\\\\
 -- # Share the system clipboard (`+` register)
@@ -135,7 +99,48 @@ vim.opt.encoding = "utf-8"
 -- # to UTF-8 for consistency
 vim.opt.fileencoding = "utf-8"
 
--- ///// CONTROL \\\\\
--- # Enable mouse controls in all modes
--- # so that it can be used seamlessly alongside the keyboard
-vim.opt.mouse = "a"
+-- ///// INDENTATION \\\\\
+-- # Enable the copy of indent from current line when starting a new line
+-- # Note: press `Ctrl + d` to delete the indent on the new line
+-- # General note: if the indentation includes a comment character / symbol
+-- # from the previous line,
+-- # remove the added character / symbol
+-- # by pressing `Ctrl + w` (deletes the previous word) in INSERT mode
+vim.opt.autoindent = true
+-- # Set the number of columns that make up one level of (auto)indentation
+-- # By default, 4 spaces is a good number across languages and file formats
+vim.opt.shiftwidth = 4
+
+-- ///// TABULATION \\\\\
+-- # Set the number of column (or visual spaces) per tab character
+-- # Neovim recommends to keep the number at 8 for display purposes
+-- # However, for consistency purposes, a good default is 4
+vim.opt.tabstop = 4
+-- # Modify the behaviour of the tab and backspace keys
+-- # Specify the amount of whitespace to be inserted
+-- # when the tab key is pressed
+-- # and the amount of whitespace to be removed
+-- # when the backspace key is pressed
+-- # By default, 4 spaces is consistent with the `shiftwidth` option
+vim.opt.softtabstop = 4
+-- # Convert a tab into spaces
+-- # when a whitespace command is executed or when the tab key is pressed
+vim.opt.expandtab = true
+
+-- ///// SEARCH \\\\\
+-- # Ignore case of normal letters when searching
+vim.opt.ignorecase = true
+-- # Override the `ignorecase` option
+-- # if the search pattern contains upper case characters
+vim.opt.smartcase = true
+-- # Do not search as characters are entered
+vim.opt.incsearch = false
+
+-- ///// AUTO-COMPLETION \\\\\
+-- # Set maximum number of items to show in the popup menu
+-- # for autocompletion (via `Ctrl + p` or `Ctrl + n`)
+-- # while in INSERT mode
+vim.opt.pumheight = 10
+
+-- ///// FORMATTING \\\\\
+-- # Command to remove all trailing whitespace (key maps?)
