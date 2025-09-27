@@ -69,6 +69,8 @@ vim.opt.colorcolumn = "80"
 -- # and that no block of text is replaced by a character
 -- # For instance, full link syntax is shown in markdown
 vim.opt.conceallevel = 0
+-- # Force text wrapping if line is longer than screen size
+vim.opt.wrap = true
 
 -- ///// WINDOW DISPLAY \\\\\
 -- # Specify whether the window tab line (at the top of the screen)
@@ -85,6 +87,12 @@ vim.opt.number = true
 vim.opt.relativenumber = false
 -- # Set the number of screen lines to use for the command-line
 vim.opt.cmdheight = 1
+-- # When splitting window horizontally,
+-- # show newest window on top
+vim.opt.splitbelow = false
+-- # When splitting window vertically,
+-- # show newest window to the right
+vim.opt.splitright = true
 
 -- ///// MEMORY MANAGEMENT \\\\\
 -- # Share the system clipboard (`+` register)
@@ -126,3 +134,8 @@ vim.opt.encoding = "utf-8"
 -- # Set the output encoding of the file that is written
 -- # to UTF-8 for consistency
 vim.opt.fileencoding = "utf-8"
+
+-- ///// CONTROL \\\\\
+-- # Enable mouse controls in all modes
+-- # so that it can be used seamlessly alongside the keyboard
+vim.opt.mouse = "a"
