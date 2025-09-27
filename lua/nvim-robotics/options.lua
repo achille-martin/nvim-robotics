@@ -95,6 +95,7 @@ vim.opt.cmdheight = 1
 -- # seamlessly
 -- # Note that the neovim actions populate the `unnamed` and `+` registers
 -- # but the actions outside of neovim only populate the `+` register
+-- # However, the neovim paste action will now source from the `+` register
 vim.opt.clipboard = "unnamedplus"
 -- # Keep swap files in the default location (defined in `vim.opt.directory`):
 -- # `~/.local/state/<nvim_name>/swap//`
