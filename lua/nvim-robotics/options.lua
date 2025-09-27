@@ -140,7 +140,9 @@ vim.opt.incsearch = false
 -- # Set maximum number of items to show in the popup menu
 -- # for autocompletion (via `Ctrl + p` or `Ctrl + n`)
 -- # while in INSERT mode
-vim.opt.pumheight = 10
+-- # To avoid odd behaviours, the maximum space available is used
+-- # for the popup menu
+vim.opt.pumheight = 0
 -- # Define the expected behaviour of the INSERT mode completion tool:
 -- # Menu opens even if there is only one match
 -- # Fuzzy match runs in the background so that it is more forgiving
