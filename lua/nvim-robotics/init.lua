@@ -1,2 +1,2 @@
-require("nvim-robotics.key_mappings")
+require("nvim-robotics.keymaps")
 require("nvim-robotics.options")
