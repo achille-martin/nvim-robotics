@@ -141,6 +141,12 @@ vim.opt.incsearch = false
 -- # for autocompletion (via `Ctrl + p` or `Ctrl + n`)
 -- # while in INSERT mode
 vim.opt.pumheight = 10
+-- # Define the expected behaviour of the INSERT mode completion tool:
+-- # Menu opens even if there is only one match
+-- # Fuzzy match runs in the background so that it is more forgiving
+-- # Matches are not inserted until the user decides to (e.g. with `enter`)
+-- # More information about matches is provided in the preview window
+vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "preview" }
 
 -- ///// FORMATTING \\\\\
 -- # Command to remove all trailing whitespace (key maps?)
