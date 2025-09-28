@@ -9,11 +9,20 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 -- # Highlight the line number of the cursor
 -- # so that it is clearly visible
-vim.cmd([[
-    highlight CursorLineNr guibg=DarkGray guifg=Black
-]])
+vim.cmd(
+    [[
+        highlight CursorLineNr guibg=DarkGray guifg=Black
+    ]]
+)
 -- # Highlight all matches on previous search pattern
 vim.opt.hlsearch = true
+-- # Specify the highlight colour of search matches
+-- # to ensure visibility
+vim.cmd(
+    [[
+        highlight Search guibg=Yellow guifg=Black
+    ]]
+)
 -- # Set the minimal number of screen lines to keep
 -- # above and below the cursor
 -- # By default, setting the value to 2 lines
