@@ -61,6 +61,8 @@ vim.opt.splitbelow = false
 -- # When splitting window vertically,
 -- # show newest window to the right
 vim.opt.splitright = true
+-- # Show sign column on the left of number column
+vim.opt.signcolumn = "yes"
 
 -- ///// CONTROL \\\\\
 -- # Enable mouse controls in all modes
@@ -77,7 +79,14 @@ vim.opt.mouse = "a"
 -- # Note that the neovim actions populate the `unnamed` and `+` registers
 -- # but the actions outside of neovim only populate the `+` register
 -- # However, the neovim paste action will now source from the `+` register
-vim.opt.clipboard = "unnamedplus"
+-- # Extra note: to reduce Neovim startup time,
+-- # we can schedule the setting to be executed after `UiEnter`
+-- # (when the user interface connects)
+vim.schedule(
+    function()
+        vim.opt.clipboard = "unnamedplus"
+    end
+)
 -- # Keep swap files in the default location (defined in `vim.opt.directory`):
 -- # `~/.local/state/<nvim_name>/swap//`
 -- # Swap files are useful to retain latest unsaved changes to a file
