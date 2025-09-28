@@ -72,3 +72,11 @@ You can also launch Neovim with the forked repo configuration by using a practic
 neo
 ```
 
+## 3. Support
+
+If you enjoy this Neovim configuration, or found some interesting settings, let me know by clicking the button below:
+
+<!-- Buy me a coffee link -->
+<a href="https://www.buymeacoffee.com/achille_martin">
+  <img src="https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=achille_martin&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"/>
+</a>
