@@ -63,6 +63,9 @@ vim.opt.splitbelow = false
 vim.opt.splitright = true
 -- # Show sign column on the left of number column
 vim.opt.signcolumn = "yes"
+-- # Prevent update of the terminal window title
+-- # so that terminal settings are maintained
+vim.opt.title = false
 
 -- ///// CONTROL \\\\\
 -- # Enable mouse controls in all modes
