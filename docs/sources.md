@@ -15,3 +15,4 @@ The following table gathers a list of sources that have inspired me for this rep
 | ChristianChiarulli's Neovim configuration | [Link](https://github.com/ChristianChiarulli/nvim/blob/master) | |
 | Alexey Goloburdin's Neovim configuration | [Link](https://github.com/alexey-goloburdin/nvim-config/blob/main) | |
 | Jannik Buhr's Neovim configuration | [Link](https://github.com/jmbuhr/nvim-config/blob/main) | |
+| Jacob Mcauley Penney's Neovim configuration | [Link](https://github.com/mcauley-penney/nvim/tree/main) | |
