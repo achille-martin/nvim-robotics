@@ -66,6 +66,150 @@ vim.opt.signcolumn = "yes"
 -- # Prevent update of the terminal window title
 -- # so that terminal settings are maintained
 vim.opt.title = false
+-- # Hide mode information in command line
+-- # since it is already displayed in the status line
+vim.opt.showmode = false
+
+-- # Always show a statusline in the previously focused window
+vim.opt.laststatus = 2
+-- # Mode identification
+-- # according to the Neovim documentation
+local modes = {
+    ["n"] = "NORMAL",
+    ["v"] = "VISUAL",
+    ["V"] = "VISUAL LINE",
+    ["CTRL-V"] = "VISUAL BLOCK",
+    ["s"] = "SELECT",
+    ["S"] = "SELECT LINE",
+    ["CTRL-S"] = "SELECT BLOCK",
+    ["i"] = "INSERT",
+    ["ic"] = "INSERT",
+    ["R"] = "REPLACE",
+    ["Rv"] = "VIRTUAL REPLACE",
+    ["c"] = "COMMAND",
+    ["cv"] = "VIM EX",
+    ["r"] = "PROMPT",
+    ["rm"] = "MORE PROMPT",
+    ["r?"] = "CONFIRM",
+    ["!"] = "SHELL",
+    ["t"] = "TERMINAL",
+}
+-- # Mode display from nvim identifier
+local function mode()
+    local current_mode = vim.api.nvim_get_mode().mode
+    return string.format(" %s ", modes[current_mode])
+end
+-- # Filepath display
+-- # restricted to parent folder path
+-- # including shortened home directory
+-- # Note that path may be truncated if too long
+-- # For more information about `filename-modifiers`,
+-- # refer to the Neovim documentation
+local function filepath()
+    local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":p:~:h")
+    return string.format(" [%%<%s/] ", fpath)
+end
+-- # Filename display
+-- # including a space at the end for aesthetics
+local function filename()
+    local fname = vim.fn.expand "%:t"
+    return fname .. " "
+end
+-- # Cursor location information
+-- # including line, column and percentage of page
+local function cursorinfo()
+    return " Line:%l | Col:%c | %P "
+end
+-- # Status line building
+-- # including an active state when page focused
+-- # and an inactive state when page unfocused
+Statusline = {}
+-- # Active status for status line
+Statusline.active = function()
+    return table.concat {
+        "%#Statusline#",
+        mode(),
+        "%#Normal# ",
+        "%=%#StatusLineExtra#",
+        cursorinfo(),
+    }
+end
+-- # Inactive status for status line
+function Statusline.inactive()
+    return ""
+end
+-- # Group definition for status line
+local statusline_group = vim.api.nvim_create_augroup(
+    "Statusline",
+    { clear = true }
+)
+-- # Function execution for status line
+-- # on focusing on a new window or buffer
+vim.api.nvim_create_autocmd(
+    { "WinEnter", "BufEnter" },
+    {
+        group = statusline_group,
+        desc = "Activate statusline on focus",
+        callback = function()
+            vim.opt_local.statusline = "%!v:lua.Statusline.active()"
+        end,
+    }
+)
+-- # Function execution for status line
+-- # on leaving a window or buffer
+vim.api.nvim_create_autocmd(
+    { "WinLeave", "BufLeave" },
+    {
+        group = statusline_group,
+        desc = "Deactivate statusline when unfocused",
+        callback = function()
+            vim.opt_local.statusline = "%!v:lua.Statusline.inactive()"
+        end,
+    }
+)
+
+-- # Winbar (window bar, right under the tab line) building
+-- # including an active state when page focused
+-- # and an inactive state when page unfocused
+Winbar = {}
+-- # Active status for winbar
+-- # showing buffer parent folder path and filename
+function Winbar.active()
+    return "%F"
+end
+-- # Inactive status for winbar
+function Winbar.inactive()
+    return "%F"
+end
+-- # Group definition for winbar
+local winbar_group = vim.api.nvim_create_augroup(
+    "Winbar",
+    { clear = true }
+)
+-- # Function execution for winbar
+-- # on focusing on a new window or buffer
+vim.api.nvim_create_autocmd(
+    { "WinEnter", "BufEnter" },
+    {
+        group = winbar_group,
+        desc = "Refresh win bar on focus",
+        callback = function()
+            vim.opt_local.winbar = "%!v:lua.Winbar.active()"
+        end,
+    }
+)
+-- # Function execution for winbar
+-- # on leaving a window or buffer
+vim.api.nvim_create_autocmd(
+    { "WinLeave", "BufLeave" },
+    {
+        group = winbar_group,
+        desc = "Maintain win bar when unfocused",
+        callback = function()
+            vim.opt_local.winbar = "%!v:lua.Winbar.inactive()"
+        end,
+    }
+)
 
 -- ///// CONTROL \\\\\
 -- # Enable mouse controls in all modes
@@ -173,3 +317,4 @@ vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "preview" }
 
 -- ///// FORMATTING \\\\\
 -- # Command to remove all trailing whitespace (key maps?)
+
