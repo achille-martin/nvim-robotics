@@ -56,6 +56,30 @@ vim.opt.wrap = true
 -- # and that no block of text is replaced by a character
 -- # For instance, full link syntax is shown in markdown
 vim.opt.conceallevel = 0
+-- # Create group for syntax cleanup
+local syntax_cleanup_group = vim.api.nvim_create_augroup(
+    "SyntaxCleanup",
+    { clear = true }
+)
+-- # Auto-remove trailing whitespace in the whole file
+-- # just before writing to Buffer,
+-- # maintain cursor position,
+-- # do not flag errors,
+-- # and do not add anything to the search history
+-- # (do not modify the last substitute pattern or substitute string)
+vim.api.nvim_create_autocmd(
+    "BufWritePre",
+    {
+        group = "SyntaxCleanup",
+        pattern = "*",
+        callback = function()
+            local curpos = vim.api.nvim_win_get_cursor(0)
+            vim.cmd([[keeppatterns %s/\s\+$//ge]])
+            vim.api.nvim_win_set_cursor(0, curpos)
+	end,
+    }
+)
+
 
 -- =============== WINDOW DISPLAY ===============
 
