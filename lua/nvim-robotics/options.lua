@@ -1,6 +1,11 @@
--- GENERAL OPTIONS
+-- -------------------
+-- | GENERAL OPTIONS |
+-- -------------------
 
--- ///// TEXT DISPLAY \\\\\
+-- =============== TEXT DISPLAY ===============
+
+-- CURSOR
+
 -- # Highlight current horizontal cursor line
 -- # Might make screen redrawing slower though
 vim.opt.cursorline = true
@@ -14,6 +19,9 @@ vim.cmd(
         highlight CursorLineNr guibg=DarkGray guifg=Black
     ]]
 )
+
+-- MATCH
+
 -- # Highlight all matches on previous search pattern
 vim.opt.hlsearch = true
 -- # Specify the highlight colour of search matches
@@ -23,29 +31,44 @@ vim.cmd(
         highlight Search guibg=Yellow guifg=Black
     ]]
 )
+
+-- SCROLL
+
 -- # Set the minimal number of screen lines to keep
 -- # above and below the cursor
 -- # By default, setting the value to 2 lines
 -- # is optimal for any language
 -- # and does not disturb user experience much
 vim.opt.scrolloff = 2
+
+-- BOUNDARIES
+
 -- # Highlight the column 80
 -- # which corresponds to standard EMACS screen size
 -- # and is part of PEP8 style guide
 vim.opt.colorcolumn = "80"
+-- # Force text wrapping if line is longer than screen size
+vim.opt.wrap = true
+
+-- SYNTAX
+
 -- # Ensure that full text is shown normally
 -- # and that no block of text is replaced by a character
 -- # For instance, full link syntax is shown in markdown
 vim.opt.conceallevel = 0
--- # Force text wrapping if line is longer than screen size
-vim.opt.wrap = true
 
--- ///// WINDOW DISPLAY \\\\\
+-- =============== WINDOW DISPLAY ===============
+
+-- TABLINE
+
 -- # Specify whether the window tab line (at the top of the screen)
 -- # should be displayed, or only under specific conditions
 -- # By default, for a consistent window design,
 -- # the window tab line is always displayed
 vim.opt.showtabline = 2
+
+-- NUMBER COLUMN
+
 -- # Show absolute number of each line
 -- # on the left side of the text area
 vim.opt.number = true
@@ -53,22 +76,36 @@ vim.opt.number = true
 -- # around the current line
 -- # on the left side of the text area
 vim.opt.relativenumber = false
+
+-- SIGN COLUMN
+
+-- # Show sign column on the left of number column
+vim.opt.signcolumn = "yes"
+
+-- COMMAND LINE
+
 -- # Set the number of screen lines to use for the command-line
 vim.opt.cmdheight = 1
+-- # Hide mode information in command line
+-- # since it is already displayed in the status line
+vim.opt.showmode = false
+
+-- WINDOW SPLITS
+
 -- # When splitting window horizontally,
 -- # show newest window on top
 vim.opt.splitbelow = false
 -- # When splitting window vertically,
 -- # show newest window to the right
 vim.opt.splitright = true
--- # Show sign column on the left of number column
-vim.opt.signcolumn = "yes"
+
+-- WINDOW TITLE
+
 -- # Prevent update of the terminal window title
 -- # so that terminal settings are maintained
 vim.opt.title = false
--- # Hide mode information in command line
--- # since it is already displayed in the status line
-vim.opt.showmode = false
+
+-- STATUS LINE
 
 -- # Always show a statusline in the previously focused window
 vim.opt.laststatus = 2
@@ -98,6 +135,12 @@ local modes = {
 local function mode()
     local current_mode = vim.api.nvim_get_mode().mode
     return string.format(" %s ", modes[current_mode])
+end
+-- # Current working directory display
+-- # including shortened home directory
+local function pwd()
+    local cwd_path = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:~")
+    return string.format(" [cwd: %%<%s] ", cwd_path)
 end
 -- # Filepath display
 -- # restricted to parent folder path
@@ -130,6 +173,7 @@ Statusline.active = function()
         "%#Statusline#",
         mode(),
         "%#Normal# ",
+        pwd(),
         "%=%#StatusLineExtra#",
         cursorinfo(),
     }
@@ -144,7 +188,7 @@ local statusline_group = vim.api.nvim_create_augroup(
     { clear = true }
 )
 -- # Function execution for status line
--- # on focusing on a new window or buffer
+-- # when focusing on a new window or buffer
 vim.api.nvim_create_autocmd(
     { "WinEnter", "BufEnter" },
     {
@@ -155,8 +199,17 @@ vim.api.nvim_create_autocmd(
         end,
     }
 )
+-- # Setting bright colour
+-- # for active status line
+-- # to identify the focused window or buffer easily
+vim.cmd(
+    [[
+        highlight StatusLine guibg=Yellow guifg=Black
+    ]]
+)
+
 -- # Function execution for status line
--- # on leaving a window or buffer
+-- # when leaving a window or buffer
 vim.api.nvim_create_autocmd(
     { "WinLeave", "BufLeave" },
     {
@@ -168,16 +221,19 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+-- WINBAR
+
 -- # Winbar (window bar, right under the tab line) building
 -- # including an active state when page focused
 -- # and an inactive state when page unfocused
 Winbar = {}
 -- # Active status for winbar
--- # showing buffer parent folder path and filename
+-- # showing absolute file path for buffer
 function Winbar.active()
     return "%F"
 end
 -- # Inactive status for winbar
+-- # similar to active status
 function Winbar.inactive()
     return "%F"
 end
@@ -187,7 +243,7 @@ local winbar_group = vim.api.nvim_create_augroup(
     { clear = true }
 )
 -- # Function execution for winbar
--- # on focusing on a new window or buffer
+-- # when focusing on a new window or buffer
 vim.api.nvim_create_autocmd(
     { "WinEnter", "BufEnter" },
     {
@@ -199,7 +255,7 @@ vim.api.nvim_create_autocmd(
     }
 )
 -- # Function execution for winbar
--- # on leaving a window or buffer
+-- # when leaving a window or buffer
 vim.api.nvim_create_autocmd(
     { "WinLeave", "BufLeave" },
     {
@@ -211,12 +267,18 @@ vim.api.nvim_create_autocmd(
     }
 )
 
--- ///// CONTROL \\\\\
+-- =============== CONTROL ===============
+
+-- MOUSE
+
 -- # Enable mouse controls in all modes
 -- # so that it can be used seamlessly alongside the keyboard
 vim.opt.mouse = "a"
 
--- ///// MEMORY MANAGEMENT \\\\\
+-- =============== MEMORY MANAGEMENT ===============
+
+-- CLIPBOARD
+
 -- # Share the system clipboard (`+` register)
 -- # with neovim default register (`unnamed` register)
 -- # so that copy, cut, and paste actions can be performed
@@ -234,6 +296,9 @@ vim.schedule(
         vim.opt.clipboard = "unnamedplus"
     end
 )
+
+-- SWAP FILES
+
 -- # Keep swap files in the default location (defined in `vim.opt.directory`):
 -- # `~/.local/state/<nvim_name>/swap//`
 -- # Swap files are useful to retain latest unsaved changes to a file
@@ -246,6 +311,9 @@ vim.schedule(
 -- # and diff the swap / original files with:
 -- # `:diffthis | :vnew | r # | exe "norm! ggdd" | :diffthis`
 vim.opt.swapfile = true
+
+-- BACKUP FILES
+
 -- # Do not keep backups of edited files
 -- # Backups represent the original file before it was edited and overwritten
 -- # Backups are saved in the current directory or in the folder (if created):
@@ -254,6 +322,9 @@ vim.opt.swapfile = true
 -- # to keep track of changes
 vim.opt.backup = false
 vim.opt.writebackup = false
+
+-- ENCODING
+
 -- # Set the output encoding shown in terminal to UTF-8
 -- # which is a Unicode format universally praised
 -- # thanks to its backwards-compatibility with ASCII,
@@ -264,7 +335,8 @@ vim.opt.encoding = "utf-8"
 -- # to UTF-8 for consistency
 vim.opt.fileencoding = "utf-8"
 
--- ///// INDENTATION \\\\\
+-- =============== INDENTATION ===============
+
 -- # Enable the copy of indent from current line when starting a new line
 -- # Note: press `Ctrl + d` to delete the indent on the new line
 -- # General note: if the indentation includes a comment character / symbol
@@ -276,7 +348,8 @@ vim.opt.autoindent = true
 -- # By default, 4 spaces is a good number across languages and file formats
 vim.opt.shiftwidth = 4
 
--- ///// TABULATION \\\\\
+-- =============== TABULATION ===============
+
 -- # Set the number of column (or visual spaces) per tab character
 -- # Neovim recommends to keep the number at 8 for display purposes
 -- # However, for consistency purposes, a good default is 4
@@ -292,7 +365,8 @@ vim.opt.softtabstop = 4
 -- # when a whitespace command is executed or when the tab key is pressed
 vim.opt.expandtab = true
 
--- ///// SEARCH \\\\\
+-- =============== SEARCH ===============
+
 -- # Ignore case of normal letters when searching
 vim.opt.ignorecase = true
 -- # Override the `ignorecase` option
@@ -301,7 +375,8 @@ vim.opt.smartcase = true
 -- # Do not search as characters are entered
 vim.opt.incsearch = false
 
--- ///// AUTO-COMPLETION \\\\\
+-- =============== AUTO-COMPLETION ===============
+
 -- # Set maximum number of items to show in the popup menu
 -- # for autocompletion (via `Ctrl + p` or `Ctrl + n`)
 -- # while in INSERT mode
@@ -315,6 +390,7 @@ vim.opt.pumheight = 0
 -- # More information about matches is provided in the preview window
 vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "preview" }
 
--- ///// FORMATTING \\\\\
+-- =============== FORMATTING ===============
+
 -- # Command to remove all trailing whitespace (key maps?)
 
