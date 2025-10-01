@@ -19,6 +19,51 @@ vim.cmd(
         highlight CursorLineNr guibg=DarkGray guifg=Black
     ]]
 )
+-- # Create group for cursor management
+local cursor_management_group = vim.api.nvim_create_augroup(
+    "CursorManagement",
+    { clear = true }
+)
+-- # Define vimscript function to restore cursor position
+-- # when opening a file / buffer
+-- # but excluding specific file types and buffer types
+-- # (vimscript function because does not work in lua)
+vim.api.nvim_exec(
+    [[
+        function! RestoreCursorPosition()
+            if line("'\"")
+                \ && line("'\"") <= line("$")
+                \ && &filetype != "gitcommit"
+                \ && &buftype != "help"
+                \ && &buftype != "nofile"
+                \ && &buftype != "quickfix"
+                \ && &buftype != "terminal"
+            " if the last edit position is set
+            " and is less than the number of lines in this buffer
+            " and the current file is not for editing commits
+            " and the buffer is not the help,
+            " or quickfix, or terminal, or even a nofile
+            " Note: the \" mark is the cursor position
+            " when last exited the file
+                normal! g`"
+                return 1
+            endif
+        endfunction
+    ]],
+    false
+)
+-- # Create autocommand to restore cursor position
+-- # when opening a file / buffer
+-- # (vimscript used because does not work in lua)
+vim.api.nvim_exec(
+    [[
+        autocmd CursorManagement BufWinEnter * call RestoreCursorPosition()
+    ]],
+    false
+)
+-- # Note: for a better management of last cursor position,
+-- # use vim-lastplace plugin
+-- # https://github.com/farmergreg/vim-lastplace/tree/master
 
 -- MATCH
 
