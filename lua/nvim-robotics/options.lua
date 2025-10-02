@@ -123,12 +123,13 @@ vim.api.nvim_create_autocmd(
     "BufWritePre",
     {
         group = "SyntaxCleanup",
+        desc = "Maintain win bar when unfocused",
         pattern = "*",
         callback = function()
             local curpos = vim.api.nvim_win_get_cursor(0)
             vim.cmd([[keeppatterns %s/\s\+$//ge]])
             vim.api.nvim_win_set_cursor(0, curpos)
-	end,
+	    end,
     }
 )
 
