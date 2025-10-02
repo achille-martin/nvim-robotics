@@ -28,7 +28,7 @@ local cursor_management_group = vim.api.nvim_create_augroup(
 -- # when reading a file into the buffer
 -- # and centering the screen around the cursor when relevant
 -- # but excluding specific file types and buffer types
--- # (vimscript function because does not work in lua)
+-- # (vimscript function because lua function slower)
 vim.api.nvim_exec(
     [[
         function! RestoreCursorPosition()
@@ -61,7 +61,7 @@ vim.api.nvim_exec(
 )
 -- # Create autocommand to restore cursor position
 -- # when reading a file into the buffer
--- # (vimscript used because does not work in lua)
+-- # (vimscript used here because does not work in lua otherwise)
 vim.api.nvim_exec(
     [[
         autocmd CursorManagement BufReadPost * call RestoreCursorPosition()
