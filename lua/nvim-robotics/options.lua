@@ -6,19 +6,6 @@
 
 -- CURSOR
 
--- # Highlight current horizontal cursor line
--- # Might make screen redrawing slower though
-vim.opt.cursorline = true
--- # Restrict the highlight of current cursor line
--- # to only the number on the left
-vim.opt.cursorlineopt = "number"
--- # Highlight the line number of the cursor
--- # so that it is clearly visible
-vim.cmd(
-    [[
-        highlight CursorLineNr guibg=DarkGray guifg=Black
-    ]]
-)
 -- # Create group for cursor management
 local cursor_management_group = vim.api.nvim_create_augroup(
     "CursorManagement",
@@ -68,9 +55,19 @@ vim.api.nvim_exec(
     ]],
     false
 )
--- # Note: for a better management of last cursor position,
--- # use vim-lastplace plugin
--- # https://github.com/farmergreg/vim-lastplace/tree/master
+-- # Highlight current horizontal cursor line
+-- # Might make screen redrawing slower though
+vim.opt.cursorline = true
+-- # Restrict the highlight of current cursor line
+-- # to only the number on the left
+vim.opt.cursorlineopt = "number"
+-- # Highlight the line number of the cursor
+-- # so that it is clearly visible
+vim.cmd(
+    [[
+        highlight CursorLineNr guibg=DarkGray guifg=Black
+    ]]
+)
 
 -- MATCH
 
