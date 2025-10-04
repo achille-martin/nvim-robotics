@@ -4,6 +4,8 @@ The following requirements have been decided for the [nvim-robotics](https://git
 
 They highlight the purpose and limitations of this repo.
 
+## Original requirements (June 2025)
+
 | ID | Requirement | Value | MoSCoW | Comments |
 | --- | --- | --- | --- | --- |
 | R1 | Be installable on common computer boards used in Robotics | Based on the Raspberry Pi with a simple SD card of 32GB, the total size of the neovim installation (including dependencies) is < 100MB (i.e. less than 1% of storage capacity) | MUST | Strict storage space limits |
