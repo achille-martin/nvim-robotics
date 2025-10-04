@@ -141,18 +141,22 @@ vim.api.nvim_create_autocmd(
 -- # the window tab line is always displayed
 vim.opt.showtabline = 2
 
--- NUMBER COLUMN
+-- STATUS COLUMN
 
+-- # Ensure that all 3 columns are displayed
+-- # in the status column:
+-- # * Signs
+-- # * Absolute number
+-- # * Relative number
+vim.opt.statuscolumn = "%s %{v:lnum} %{v:relnum}"
 -- # Show absolute number of each line
 -- # on the left side of the text area
 vim.opt.number = true
--- # Do not show relative number of lines
+-- # Show relative number of lines
 -- # around the current line
--- # on the left side of the text area
-vim.opt.relativenumber = false
-
--- SIGN COLUMN
-
+-- # on the right of absolute numbers
+-- # for easier navigation
+vim.opt.relativenumber = true
 -- # Show sign column on the left of number column
 vim.opt.signcolumn = "yes"
 
