@@ -23,3 +23,7 @@ This note presents the list of releases with features (and implementation) inclu
 | F7 | Interact with programming languages with minimal friction | \* Support a wide range of programming language actions, relevant for Robotics Engineers | R5 | I7.1 | Create a basic config for common programmig languages through the Language Server Protocol | \* Picking languages to support<br>\* Maintaining support for picked languages<br>\* Investigating and solving LSP implementation issues / limitations | OK | TODO |
 | F8 | Interact with the interface in a familiar / universal way | \* Define key mappings to enable quick transfer from other editors to Neovim | R1, R2 | I8.1 | Create a basic set of key mappings shared across the Software Community | \* Picking universal key mappings while not altering the Neovim capabilities | OK | TODO |
 | F9 | Get in control of the basic configuration | \* Give control to new and seasoned users to tweak the basic configuration to their liking | R4 | I9.1 | Define toggles and customisation management utilities | \* Enable fully custom configuration while ensuring that the repo is maintainable | MAYBE | N/A |
+
+Notes:
+* This version only supports Linux-Ubuntu OS (maybe some Unix-based OS)
+* This version requires `bashrc` usage
