@@ -446,8 +446,9 @@ vim.opt.ignorecase = true
 -- # Override the `ignorecase` option
 -- # if the search pattern contains upper case characters
 vim.opt.smartcase = true
--- # Do not search as characters are entered
-vim.opt.incsearch = false
+-- # Search as characters are entered
+-- # to get live feedback while typing (faster search)
+vim.opt.incsearch = true
 
 -- =============== AUTO-COMPLETION ===============
 
