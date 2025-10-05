@@ -476,7 +476,3 @@ vim.opt.pumheight = 0
 -- # More information about matches is provided in the preview window
 vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "preview" }
 
--- =============== FORMATTING ===============
-
--- # Command to remove all trailing whitespace (key maps?)
-
