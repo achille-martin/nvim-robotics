@@ -4,10 +4,47 @@
 
 -- =============== FILETYPE MANAGEMENT ===============
 
+-- AUTOMATIC CONFIG
+
 -- # Load default/automatic filetype config
 -- # which detects the filetype (e.g. python)
 -- # and applies specific config/rules to the file
 vim.cmd("filetype indent plugin on")
+-- # Load default syntax highlighting config
+vim.cmd("syntax on")
+
+-- SPELLCHECK
+
+-- # Force disable spellcheck on all filetypes
+-- # to then be able to select specific filetypes
+vim.opt.spell = false
+-- # Select languages for spellchecking
+vim.opt.spelllang = "en_gb"
+-- # Select list of filetypes
+-- # to enable spellcheck for
+local spell_filetypes = {
+    "text",
+    "markdown"
+}
+-- # Create group for spellchecking
+vim.api.nvim_create_augroup(
+    "SpellCheck",
+    { clear = true }
+)
+-- # Define an autocommand
+-- # to enable spellcheck for the relevant group
+-- # and for the desired filetypes only
+vim.api.nvim_create_autocmd(
+    { "FileType" },
+    {
+        group = "SpellCheck",
+        pattern = spell_filetypes,
+        callback = function()
+            vim.opt_local.spell = true
+        end,
+        desc = "Enable spellcheck for defined filetypes",
+    }
+)
 
 -- =============== TEXT DISPLAY ===============
 
