@@ -2,6 +2,13 @@
 -- | GENERAL OPTIONS |
 -- -------------------
 
+-- =============== FILETYPE MANAGEMENT ===============
+
+-- # Load default/automatic filetype config
+-- # which detects the filetype (e.g. python)
+-- # and applies specific config/rules to the file
+vim.cmd("filetype indent plugin on")
+
 -- =============== TEXT DISPLAY ===============
 
 -- CURSOR
