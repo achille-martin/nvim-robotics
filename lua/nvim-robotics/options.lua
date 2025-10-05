@@ -34,6 +34,8 @@ vim.api.nvim_create_augroup(
 -- # Define an autocommand
 -- # to enable spellcheck for the relevant group
 -- # and for the desired filetypes only
+-- # As a bonus, spelling suggestions are also enabled
+-- # when using autocompletion (only valid for the conditions stated above)
 vim.api.nvim_create_autocmd(
     { "FileType" },
     {
@@ -41,6 +43,7 @@ vim.api.nvim_create_autocmd(
         pattern = spell_filetypes,
         callback = function()
             vim.opt_local.spell = true
+            vim.opt_local.complete = vim.opt_local.complete + "kspell"
         end,
         desc = "Enable spellcheck for defined filetypes",
     }
