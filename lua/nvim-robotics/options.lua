@@ -145,6 +145,10 @@ vim.opt.scrolloff = 2
 vim.opt.colorcolumn = "80"
 -- # Force text wrapping if line is longer than screen size
 vim.opt.wrap = true
+-- # Display wrapped lines as visually indented
+-- # (same amount of space as the beginning of that line)
+-- # for visual consistency
+vim.opt.breakindent = true
 
 -- SYNTAX
 
