@@ -31,7 +31,7 @@ vim.api.nvim_set_keymap(
     '<Esc>',
     { noremap=true, silent=true }
 )
--- # Ensure access to Visual Block with `Ctrl + q`
+-- # Ensure clear access to Visual Block with `Ctrl + q`
 -- # because most terminals will paste clipboard with `Ctrl + v`
 
 -- # Define a special mode
@@ -40,19 +40,60 @@ vim.api.nvim_set_keymap(
 -- # Add your key after the Ctrl sequence to access a functionality
 -- # TODO: bring up a little window with key options
 -- # to select functionality when special mode is entered
+-- #
+-- # PART 1 = Handy functions
+local function special_reload_normal()
+    vim.api.nvim_exec(
+        [[
+            so %
+        ]],
+        false
+    )
+    print("[SPECIAL] Reloaded current file")
+end
+local function special_copy_normal()
+    vim.api.nvim_exec(
+        [[
+           "ayy
+        ]],
+        false
+    )
+    print("[SPECIAL] Copied current line into the register a")
+end
+local function special_mode_normal()
+    print("[WARN] Activated special mode: input a char...")
+    local input_char = vim.fn.nr2char(vim.fn.getchar())
+    if input_char == "r" then
+        special_reload_normal()
+    elseif input_char == "c" then
+        special_copy_normal()
+    else
+        print("Not mapped (deactivated special mode)")
+    end
+end
+-- # PART 2 = Mappings
+-- # NORMAL mode
 vim.api.nvim_set_keymap(
     "n",
     "<C-space>",
-    ':echo"[WARN] Tried to activate special mode but requires key input"<CR>',
-    { noremap=true, silent=true }
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=special_mode_normal,
+    }
 )
 
 -- # Reload current file with `<Ctrl-space>r`
 vim.api.nvim_set_keymap(
     "n",
     "<C-space>r",
-    ':so %<CR>:echo"[SPECIAL] Reloaded current file"<CR>',
-    { noremap=true, silent=true }
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=special_reload_normal,
+    }
 )
 
 -- # Define copy shortcuts
@@ -72,8 +113,12 @@ vim.api.nvim_set_keymap(
 vim.api.nvim_set_keymap(
     "n",
     "<C-space>c",
-    '"ayy:echo"[SPECIAL] Copied current line into the register a"<CR>',
-    { noremap=true, silent=false }
+    "",
+    {
+        noremap=true,
+        silent=false,
+        callback=special_copy_normal,
+    }
 )
 -- # In VISUAL mode, copy selected text into the "a" register
 -- # with `<Ctrl-space>c`
@@ -177,6 +222,9 @@ vim.api.nvim_set_keymap(
     '<C-\\><C-n>"apa',
     { noremap=true, silent=false }
 )
+-- # BONUS: add option to paste from the unnamed register
+-- # so that the content of `d` can be pasted if needed
+-- # without affecting the "a" register
 
 -- # Define undo/redo shortcuts
 -- #
