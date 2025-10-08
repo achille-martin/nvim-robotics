@@ -99,8 +99,13 @@ perform_quick_setup() {
     printf "...done\n"
 
     # Install necessary dependencies
+    # Note: the `ripgrep` dependency is not really necessary
+    # but it speeds up the Neovim startup time (load of `vim._defaults`)
+    # according to the following bug:
+    # https://github.com/neovim/neovim/issues/31506
     printf "\nInstalling necessary dependencies...\n"
     sudo apt-get install git
+    sudo apt-get install ripgrep
     printf "...done\n"
 
     # Store the configuration in a specific folder for nvim to find it
