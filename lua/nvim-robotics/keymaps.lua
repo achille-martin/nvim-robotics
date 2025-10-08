@@ -20,6 +20,8 @@ vim.g.maplocalleader = " "
 
 -- ========== UNIVERSAL ===========
 
+-- CONTROL MANAGEMENT
+
 -- # Ensure consistent behaviour of `Ctrl + c` as `Esc`
 -- # in all modes (apart from TERMINAL mode)
 -- # In NORMAL mode, also clear the command line
@@ -55,6 +57,114 @@ vim.api.nvim_set_keymap(
 
 -- # TIP: use `Ctrl + q` to access Visual Block
 -- # because most terminals will paste clipboard with `Ctrl + v`
+
+-- TERMINAL MANAGEMENT
+
+-- # In any mode, use `<F3>` to open a new terminal
+-- # at the bottom of the current session window (split horizontally)
+-- # with `<Ctrl-space> + t`
+-- # Think "Three" like "Terminal"
+-- # Bonus: the TERMINAL-NORMAL mode is skipped on entry
+-- # and the terminal can be used right away
+local function all_open_term()
+    vim.api.nvim_exec(
+        [[
+            sp
+            term
+            call feedkeys("\<C-w>J")
+            call feedkeys("i")
+        ]],
+        false
+    )
+end
+vim.api.nvim_set_keymap(
+    "n",
+    "<F3>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=all_open_term,
+    }
+)
+vim.api.nvim_set_keymap(
+    "v",
+    "<F3>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=all_open_term,
+    }
+)
+vim.api.nvim_set_keymap(
+    "i",
+    "<F3>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=all_open_term,
+    }
+)
+vim.api.nvim_set_keymap(
+    "c",
+    "<F3>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=all_open_term,
+    }
+)
+vim.api.nvim_set_keymap(
+    "t",
+    "<F3>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=all_open_term,
+    }
+)
+-- # In TERMINAL mode, use `<F2>` to toggle terminal edition on/off
+-- # Note: you can use `<F2>` in NORMAL mode to get into INSERT mode
+local function n_insert()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("i")
+        ]],
+        false
+    )
+end
+local function t_browse_term()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<C-\>\<C-n>")
+        ]],
+        false
+    )
+end
+vim.api.nvim_set_keymap(
+    "n",
+    "<F2>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=n_insert,
+    }
+)
+vim.api.nvim_set_keymap(
+    "t",
+    "<F2>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=t_browse_term,
+    }
+)
 
 -- ========== SPECIAL ===========
 
@@ -180,7 +290,7 @@ end
 local function t_special_paste()
     vim.api.nvim_exec(
         [[
-            call feedkeys("\<C-\\>\<C-n>\"apa")
+            call feedkeys("\<C-\>\<C-n>\"apa")
         ]],
         false
     )
@@ -486,3 +596,17 @@ vim.api.nvim_set_keymap(
 -- #
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, exit without saving with `<Ctrl-space> + q`
+--
+-- # 7) Terminal shortcuts
+-- #
+-- # OPTION 1: for new Neovim users
+-- # use `:term`
+-- #
+-- # OPTION 2: for advanced Neovim users
+-- # In NORMAL mode, open a new terminal
+-- # TODO: make this feature toggleable (or use `T` to close)
+-- # but then only one terminal per session can be used...
+
+-- # 8) Tab shortcuts
+-- #
+-- # TODO: use the `tab` key for instance to manipulate tabs
