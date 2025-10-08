@@ -127,12 +127,21 @@ vim.api.nvim_set_keymap(
         callback=all_open_term,
     }
 )
--- # In TERMINAL mode, use `<F2>` to toggle terminal edition on/off
--- # Note: you can use `<F2>` in NORMAL mode to get into INSERT mode
-local function n_insert()
+-- # In TERMINAL mode, use `<F2>` to get into / out of terminal edit
+-- # Note: you can use `<F2>` in NORMAL mode
+-- # to get into / out of INSERT mode
+local function n_enter_insert()
     vim.api.nvim_exec(
         [[
             call feedkeys("i")
+        ]],
+        false
+    )
+end
+local function i_exit_insert()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<Esc>\<Right>")
         ]],
         false
     )
@@ -152,7 +161,17 @@ vim.api.nvim_set_keymap(
     {
         noremap=true,
         silent=true,
-        callback=n_insert,
+        callback=n_enter_insert,
+    }
+)
+vim.api.nvim_set_keymap(
+    "i",
+    "<F2>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=i_exit_insert,
     }
 )
 vim.api.nvim_set_keymap(
@@ -597,16 +616,13 @@ vim.api.nvim_set_keymap(
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, exit without saving with `<Ctrl-space> + q`
 --
--- # 7) Terminal shortcuts
+-- # 7) Window shortcuts
 -- #
--- # OPTION 1: for new Neovim users
--- # use `:term`
+-- # TODO: use `arrows` to move between windows
+-- # once you are in the window motion special mode?
 -- #
--- # OPTION 2: for advanced Neovim users
--- # In NORMAL mode, open a new terminal
--- # TODO: make this feature toggleable (or use `T` to close)
--- # but then only one terminal per session can be used...
-
 -- # 8) Tab shortcuts
 -- #
 -- # TODO: use the `tab` key for instance to manipulate tabs
+-- # TODO: use `arrows` to move between tabs
+-- # once you are in the tab motion special mode?
