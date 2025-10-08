@@ -223,44 +223,37 @@ local function n_special_exit()
     )
 end
 
--- # Store the key codes for unusual keys on opening window/buffer
-local bs_char_code = ""
-local enter_char_code = ""
+-- # Store key codes for unusual keys on starting neovim
+-- # in SHADA (Shared Data between sessions)
+-- # so that this action is only performed a minimal number of times
+if vim.g.BS_CHAR_CODE == nil then
+    vim.g.BS_CHAR_CODE = ""
+end
 vim.api.nvim_create_augroup(
     "UnusualCharCodes",
     { clear = true }
 )
 local function get_unusual_key_codes()
-    vim.fn.timer_start(
-        1,
-        function()
-            vim.api.nvim_exec(
-                [[
-                    call feedkeys("\<BS>")
-                ]],
-                false
-            )
-        end
-    )
-    bs_char_code = vim.fn.getchar()
-    vim.fn.timer_start(
-        1,
-        function()
-            vim.api.nvim_exec(
-                [[
-                    call feedkeys("\<CR>")
-                ]],
-                false
-            )
-        end
-    )
-    enter_char_code = vim.fn.getchar()
+    if vim.g.BS_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<BS>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.BS_CHAR_CODE = vim.fn.getchar()
+    end
 end
 vim.api.nvim_create_autocmd(
-    { "WinEnter", "BufEnter" },
+    { "VimEnter" },
     {
         group = "UnusualCharCodes",
-        desc = "Collect unusual char codes on accessing window/buffer",
+        desc = "Collect unusual char codes on starting Neovim",
         callback = get_unusual_key_codes,
     }
 )
@@ -287,9 +280,9 @@ local function n_special_mode()
         n_special_cut()
     elseif input_char == "v" then
         n_special_paste()
-    elseif input_code == bs_char_code then
+    elseif input_code == vim.g.BS_CHAR_CODE then
         n_special_undo()
-    elseif input_code == enter_char_code then
+    elseif input_code == 13 then
         n_special_redo()
     elseif input_char == "s" then
         n_special_save()
