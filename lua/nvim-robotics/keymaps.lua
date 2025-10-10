@@ -22,15 +22,31 @@ vim.g.maplocalleader = " "
 
 -- CONTROL MANAGEMENT
 
--- # Ensure consistent behaviour of `Ctrl + c` as `Esc`
--- # in all modes (apart from TERMINAL mode)
--- # In NORMAL mode, also clear the command line
--- # Note: OPERATOR-PENDING mode has not been included
+-- # Ensure consistent behaviour of `Ctrl + c` as `Esc` in all modes
+-- # apart from TERMINAL mode, in which case `Ctrl + c` is an interrupt
 
+-- # In NORMAL mode, also clear the command line
+-- #
+-- # Note: in NORMAL mode, there is a complexity
+-- # when replacing a single character
+-- # with `r`, since Neovim prints any key / combination literally
+-- # For instance, `^C` is printed when typing `Ctrl + c`.
+-- # A simple workaround to exit single character replace is to use
+-- # the arrow keys
+-- #
+-- # Another note: from NORMAL mode, use `Ctrl + q` to access Visual Block
+-- # because most terminals will paste clipboard with `Ctrl + v`
 vim.api.nvim_set_keymap(
     "n",
     "<C-c>",
     '<Esc>:echo""<CR>',
+    { noremap=true, silent=true }
+)
+
+vim.api.nvim_set_keymap(
+    "o",
+    "<C-c>",
+    '<Esc>',
     { noremap=true, silent=true }
 )
 
@@ -48,15 +64,16 @@ vim.api.nvim_set_keymap(
     { noremap=true, silent=true }
 )
 
+-- # In COMMAND mode, `Ctrl + c` usually executes the command
+-- # and then aborts
+-- # It is possible to cancel the execution by submitting an extra `Ctrl + c`
+-- # and then refreshing the NORMAL mode by jumping back in from another mode
 vim.api.nvim_set_keymap(
     "c",
     "<C-c>",
-    '<Esc>',
+    '<C-c>i<Esc>',
     { noremap=true, silent=true }
 )
-
--- # TIP: use `Ctrl + q` to access Visual Block
--- # because most terminals will paste clipboard with `Ctrl + v`
 
 -- TERMINAL MANAGEMENT
 
