@@ -27,13 +27,6 @@ vim.g.maplocalleader = " "
 
 -- # In NORMAL mode, also clear the command line
 -- #
--- # Note: in NORMAL mode, there is a complexity
--- # when replacing a single character
--- # with `r`, since Neovim prints any key / combination literally
--- # For instance, `^C` is printed when typing `Ctrl + c`.
--- # A simple workaround to exit single character replace is to use
--- # the arrow keys
--- #
 -- # Another note: from NORMAL mode, use `Ctrl + q` to access Visual Block
 -- # because most terminals will paste clipboard with `Ctrl + v`
 vim.api.nvim_set_keymap(
@@ -41,6 +34,89 @@ vim.api.nvim_set_keymap(
     "<C-c>",
     '<Esc>:echo""<CR>',
     { noremap=true, silent=true }
+)
+
+-- # In NORMAL and VISUAL mode, there is a complexity
+-- # when replacing a single character
+-- # with `r`, since Neovim prints any key / combination literally
+-- # For instance, `^C` is printed when typing `Ctrl + c`.
+-- # As a solution, we change the default map for `r` with an alt-map
+-- # so that we can override the default `r` functionality
+-- # Note: the `r` functionality is fully replicated
+-- # down to the cursor shape (default found in the documentation)
+vim.api.nvim_set_keymap(
+    "n",
+    "<A-r>",
+    'r',
+    { noremap=true, silent=true }
+)
+vim.api.nvim_set_keymap(
+    "v",
+    "<A-r>",
+    'r',
+    { noremap=true, silent=true }
+)
+vim.api.nvim_set_keymap(
+    "n",
+    "r",
+    '',
+    {
+        noremap=true,
+        silent=true,
+        callback=function()
+            vim.api.nvim_exec(
+                [[
+                    set guicursor=n:hor20
+                    let input_code = getchar()
+                    let input_char = nr2char(input_code)
+                    if input_code == 3
+                        call feedkeys("\<Esc>")
+                        echo ""
+                    else
+                        call feedkeys("\<A-r>")
+                        call feedkeys(input_char)
+                    endif
+                    set guicursor=
+                        \n-v-c-sm:block,
+                        \i-ci-ve:ver25,
+                        \r-cr-o:hor20,
+                        \t:block-blinkon500-blinkoff500-TermCursor
+                ]],
+                false
+            )
+        end
+    }
+)
+vim.api.nvim_set_keymap(
+    "v",
+    "r",
+    '',
+    {
+        noremap=true,
+        silent=true,
+        callback=function()
+            vim.api.nvim_exec(
+                [[
+                    set guicursor=v:hor20
+                    let input_code = getchar()
+                    let input_char = nr2char(input_code)
+                    if input_code == 3
+                        call feedkeys("\<Esc>")
+                        echo ""
+                    else
+                        call feedkeys("\<A-r>")
+                        call feedkeys(input_char)
+                    endif
+                    set guicursor=
+                        \n-v-c-sm:block,
+                        \i-ci-ve:ver25,
+                        \r-cr-o:hor20,
+                        \t:block-blinkon500-blinkoff500-TermCursor
+                ]],
+                false
+            )
+        end
+    }
 )
 
 vim.api.nvim_set_keymap(
