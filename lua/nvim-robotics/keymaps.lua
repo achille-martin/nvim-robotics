@@ -71,7 +71,7 @@ vim.api.nvim_set_keymap(
 vim.api.nvim_set_keymap(
     "c",
     "<C-c>",
-    '<C-c>i<Esc>',
+    '<C-c>v<Esc>',
     { noremap=true, silent=true }
 )
 
