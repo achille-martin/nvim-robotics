@@ -27,14 +27,15 @@ vim.g.maplocalleader = " "
 
 -- # In NORMAL mode, also clear the command line
 -- #
--- # Another note: from NORMAL mode, use `Ctrl + q` to access Visual Block
--- # because most terminals will paste clipboard with `Ctrl + v`
 vim.api.nvim_set_keymap(
     "n",
     "<C-c>",
     '<Esc>:echo""<CR>',
     { noremap=true, silent=true }
 )
+
+-- # Note: from NORMAL mode, use `Ctrl + q` to access Visual Block
+-- # because most terminals will paste clipboard with `Ctrl + v`
 
 -- # In NORMAL and VISUAL mode, there is a complexity
 -- # when replacing a single character
@@ -56,6 +57,55 @@ vim.api.nvim_set_keymap(
     'r',
     { noremap=true, silent=true }
 )
+local function replicate_r_func()
+    vim.api.nvim_exec(
+        [[
+            " Define the guicursor default value
+            " and compare it to the actual option
+            " to make sure that the user has not defined a custom value
+            let guicursor_default = "
+                \n-v-c-sm:block,
+                \i-ci-ve:ver25,
+                \r-cr-o:hor20,
+                \t:block-blinkon500-blinkoff500-TermCursor"
+            let is_guicursor_default = v:false
+            " If there is no custom cursor definition,
+            " update the cursor to replicate the default `r` behaviour
+            if exists('&guicursor')
+                if &guicursor == guicursor_default
+                    let is_guicursor_default = v:true
+                endif
+            endif
+            if is_guicursor_default
+                set guicursor=n-v:hor20
+            endif
+            " Poll for a key input to replicate the default `r` behaviour
+            let input_code = getchar()
+            let input_char = nr2char(input_code)
+            echo "Test2"
+            " Handle the case when `Ctrl + c` is pressed by the user
+            if input_code == 3
+                call feedkeys("\<Esc>")
+                echo ""
+            " Handle the other cases by forwarding the key input
+            " to the actual `r` command
+            else
+                call feedkeys("\<A-r>")
+                call feedkeys(input_char)
+                call feedkeys("\<Esc>")
+            endif
+            " Reset the cursor if it has been modified temporarily
+            if is_guicursor_default
+                set guicursor=
+                    \n-v-c-sm:block,
+                    \i-ci-ve:ver25,
+                    \r-cr-o:hor20,
+                    \t:block-blinkon500-blinkoff500-TermCursor
+            endif
+        ]],
+        false
+    )
+end
 vim.api.nvim_set_keymap(
     "n",
     "r",
@@ -63,28 +113,7 @@ vim.api.nvim_set_keymap(
     {
         noremap=true,
         silent=true,
-        callback=function()
-            vim.api.nvim_exec(
-                [[
-                    set guicursor=n:hor20
-                    let input_code = getchar()
-                    let input_char = nr2char(input_code)
-                    if input_code == 3
-                        call feedkeys("\<Esc>")
-                        echo ""
-                    else
-                        call feedkeys("\<A-r>")
-                        call feedkeys(input_char)
-                    endif
-                    set guicursor=
-                        \n-v-c-sm:block,
-                        \i-ci-ve:ver25,
-                        \r-cr-o:hor20,
-                        \t:block-blinkon500-blinkoff500-TermCursor
-                ]],
-                false
-            )
-        end
+        callback=replicate_r_func,
     }
 )
 vim.api.nvim_set_keymap(
@@ -94,28 +123,7 @@ vim.api.nvim_set_keymap(
     {
         noremap=true,
         silent=true,
-        callback=function()
-            vim.api.nvim_exec(
-                [[
-                    set guicursor=v:hor20
-                    let input_code = getchar()
-                    let input_char = nr2char(input_code)
-                    if input_code == 3
-                        call feedkeys("\<Esc>")
-                        echo ""
-                    else
-                        call feedkeys("\<A-r>")
-                        call feedkeys(input_char)
-                    endif
-                    set guicursor=
-                        \n-v-c-sm:block,
-                        \i-ci-ve:ver25,
-                        \r-cr-o:hor20,
-                        \t:block-blinkon500-blinkoff500-TermCursor
-                ]],
-                false
-            )
-        end
+        callback=replicate_r_func,
     }
 )
 
