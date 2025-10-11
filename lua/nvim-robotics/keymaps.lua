@@ -163,7 +163,6 @@ vim.api.nvim_set_keymap(
 
 -- # In any mode, use `<F3>` to open a new terminal
 -- # at the bottom of the current session window (split horizontally)
--- # with `<Ctrl-space> + t`
 -- # Think "Three" like "Terminal"
 -- # Bonus: the TERMINAL-NORMAL mode is skipped on entry
 -- # and the terminal can be used right away
