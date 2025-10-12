@@ -1,0 +1,4 @@
+# Ignore `autoload` directory
+# as it is related to plugin management
+# and this is a custom management
+autoload/
