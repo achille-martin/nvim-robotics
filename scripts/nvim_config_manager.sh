@@ -129,10 +129,10 @@ perform_quick_setup() {
     # if it was successful
     if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
     then
-        git clone git@gist.github.com:achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
+        git clone git@github.com:achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?"
     else
-        git clone https://gist.github.com/achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
+        git clone https://github.com/achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?";
     fi
     # Report any git error to the user
