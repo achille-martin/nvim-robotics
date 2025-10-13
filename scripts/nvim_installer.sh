@@ -23,7 +23,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# ---- HANDY VARIABLES ---- 
+# ---- HANDY VARIABLES ----
 
 NEOVIM_TAG="latest"
 BUILD_DESIRED="supported"
@@ -38,26 +38,26 @@ DEFAULT_LOCAL_FOLDER="$HOME/.local"
 print_usage() {
     multiline_usage_txt="
     Usage: bash $(basename "$0") CMD
-    
+
     Purpose: Manage the installation and uninstallation of neovim
-             on various OS platforms 
+             on various OS platforms
              (supported platforms: Linux Ubuntu x86_64)
-	
+
     CMD:
         install [BUILD]    Install latest neovim version
                            for the current OS platform
                            Optional argument: BUILD ([supported]/unsupported)
-        
+
         uninstall          Remove all neovim versions from current OS platform
 
         --help, -h         Show this help
     "
-    
+
     printf "%s" "$multiline_usage_txt"
 }
 
 source_changes() {
-    printf "\nTIP: Refresh the state of the environment with the following command\n"
+    printf "\nACTION: Refresh the state of the environment with the following command\n"
     case "$OS_DETECTED" in
         linux)
             local bashrc_path="$HOME/.bashrc"
@@ -140,7 +140,7 @@ perform_install() {
             fi
             cd $downloads_folder
             printf "...done\n"
-            
+
             case "$OS_DISTRIBUTION_DETECTED" in
 
                 ubuntu)
@@ -207,7 +207,7 @@ perform_install() {
             ;;
 
     esac
-
+    # Highlight post-action requests to the user
     source_changes
 }
 
@@ -249,9 +249,10 @@ perform_uninstall() {
             print_usage
             exit 1
             ;;
-    
+
     esac
 
+    # Highlight post-action requests to the user
     source_changes
 }
 
