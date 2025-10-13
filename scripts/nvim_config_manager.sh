@@ -124,7 +124,9 @@ perform_quick_setup() {
     printf "\nDownloading configuration at specific location...\n"
     ssh_cmd="$(ssh -T git@github.com &>/dev/null)"
     ssh_cmd_status="$?"
-    if [[ "$ssh_cmd_status" -eq 1 ]];
+    # Note: the exit status of the ssh user verification command
+    # is usually 1 if it was successful according to Github docs
+    if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
     then
         git clone git@gist.github.com:achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?"
@@ -135,37 +137,37 @@ perform_quick_setup() {
     printf "...done\n"
 
     # Proceed with the installation or warn the user about git errors
-    if [[ "$git_clone_cmd_status" -eq 0 ]];
+    if [[ "$git_clone_cmd_status" -ne 0 ]];
     then
-        # Create a link to the nvim loader script (force overwrite if existing)
-        printf "\nLinking the nvim loader script for easy access...\n"
-        ln -sf "$CONFIG_FOLDER/$CONFIG_NAME/scripts/$DEFAULT_LOADER_SCRIPT_NAME" "$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME"
-        printf "...done\n"
-
-        # Create the alias for the nvim robotics config (making sure it does not exist already)
-        # and create a practical alias for the launch of the custom nvim robotics config
-        printf "\nCreating the alias for the configuration...\n"
-        if [[ ! ${BASH_ALIASES[$ALIAS]} ]];
-        then
-            printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"\n" >> "$DEFAULT_BASH_ALIASES_FILE"
-            printf "alias $SHORT_ALIAS=\"$ALIAS\"" >> "$DEFAULT_BASH_ALIASES_FILE"
-        else
-            printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
-        fi
-        printf "...done\n"
-
-        # Add the plugin manager to take care of
-        # downloading, installing and setting up third-party Neovim plugins
-        printf "\nSetting up the plugin manager...\n"
-        sh -c 'curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
-                    --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim'
-        printf "...done\n"
-
-    else
         printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
         exit 1
     fi
 
+    # Create a link to the nvim loader script (force overwrite if existing)
+    printf "\nLinking the nvim loader script for easy access...\n"
+    ln -sf "$CONFIG_FOLDER/$CONFIG_NAME/scripts/$DEFAULT_LOADER_SCRIPT_NAME" "$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME"
+    printf "...done\n"
+
+    # Create the alias for the nvim robotics config (making sure it does not exist already)
+    # and create a practical alias for the launch of the custom nvim robotics config
+    printf "\nCreating the alias for the configuration...\n"
+    if [[ ! ${BASH_ALIASES[$ALIAS]} ]];
+    then
+        printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"\n" >> "$DEFAULT_BASH_ALIASES_FILE"
+        printf "alias $SHORT_ALIAS=\"$ALIAS\"" >> "$DEFAULT_BASH_ALIASES_FILE"
+    else
+        printf "WARNING: alias \`$ALIAS\` is already in use, so not replaced.\n"
+    fi
+    printf "...done\n"
+
+    # Add the plugin manager to take care of
+    # downloading, installing and setting up third-party Neovim plugins
+    printf "\nSetting up the plugin manager...\n"
+    sh -c 'curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
+                --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim'
+    printf "...done\n"
+
+    # Highlight post-action requests to the user
     source_changes
     install_plugins
 }
@@ -204,6 +206,7 @@ perform_cleanup() {
     mv "/tmp/.bash_aliases" "$DEFAULT_BASH_ALIASES_FILE"
     printf "...done\n"
 
+    # Highlight post-action requests to the user
 	source_changes
 }
 
