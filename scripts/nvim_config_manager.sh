@@ -163,8 +163,8 @@ perform_quick_setup() {
     # Install the plugin manager (overwrite if existing) to take care of
     # downloading, installing and setting up third-party Neovim plugins
     printf "\nInstalling the plugin manager...\n"
-    curl_cmd="$(sh -c 'curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
-                            --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim')"
+    curl_cmd="$(sh -c "curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
+                            --create-dirs \"https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim")"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
