@@ -57,7 +57,7 @@ print_usage() {
 }
 
 source_changes() {
-    printf "\nACTION: Refresh the state of the environment with the following command\n"
+    printf "\n / ! \\ ACTION: Refresh the state of the environment with the following command\n"
     case "$OS_DETECTED" in
         linux)
             local bashrc_path="$HOME/.bashrc"

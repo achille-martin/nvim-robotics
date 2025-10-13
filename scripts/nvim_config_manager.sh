@@ -75,13 +75,13 @@ print_usage() {
 }
 
 source_changes() {
-    printf "\nACTION: Refresh the state of the environment with the following command:\n"
+    printf "\n / ! \\ ACTION: Refresh the state of the environment with the following command:\n"
     printf "source $DEFAULT_BASHRC_FILE\n"
 }
 
 install_plugins() {
-    printf "\nACTION: Finish installation of third-party Neovim plugins with the following command:\n"
-    printf "$ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall"
+    printf "\n / ! \\ ACTION: Finish installation of third-party Neovim plugins with the following command:\n"
+    printf "$ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
 }
 
 perform_quick_setup() {
@@ -164,7 +164,7 @@ perform_quick_setup() {
     # downloading, installing and setting up third-party Neovim plugins
     printf "\nInstalling the plugin manager...\n"
     curl_cmd="$(sh -c "curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
-                            --create-dirs \"https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim")"
+                            --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim")"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
