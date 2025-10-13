@@ -124,8 +124,9 @@ perform_quick_setup() {
     printf "\nDownloading configuration at specific location...\n"
     ssh_cmd="$(ssh -T git@github.com &>/dev/null)"
     ssh_cmd_status="$?"
-    # Note: the exit status of the ssh user verification command
-    # is usually 1 if it was successful according to Github docs
+    # Note: according to Github docs, the exit status
+    # of the ssh user verification command is usually 1
+    # if it was successful
     if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
     then
         git clone git@gist.github.com:achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
@@ -134,14 +135,13 @@ perform_quick_setup() {
         git clone https://gist.github.com/achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?";
     fi
-    printf "...done\n"
-
-    # Proceed with the installation or warn the user about git errors
+    # Report any git error to the user
     if [[ "$git_clone_cmd_status" -ne 0 ]];
     then
         printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
         exit 1
     fi
+    printf "...done\n"
 
     # Create a link to the nvim loader script (force overwrite if existing)
     printf "\nLinking the nvim loader script for easy access...\n"
@@ -160,11 +160,18 @@ perform_quick_setup() {
     fi
     printf "...done\n"
 
-    # Add the plugin manager to take care of
+    # Install the plugin manager (overwrite if existing) to take care of
     # downloading, installing and setting up third-party Neovim plugins
-    printf "\nSetting up the plugin manager...\n"
-    sh -c 'curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
-                --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim'
+    printf "\nInstalling the plugin manager...\n"
+    curl_cmd="$(sh -c 'curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
+                            --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim')"
+    curl_cmd_status="$?"
+    # Report any curl error to the user
+    if [[ "$curl_cmd_status" -ne 0 ]];
+    then
+        printf "ERROR: Cannot install the plugin manager at the desired location. Please review the log messages.\n"
+        exit 1
+    fi
     printf "...done\n"
 
     # Highlight post-action requests to the user
