@@ -47,6 +47,8 @@ INSTALLER_UTILITY_NAME="nvim_installer.sh"
 
 DEFAULT_LOCAL_FOLDER="$HOME/.local"
 
+VIM_PLUG_LATEST_VERSION="0.14.0"
+
 # ---- HANDY FUNCTIONS ----
 
 print_usage() {
@@ -73,8 +75,13 @@ print_usage() {
 }
 
 source_changes() {
-    printf "\nTIP: Refresh the state of the environment with the following command:\n"
+    printf "\nACTION: Refresh the state of the environment with the following command:\n"
     printf "source $DEFAULT_BASHRC_FILE\n"
+}
+
+install_plugins() {
+    printf "\nACTION: Finish installation of third-party Neovim plugins with the following command:\n"
+    printf "$ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall"
 }
 
 perform_quick_setup() {
@@ -108,6 +115,7 @@ perform_quick_setup() {
 	# https://github.com/BurntSushi/ripgrep#installation
     printf "\nInstalling necessary dependencies...\n"
     sudo apt-get install git
+    sudo apt-get install curl
     sudo apt-get install ripgrep
     printf "...done\n"
 
@@ -146,12 +154,20 @@ perform_quick_setup() {
         fi
         printf "...done\n"
 
+        # Add the plugin manager to take care of
+        # downloading, installing and setting up third-party Neovim plugins
+        printf "\nSetting up the plugin manager...\n"
+        sh -c 'curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
+                    --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim'
+        printf "...done\n"
+
     else
         printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
         exit 1
     fi
 
     source_changes
+    install_plugins
 }
 
 perform_cleanup() {
