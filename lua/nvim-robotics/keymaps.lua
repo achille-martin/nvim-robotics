@@ -82,7 +82,6 @@ local function replicate_r_func()
             " Poll for a key input to replicate the default `r` behaviour
             let input_code = getchar()
             let input_char = nr2char(input_code)
-            echo "Test2"
             " Handle the case when `Ctrl + c` is pressed by the user
             if input_code == 3
                 call feedkeys("\<Esc>")
@@ -282,6 +281,45 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=t_browse_term,
+    }
+)
+
+-- COMMENTARY
+
+-- # Note: this section is based on the native Neovim capability
+-- # to toggle code comments, inherited from the vim-commentary plugin
+
+-- # In NORMAL mode, hit `<F6>` to comment out the current line
+vim.api.nvim_set_keymap(
+    "n",
+    "<F6>",
+    "gcc",
+    {
+        noremap=false,
+        silent=true,
+    }
+)
+
+-- # In VISUAL/SELECT mode, hit `<F6>` to comment out the selection
+vim.api.nvim_set_keymap(
+    "v",
+    "<F6>",
+    "gc",
+    {
+        noremap=false,
+        silent=true,
+    }
+)
+
+-- # In INSERT mode, hit `<F6>` to comment out the current line
+-- # and remain in INSERT mode
+vim.api.nvim_set_keymap(
+    "i",
+    "<F6>",
+    "<Esc>gcc",
+    {
+        noremap=false,
+        silent=true,
     }
 )
 
@@ -640,6 +678,8 @@ vim.api.nvim_set_keymap(
 -- #
 -- # OPTION 1: for new Neovim users
 -- # use `yy` (whole line), `y` (selection), or right click to copy
+-- # Note: as an alternative, depending on the terminal used,
+-- # it might be possible to copy text with `Ctrl + Shift + c`
 -- #
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, copy current line into the "a" register
@@ -674,6 +714,8 @@ vim.api.nvim_set_keymap(
 -- #
 -- # OPTION 1: for new Neovim users
 -- # use `p` or right click to paste
+-- # Note: as an alternative, depending on the terminal used,
+-- # it might be possible to paste with `Ctrl + Shift + v`
 -- #
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, paste the "a" register one line below than current
@@ -695,6 +737,8 @@ vim.api.nvim_set_keymap(
 -- #
 -- # OPTION 1: for new Neovim users
 -- # use `u` (undo) or `Ctrl + r` (redo)
+-- # Note: if you hit `Ctrl + z`, you will put the current process
+-- # in the background. To bring it back, enter `fg` in your terminal.
 -- #
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, undo last action with `<Ctrl-space> + <backspace>`
@@ -704,6 +748,8 @@ vim.api.nvim_set_keymap(
 -- #
 -- # OPTION 1: for new Neovim users
 -- # use `:w`
+-- # Note: if you hit `Ctrl + s`, you will freeze the current buffer
+-- # to unfreeze it, hit `Ctrl + q`
 -- #
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, write current buffer with `<Ctrl-space> + s`
