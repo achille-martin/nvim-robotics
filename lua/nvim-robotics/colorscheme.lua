@@ -20,7 +20,7 @@ vim.cmd("silent! colorscheme cyberdream")
 -- # so that it is clearly visible
 vim.cmd(
     [[
-        highlight CursorLineNr guibg=DarkGray guifg=Black
+        highlight CursorLineNr guibg=#FFFDD0 guifg=Black
     ]]
 )
 
@@ -28,7 +28,7 @@ vim.cmd(
 -- # to ensure visibility
 vim.cmd(
     [[
-        highlight Search guibg=Yellow guifg=Black
+        highlight Search guibg=#F1FF5E guifg=Black
     ]]
 )
 
@@ -37,6 +37,6 @@ vim.cmd(
 -- # to identify the focused window or buffer easily
 vim.cmd(
     [[
-        highlight StatusLine guibg=Yellow guifg=Black
+        highlight StatusLine guibg=#FFFDD0 guifg=Black
     ]]
 )

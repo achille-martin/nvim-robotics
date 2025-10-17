@@ -93,6 +93,8 @@ require("cyberdream").setup({
     colors = {
         -- # Modify colours for the dark mode only
         dark = {
+            -- # Update background (black) to Matte Black
+            bg = "#28282B",
             -- # Update foreground (white) to Cornsilk
             fg = "#FFF8DC",
             -- # Update comments (grey) to Steel Grey
