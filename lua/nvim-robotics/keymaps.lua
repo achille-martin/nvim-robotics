@@ -525,7 +525,6 @@ local function n_special_mode()
     print("[SPECIAL] Waiting for key input...")
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
-    print(input_code)
     if input_char == "r" then
         n_special_reload()
     elseif input_char == "c" then
