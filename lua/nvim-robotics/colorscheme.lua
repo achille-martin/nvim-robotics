@@ -10,7 +10,9 @@
 -- # Note: changes to main colorscheme defaults
 -- # can be done in the `plugins.lua` config,
 -- # in which the colorscheme is loaded as plugin
-vim.cmd("colorscheme cyberdream")
+-- # Another note: `silent!` enables to ignore errors
+-- # if the colorscheme is not yet installed
+vim.cmd("silent! colorscheme cyberdream")
 
 -- =============== COLORSCHEME FIXES ===============
 
