@@ -56,7 +56,9 @@
 
 -- =============== PLUGIN MANAGEMENT ===============
 
--- Define handy variables for plugin management via vim-plug
+-- HANDY VARIABLES
+
+-- # Define handy variables for plugin management via vim-plug
 
 local plugs_install_path = table.concat{
     vim.env.HOME,
@@ -66,10 +68,21 @@ local plugs_install_path = table.concat{
 }
 local Plug = vim.fn['plug#']
 
--- List plugins downloaded/installed via vim-plug
+-- DOWNLOADED/INSTALLED PLUGINS
+
+-- # List plugins downloaded/installed via vim-plug
+
 vim.call('plug#begin', plugs_install_path)
     Plug 'windwp/nvim-autopairs'
+    Plug 'scottmckendry/cyberdream.nvim'
 vim.call('plug#end')
 
--- List plugins setup/activated
+-- SETUP/ACTIVATED PLUGINS
+
+-- # List plugins setup/activated
+
 require("nvim-autopairs").setup({})
+-- # Improve the cyberdream colorscheme experience
+-- # by referring to the official setup config:
+-- # https://github.com/scottmckendry/cyberdream.nvim?tab=readme-ov-file#%EF%B8%8F-configuring
+require("cyberdream").setup({})
