@@ -284,45 +284,6 @@ vim.api.nvim_set_keymap(
     }
 )
 
--- COMMENTARY
-
--- # Note: this section is based on the native Neovim capability
--- # to toggle code comments, inherited from the vim-commentary plugin
-
--- # In NORMAL mode, hit `<F6>` to comment out the current line
-vim.api.nvim_set_keymap(
-    "n",
-    "<F6>",
-    "gcc",
-    {
-        noremap=false,
-        silent=true,
-    }
-)
-
--- # In VISUAL/SELECT mode, hit `<F6>` to comment out the selection
-vim.api.nvim_set_keymap(
-    "v",
-    "<F6>",
-    "gc",
-    {
-        noremap=false,
-        silent=true,
-    }
-)
-
--- # In INSERT mode, hit `<F6>` to comment out the current line
--- # and remain in INSERT mode
-vim.api.nvim_set_keymap(
-    "i",
-    "<F6>",
-    "<Esc>gcc",
-    {
-        noremap=false,
-        silent=true,
-    }
-)
-
 -- ========== SPECIAL ===========
 
 -- # Define a special mode
@@ -454,6 +415,35 @@ local function t_special_paste()
     print("[SPECIAL] Pasted saved line from register a")
 end
 
+-- # Note: this "comment" action is based on the native Neovim capability
+-- # to toggle code comments, inherited from the vim-commentary plugin
+local function n_special_comment()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gcc")
+        ]],
+        false
+    )
+end
+
+local function vs_special_comment()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gc")
+        ]],
+        false
+    )
+end
+
+local function i_special_comment()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<Esc>gcc")
+        ]],
+        false
+    )
+end
+
 local function n_special_undo()
     vim.api.nvim_exec(
         [[
@@ -535,6 +525,7 @@ local function n_special_mode()
     print("[SPECIAL] Waiting for key input...")
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
+    print(input_code)
     if input_char == "r" then
         n_special_reload()
     elseif input_char == "c" then
@@ -547,6 +538,8 @@ local function n_special_mode()
         n_special_cut()
     elseif input_char == "v" then
         n_special_paste()
+    elseif input_char == "\"" then
+        n_special_comment()
     elseif input_code == vim.g.BS_CHAR_CODE then
         n_special_undo()
     elseif input_code == 13 then
@@ -562,13 +555,16 @@ end
 
 local function vs_special_mode()
     print("[SPECIAL] Waiting for key input...")
-    local input_char = vim.fn.nr2char(vim.fn.getchar())
+    local input_code = vim.fn.getchar()
+    local input_char = vim.fn.nr2char(input_code)
     if input_char == "c" then
         vs_special_copy()
     elseif input_char == "x" then
         vs_special_cut()
     elseif input_char == "v" then
         vs_special_paste()
+    elseif input_char == "\"" then
+        vs_special_comment()
     else
         print(special_mode_escape_msg)
     end
@@ -576,9 +572,12 @@ end
 
 local function i_special_mode()
     print("[SPECIAL] Waiting for key input...")
-    local input_char = vim.fn.nr2char(vim.fn.getchar())
+    local input_code = vim.fn.getchar()
+    local input_char = vim.fn.nr2char(input_code)
     if input_char == "v" then
         i_special_paste()
+    elseif input_char == "\"" then
+        i_special_comment()
     else
         print(special_mode_escape_msg)
     end
