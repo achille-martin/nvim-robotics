@@ -86,6 +86,9 @@ require("nvim-autopairs").setup({})
 -- # by referring to the official setup config:
 -- # https://github.com/scottmckendry/cyberdream.nvim?tab=readme-ov-file#%EF%B8%8F-configuring
 require("cyberdream").setup({
+    -- # Prevent use of colorscheme terminal colours
+    -- # to not clash with custom terminal setup
+    terminal_colors = false,
     -- # Update colors to tweak some relative contrasts
     colors = {
         -- # Modify colours for the dark mode only
@@ -109,5 +112,5 @@ require("cyberdream").setup({
             -- # Update purple to Amaranth Deep Purple
             purple = "#AD15AD",
         }
-    }
+    },
 })
