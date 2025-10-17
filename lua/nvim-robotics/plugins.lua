@@ -85,4 +85,29 @@ require("nvim-autopairs").setup({})
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
 -- # https://github.com/scottmckendry/cyberdream.nvim?tab=readme-ov-file#%EF%B8%8F-configuring
-require("cyberdream").setup({})
+require("cyberdream").setup({
+    -- # Update colors to tweak some relative contrasts
+    colors = {
+        -- # Modify colours for the dark mode only
+        dark = {
+            -- # Update foreground (white) to Off-White
+            fg = "#FAF9F6",
+            -- # Update comments (grey) to Steel Grey
+            grey = "#71797E",
+            -- # Update blue to Cornflower Blue
+            blue = "#6699FF",
+            -- # Update green to Jade
+            green = "#00A36C",
+            -- # Update cyan to Vivid Cyan
+            cyan = "#11F2A3",
+            -- # Update magenta to Vivid Magenta
+            magenta = "#FF2BF5",
+            -- # Update pink to Darker Salmon
+            pink = "#F07162",
+            -- # Update orange to Shade of Brown
+            orange = "#F2AB38",
+            -- # Update purple to Amaranth Deep Purple
+            purple = "#AD15AD",
+        }
+    }
+})
