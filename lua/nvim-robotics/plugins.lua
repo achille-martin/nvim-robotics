@@ -75,6 +75,8 @@ local Plug = vim.fn['plug#']
 vim.call('plug#begin', plugs_install_path)
     Plug 'windwp/nvim-autopairs'
     Plug 'scottmckendry/cyberdream.nvim'
+    -- # Target latest `1.x` release for `blink.cmp`
+    Plug('saghen/blink.cmp', { ['tag'] = 'v1.*' })
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -93,8 +95,8 @@ require("cyberdream").setup({
     colors = {
         -- # Modify colours for the dark mode only
         dark = {
-            -- # Update background (black) to Matte Black
-            bg = "#28282B",
+            -- # Update background (black) to Very Dark Red
+            bg = "#1F1D1D",
             -- # Update foreground (white) to Cornsilk
             fg = "#FFF8DC",
             -- # Update comments (grey) to Steel Grey
@@ -115,4 +117,48 @@ require("cyberdream").setup({
             purple = "#AD15AD",
         }
     },
+})
+-- # Improve the blink.cmp completion plugin experience
+-- # by tweaking the defaults:
+-- # * Trying to downoad as little noise as possible
+-- #   (i.e. no Rust, no NerdFonts)
+-- # * Use `Tab` or `Enter` to accept the suggestion
+-- # * Use `Ctrl + c` to cancel the suggestions
+require("blink.cmp").setup({
+    keymap = {
+        preset = 'super-tab',
+        ["<Up>"] = { "select_prev", "fallback" },
+        ["<Down>"] = { "select_next", "fallback" },
+        ["<CR>"] = { "select_and_accept", "fallback" },
+    },
+    completion = {
+        documentation = { auto_show = true },
+        ghost_text = { enabled = true },
+        menu = {
+            auto_show = true,
+            draw = {
+                columns = {
+                    { "label", "label_description", gap = 1 },
+                    { "kind" }
+                },
+            },
+        },
+    },
+    cmdline = {
+        keymap = {
+            preset = 'super-tab',
+            ["<Up>"] = { "select_prev", "fallback" },
+            ["<Down>"] = { "select_next", "fallback" },
+            ["<CR>"] = { "select_and_accept", "fallback" },
+        },
+        completion = {
+            menu = {
+                auto_show = true,
+            },
+        },
+    },
+    sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'omni' },
+    },
+    fuzzy = { implementation = "lua" },
 })
