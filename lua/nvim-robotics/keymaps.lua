@@ -18,6 +18,18 @@ vim.g.mapleader = " "
 -- # for consistency
 vim.g.maplocalleader = " "
 
+-- ========== HANDY FUNCTIONS ==========
+
+-- # Check whether plugin `blink.cmp` is installed and active
+local function is_blink_cmp_active()
+    local res, error = pcall(
+        function()
+            require('blink.cmp')
+        end
+    )
+    return res
+end
+
 -- ========== UNIVERSAL ===========
 
 -- CONTROL MANAGEMENT
@@ -143,19 +155,65 @@ vim.api.nvim_set_keymap(
 vim.api.nvim_set_keymap(
     "i",
     "<C-c>",
-    '<Esc>',
-    { noremap=true, silent=true }
+    '',
+    {
+        noremap=true,
+        silent=true,
+        callback=function()
+            -- # Enhance the `Ctrl + c` functionality in INSERT mode
+            -- # when plugin `blink.cmp` is installed and active:
+            -- # * `Ctrl + c` hides the completion menu
+            -- #   if it was visible, but does not leave INSERT mode
+            local is_blink_cmp_active = is_blink_cmp_active()
+            if (is_blink_cmp_active
+                    and require('blink.cmp').is_menu_visible()) then
+                    require('blink.cmp').hide()
+            else
+                -- # This is the standard functionality for `Ctrl + c`
+                -- # in INSERT mode
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Esc>")
+                    ]],
+                    false
+                )
+            end
+        end
+    }
 )
 
 -- # In COMMAND mode, `Ctrl + c` usually executes the command
 -- # and then aborts
--- # It is possible to cancel the execution by submitting an extra `Ctrl + c`
--- # and then refreshing the NORMAL mode by jumping back in from another mode
+-- # It is possible to cancel the execution by escaping the mode
+-- # and clearing the command-line
 vim.api.nvim_set_keymap(
     "c",
     "<C-c>",
-    '<C-c>v<Esc>',
-    { noremap=true, silent=true }
+    '',
+    {
+        noremap=false,
+        silent=true,
+        callback=function()
+            -- # Enhance the `Ctrl + c` functionality in COMMAND mode
+            -- # when plugin `blink.cmp` is installed and active:
+            -- # * `Ctrl + c` hides the completion menu
+            -- #   if it was visible, but does not leave COMMAND mode
+            local is_blink_cmp_active = is_blink_cmp_active()
+            if (is_blink_cmp_active
+                    and require('blink.cmp').is_menu_visible()) then
+                    require('blink.cmp').hide()
+            else
+                -- # This is the standard functionality for `Ctrl + c`
+                -- # in COMMAND mode
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<C-c>", "n")
+                    ]],
+                    false
+                )
+            end
+        end
+    }
 )
 
 -- TERMINAL MANAGEMENT
@@ -238,12 +296,24 @@ local function n_enter_insert()
     )
 end
 local function i_exit_insert()
-    vim.api.nvim_exec(
-        [[
-            call feedkeys("\<Esc>\<Right>")
-        ]],
-        false
-    )
+    -- # When the cursor is on the first column,
+    -- # there is no need to move to the right after the escape
+    local col_before_cursor = vim.api.nvim_win_get_cursor(0)[2]
+    if col_before_cursor == 0 then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<Esc>")
+            ]],
+            false
+        )
+    else
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<Esc>\<Right>")
+            ]],
+            false
+        )
+    end
 end
 local function t_browse_term()
     vim.api.nvim_exec(
@@ -480,6 +550,17 @@ local function n_special_exit()
     )
 end
 
+local function i_special_blink_cmp_menu()
+    local is_blink_cmp_active = is_blink_cmp_active()
+    if is_blink_cmp_active then
+        require('blink.cmp').show()
+    end
+end
+
+local function c_special_blink_cmp_menu()
+    i_special_blink_cmp_menu()
+end
+
 -- # Store key codes for unusual keys on starting neovim
 -- # in SHADA (Shared Data between sessions)
 -- # so that this action is only performed a minimal number of times
@@ -577,6 +658,8 @@ local function i_special_mode()
         i_special_paste()
     elseif input_char == "\"" then
         i_special_comment()
+    elseif input_code == 9 then
+        i_special_blink_cmp_menu()
     else
         print(special_mode_escape_msg)
     end
@@ -584,9 +667,12 @@ end
 
 local function c_special_mode()
     -- print("[SPECIAL] Waiting for key input...")
-    local input_char = vim.fn.nr2char(vim.fn.getchar())
+    local input_code = vim.fn.getchar()
+    local input_char = vim.fn.nr2char(input_code)
     if input_char == "v" then
         c_special_paste()
+    elseif input_code == 9 then
+        c_special_blink_cmp_menu()
     else
         print(special_mode_escape_msg)
     end

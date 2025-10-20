@@ -124,9 +124,11 @@ require("cyberdream").setup({
 -- #   (i.e. no Rust, no NerdFonts)
 -- # * Make sure that the plugin does not disturb
 -- #   normal functionalities (like `<Tab>`)
--- # * Only show completion suggestions on key combination trigger
+-- # * Only show completion suggestions on `<Tab>` (under certain conditions),
+-- #   or use the special mode `<Ctrl + space><Tab>`
+-- # * Display ghost text only if the completion menu is visible
 -- # * Use `Tab` or `Enter` to accept the suggestion
--- # * Use `Ctrl + c` to cancel the suggestions
+-- # * Use `Ctrl + c` to hide completion menu
 require("blink.cmp").setup({
     -- # General settings
     fuzzy = {
@@ -156,11 +158,14 @@ require("blink.cmp").setup({
         -- # before _and_ after the cursor
         keyword = { range = 'prefix' },
         list = {
-            max_items = 10,
+            max_items = 100,
             selection = { auto_insert = false, },
         },
         menu = {
             auto_show = false,
+            min_width = 15,
+            max_height = 10,
+            scrolloff = 1,
             draw = {
                 columns = {
                     { "label", "label_description", gap = 1 },
@@ -184,14 +189,15 @@ require("blink.cmp").setup({
         ["<Down>"] = { "select_next", "fallback" },
         ["<CR>"] = { "select_and_accept", "fallback" },
         ['<C-space>'] = {},
-        -- # TODO: If menu is showing, then cancel with `Ctrl + c`
-        -- ['<C-c>'] = {},
-        -- # Only allow manual trigger of completion menu with `<Tab>`
-        -- # if the character before the cursor in INSERT mode
+        -- # (Experimental) Only allow manual trigger of completion menu
+        -- # with `<Tab>` if the character before the cursor in INSERT mode
         -- # is not:
         -- # * Null (char code = 0)
         -- # * Tab (char code = 9)
         -- # * Space (char code = 32)
+        -- # Otherwise, you can use the special mode `<Ctrl + space><Tab>`
+        -- # Note: if you really a tab instead of the completion menu,
+        -- # you can hit `<Shift + Tab>`
         ['<Tab>'] = {
             function(cmp)
                 local col_before_cursor = vim.api.nvim_win_get_cursor(0)[2]
@@ -212,9 +218,6 @@ require("blink.cmp").setup({
             "select_and_accept",
             "fallback",
         },
-        -- # Manually trigger completion menu with `<Shift + Tab>`
-        -- # in INSERT mode
-        ['<S-Tab>'] = { "show", "fallback" }
     },
     -- # CMD-LINE mode settings
     cmdline = {
@@ -224,10 +227,10 @@ require("blink.cmp").setup({
             ["<Down>"] = { "select_next", "fallback" },
             ["<CR>"] = { "select_and_accept", "fallback" },
             ['<C-space>'] = {},
+            -- # Manually trigger completion menu with `<Tab>`
+            -- # in CMD-LINE mode,
+            -- # or you can use the special mode `<Ctrl + space><Tab>`
             ['<Tab>'] = { "show", "select_and_accept", "fallback" },
-            -- # Manually trigger completion menu with `<Shift + Tab>`
-            -- # in CMD-LINE mode
-            ['<S-Tab>'] = { "show", "fallback" }
         },
         completion = {
             menu = {
