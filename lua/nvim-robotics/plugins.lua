@@ -196,8 +196,10 @@ require("blink.cmp").setup({
         -- # * Tab (char code = 9)
         -- # * Space (char code = 32)
         -- # Otherwise, you can use the special mode `<Ctrl + space><Tab>`
-        -- # Note: if you really a tab instead of the completion menu,
-        -- # you can hit `<Shift + Tab>`
+        -- # to manual trigger the completion menu
+        -- # Note: if you really want a tab instead of the completion menu,
+        -- # you can hit `<Shift + Tab>`, 
+        -- # or comment out the experimental feature
         ['<Tab>'] = {
             function(cmp)
                 local col_before_cursor = vim.api.nvim_win_get_cursor(0)[2]
