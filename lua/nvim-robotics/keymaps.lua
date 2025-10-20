@@ -220,8 +220,7 @@ vim.api.nvim_set_keymap(
 
 -- # In any mode, use `<F3>` to open a new terminal
 -- # at the bottom of the current session window (split horizontally)
--- # Think "Three" like "Terminal"
--- # Bonus: the TERMINAL-NORMAL mode is skipped on entry
+-- # Bonus: the TERMINAL-NORMAL mode is skipped on first entry
 -- # and the terminal can be used right away
 local function all_open_term()
     vim.api.nvim_exec(
@@ -379,7 +378,7 @@ end
 local function n_special_copy()
     vim.api.nvim_exec(
         [[
-           call feedkeys("\"ayy")
+            call feedkeys("\"ayy")
         ]],
         false
     )
@@ -413,7 +412,46 @@ local function vs_special_copy()
         ]],
         false
     )
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gv\<Esc>", "n")
+        ]],
+        false
+    )
     print("[SPECIAL] Selected text copied into the register a")
+end
+
+local function i_special_copy()
+    -- # Save current cursor location
+    local saved_cursor_location = vim.api.nvim_win_get_cursor(0)
+    -- # Go into NORMAL mode
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<Esc>")
+        ]],
+        false
+    )
+    -- # Use special copy for the NORMAL mode
+    n_special_copy()
+    -- # Move cursor back to initial position (in case it moved)
+    vim.api.nvim_win_set_cursor(0, saved_cursor_location)
+    -- # Enter back INSERT mode (taking into account the location shift)
+    if saved_cursor_location[2] == 0 then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("i")
+            ]],
+            false
+        )
+    else
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("a")
+            ]],
+            false
+        )
+    end
+    print("[SPECIAL] Copied current line into the register a")
 end
 
 local function n_special_cut()
@@ -654,7 +692,9 @@ local function i_special_mode()
     print("[SPECIAL] Waiting for key input...")
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
-    if input_char == "v" then
+    if input_char == "c" then
+        i_special_copy()
+    elseif input_char == "v" then
         i_special_paste()
     elseif input_char == "\"" then
         i_special_comment()
