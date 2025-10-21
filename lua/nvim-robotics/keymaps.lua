@@ -525,10 +525,31 @@ end
 
 -- # Note: this "comment" action is based on the native Neovim capability
 -- # to toggle code comments, inherited from the vim-commentary plugin
+-- # Further note: it is complex to get cursor back to initial position
+-- # relative to the line of characters after commenting,
+-- # because the line gets changed,
+-- # and the change depends on the block of characters used for commenting
+-- # Therefore, the initial cursor position is restored absolutely
+-- # and not relative to the sequence of characters
 local function n_special_comment()
+    -- # Save current cursor location using VISUAL mode
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<C-S-v>\<Esc>")
+        ]],
+        false
+    )
+    -- # Perform the commenting action
     vim.api.nvim_exec(
         [[
             call feedkeys("gcc")
+        ]],
+        false
+    )
+    -- # Move cursor back to initial location
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gv\<Esc>")
         ]],
         false
     )
@@ -541,15 +562,54 @@ local function vs_special_comment()
         ]],
         false
     )
+    -- # Move cursor back to initial location
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gv\<Esc>")
+        ]],
+        false
+    )
 end
 
 local function i_special_comment()
+    -- # Save current cursor location using VISUAL mode
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<Esc>\<C-S-v>\<Esc>")
+        ]],
+        false
+    )
+    -- # Perform the commenting action
     vim.api.nvim_exec(
         [[
             call feedkeys("\<Esc>gcc")
         ]],
         false
     )
+    -- # Move cursor back to initial location
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gv\<Esc>")
+        ]],
+        false
+    )
+    -- # Enter back into INSERT mode
+    local current_cursor_location = vim.api.nvim_win_get_cursor(0)
+    if current_cursor_location[2] == 0 then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("i")
+            ]],
+            false
+        )
+    else
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("a")
+            ]],
+            false
+        )
+    end
 end
 
 local function n_special_undo()
