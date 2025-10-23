@@ -68,6 +68,19 @@ local plugs_install_path = table.concat{
 }
 local Plug = vim.fn['plug#']
 
+-- HANDY ROUTINES
+
+-- # Automatically install missing plugins on startup
+-- # (extracted from: https://github.com/junegunn/vim-plug/wiki/extra)
+vim.cmd(
+    [[
+        autocmd VimEnter *
+        \  if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+        \|   PlugInstall --sync | q
+        \| endif
+    ]]
+)
+
 -- DOWNLOADED/INSTALLED PLUGINS
 
 -- # List plugins downloaded/installed via vim-plug
