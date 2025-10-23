@@ -73,6 +73,9 @@ local Plug = vim.fn['plug#']
 -- # List plugins downloaded/installed via vim-plug
 
 vim.call('plug#begin', plugs_install_path)
+    -- # Update all language parsers
+    -- # when the nvim-treesitter plugin is upgraded
+    Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
     Plug 'windwp/nvim-autopairs'
     Plug 'scottmckendry/cyberdream.nvim'
     -- # Target latest `1.x` release for `blink.cmp`
@@ -83,6 +86,57 @@ vim.call('plug#end')
 
 -- # List plugins setup/activated
 
+-- # Configure the nvim-treesitter plugin
+-- # to improve syntax highlighting, indentation, folding,
+-- # management of text objects and enhance LSP capabilities
+require('nvim-treesitter.configs').setup({
+    -- # Enable syntax highlighting
+    highlight = { enable = true },
+    -- # Enable indentation
+    indent = { enable = true },
+    -- # Auto-install parsers for specific languages
+    -- # This is missing the following:
+    -- # * ros
+    -- # * urdf
+    ensure_installed = {
+        "bash",
+        "c",
+        "cmake",
+        "comment",
+        "cpp",
+        "csv",
+        "diff",
+        "dockerfile",
+        "doxygen",
+        "git_config",
+        "git_rebase",
+        "gitattributes",
+        "gitcommit",
+        "gitignore",
+        "gpg",
+        "html",
+        "json",
+        "lua",
+        "make",
+        "markdown",
+        "markdown_inline",
+        "matlab",
+        "printf",
+        "proto",
+        "python",
+        "readline",
+        "regex",
+        "requirements",
+        "sql",
+        "ssh_config",
+        "tmux",
+        "toml",
+        "vim",
+        "vimdoc",
+        "xml",
+        "yaml",
+    }
+})
 require("nvim-autopairs").setup({})
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
@@ -198,7 +252,7 @@ require("blink.cmp").setup({
         -- # Otherwise, you can use the special mode `<Ctrl + space><Tab>`
         -- # to manual trigger the completion menu
         -- # Note: if you really want a tab instead of the completion menu,
-        -- # you can hit `<Shift + Tab>`, 
+        -- # you can hit `<Shift + Tab>`,
         -- # or comment out the experimental feature
         ['<Tab>'] = {
             function(cmp)
@@ -237,6 +291,9 @@ require("blink.cmp").setup({
         completion = {
             menu = {
                 auto_show = false,
+            },
+            list = {
+                selection = { auto_insert = false, },
             },
         },
     },
