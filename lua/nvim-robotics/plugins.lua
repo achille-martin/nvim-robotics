@@ -99,6 +99,8 @@ vim.call('plug#end')
 
 -- # List plugins setup/activated
 
+-- # Force use of git rather than cURL to download treesitter plugins
+require("nvim-treesitter.install").prefer_git = true
 -- # Configure the nvim-treesitter plugin
 -- # to improve syntax highlighting, indentation, folding,
 -- # management of text objects and enhance LSP capabilities
@@ -107,16 +109,15 @@ require('nvim-treesitter.configs').setup({
     highlight = { enable = true },
     -- # Enable indentation
     indent = { enable = true },
-    -- # Auto-install parsers for specific languages
-    -- # This is missing the following:
-    -- # * ros
-    -- # * urdf
+    -- # Auto-install existing parsers for specific languages
     ensure_installed = {
+        "arduino",
         "bash",
         "c",
         "cmake",
         "comment",
         "cpp",
+        "css",
         "csv",
         "diff",
         "dockerfile",
@@ -128,8 +129,10 @@ require('nvim-treesitter.configs').setup({
         "gitignore",
         "gpg",
         "html",
+        "http",
         "json",
         "lua",
+        "luap",
         "make",
         "markdown",
         "markdown_inline",
@@ -137,6 +140,7 @@ require('nvim-treesitter.configs').setup({
         "printf",
         "proto",
         "python",
+        "pymanifest",
         "readline",
         "regex",
         "requirements",
@@ -148,8 +152,20 @@ require('nvim-treesitter.configs').setup({
         "vimdoc",
         "xml",
         "yaml",
-    }
+    },
 })
+-- # Specify similar parsers to file types not currently supported:
+-- # * .launch files (used in ROS)
+-- # * .sdf files (used in ROS)
+-- # * .urdf files (used in ROS)
+-- # * .xacro files (used in ROS)
+-- # * .world files (used in Gazebo)
+vim.treesitter.language.register('xml', 'launch')
+vim.treesitter.language.register('xml', 'sdf')
+vim.treesitter.language.register('xml', 'urdf')
+vim.treesitter.language.register('xml', 'xacro')
+vim.treesitter.language.register('xml', 'world')
+-- # Load the autopair plugin
 require("nvim-autopairs").setup({})
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
