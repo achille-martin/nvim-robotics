@@ -89,6 +89,9 @@ vim.call('plug#begin', plugs_install_path)
     -- # Update all language parsers
     -- # when the nvim-treesitter plugin is upgraded
     Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
+        -- # Indicate dependency of nvim-treesitter plugin
+        -- # via indentation
+        Plug('nvim-treesitter/nvim-treesitter-textobjects')
     Plug 'windwp/nvim-autopairs'
     Plug 'scottmckendry/cyberdream.nvim'
     -- # Target latest `1.x` release for `blink.cmp`
@@ -164,6 +167,37 @@ require('nvim-treesitter.configs').setup({
             node_incremental = "v",
             scope_incremental = false,
             node_decremental = "<BS>",
+        },
+    },
+    -- # Enable the text-objects module
+    textobjects = {
+        select = {
+            enable = true,
+            keymaps = {
+                -- # Outer part selection with "a = a-out"
+                -- # Inner part selection with "i = in"
+                -- # Ensuring that keymaps are not prone
+                -- # to mistakes within the VISUAL mode
+
+                -- # Block selection (within brackets)
+                -- # already handled via incremental selection
+
+                -- # Conditional selection ("i" like "if")
+                ["ai"] = "@conditional.outer",
+                ["ii"] = "@conditional.inner",
+                -- # Loop selection
+                ["al"] = "@loop.outer",
+                ["il"] = "@loop.inner",
+                -- # Function selection
+                ["af"] = "@function.outer",
+                ["if"] = "@function.inner",
+                -- # Class selection
+                ["ac"] = "@class.outer",
+                ["ic"] = "@class.inner",
+                -- # Comment selection
+                ["a\""] = "@comment.outer",
+                ["i\""] = "@comment.inner",
+            },
         },
     },
 })
