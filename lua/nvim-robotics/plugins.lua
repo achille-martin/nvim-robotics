@@ -86,16 +86,21 @@ vim.cmd(
 -- # List plugins downloaded/installed via vim-plug
 
 vim.call('plug#begin', plugs_install_path)
+
     -- # Update all language parsers
     -- # when the nvim-treesitter plugin is upgraded
     Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
         -- # Indicate dependency of nvim-treesitter plugin
         -- # via indentation
         Plug('nvim-treesitter/nvim-treesitter-textobjects')
+
     Plug 'windwp/nvim-autopairs'
+
     Plug 'scottmckendry/cyberdream.nvim'
+
     -- # Target latest `1.x` release for `blink.cmp`
     Plug('saghen/blink.cmp', { ['tag'] = 'v1.*' })
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -104,6 +109,7 @@ vim.call('plug#end')
 
 -- # Force use of git rather than cURL to download treesitter plugins
 require("nvim-treesitter.install").prefer_git = true
+
 -- # Configure the nvim-treesitter plugin
 -- # to improve syntax highlighting, indentation, folding,
 -- # management of text objects and enhance LSP capabilities
@@ -212,8 +218,10 @@ vim.treesitter.language.register('xml', 'sdf')
 vim.treesitter.language.register('xml', 'urdf')
 vim.treesitter.language.register('xml', 'xacro')
 vim.treesitter.language.register('xml', 'world')
+
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
+
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
 -- # https://github.com/scottmckendry/cyberdream.nvim?tab=readme-ov-file#%EF%B8%8F-configuring
@@ -248,6 +256,7 @@ require("cyberdream").setup({
         }
     },
 })
+
 -- # Improve the blink.cmp completion plugin experience
 -- # by tweaking the defaults:
 -- # * Download as little noise as possible
