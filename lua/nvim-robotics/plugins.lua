@@ -92,6 +92,7 @@ vim.call('plug#begin', plugs_install_path)
     Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
         -- # Indicate plugins depending on nvim-treesitter via indentation
         Plug('nvim-treesitter/nvim-treesitter-textobjects')
+        Plug('nvim-treesitter/nvim-treesitter-context')
 
     -- # Update all managed registries
     -- # when the mason.nvim plugin is upgraded
@@ -230,6 +231,19 @@ vim.treesitter.language.register('xml', 'sdf')
 vim.treesitter.language.register('xml', 'urdf')
 vim.treesitter.language.register('xml', 'xacro')
 vim.treesitter.language.register('xml', 'world')
+
+-- # Adjust the configuration of nvim-treesitter-context plugin
+-- # to make the windows readable
+require("treesitter-context").setup({
+    max_lines = 5,
+    min_window_height = 1,
+    trim_scope = 'inner',
+})
+vim.cmd(
+    [[
+        hi TreesitterContextBottom gui=underline guisp=Grey
+    ]]
+)
 
 -- # Adjust the configuration of mason plugin
 -- # to be consistent with the other plugins
