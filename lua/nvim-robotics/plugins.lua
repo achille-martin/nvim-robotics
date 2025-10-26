@@ -90,9 +90,21 @@ vim.call('plug#begin', plugs_install_path)
     -- # Update all language parsers
     -- # when the nvim-treesitter plugin is upgraded
     Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
-        -- # Indicate dependency of nvim-treesitter plugin
-        -- # via indentation
+        -- # Indicate plugins depending on nvim-treesitter via indentation
         Plug('nvim-treesitter/nvim-treesitter-textobjects')
+
+    -- # Update all managed registries
+    -- # when the mason.nvim plugin is upgraded
+    -- # Note: the `:MasonUpdate` action also ensures
+    -- # that the core package registry is downloaded on first plugin use
+    -- # Further note: the mason.nvim plugin allows the user to
+    -- # easily manage external editor tooling such as LSP servers,
+    -- # DAP servers, linters, and formatters through a single interface
+    Plug('mason-org/mason.nvim', { ['do'] = ':MasonUpdate' })
+        -- # Indicate plugins depending on mason.nvim via indentation
+        Plug('neovim/nvim-lspconfig')
+            -- # Indicate plugins depending on nvim-lspconfig via indentation
+            Plug('mason-org/mason-lspconfig.nvim')
 
     Plug 'windwp/nvim-autopairs'
 
@@ -218,6 +230,35 @@ vim.treesitter.language.register('xml', 'sdf')
 vim.treesitter.language.register('xml', 'urdf')
 vim.treesitter.language.register('xml', 'xacro')
 vim.treesitter.language.register('xml', 'world')
+
+-- # Adjust the configuration of mason plugin
+-- # to be consistent with the other plugins
+local mason_install_path = table.concat{
+    vim.env.HOME,
+    "/.config/",
+    vim.g.custom_nvim_config_name,
+    "/autoload/mason",
+}
+require("mason").setup({
+    install_root_dir = mason_install_path,
+})
+
+-- # Install and configure (if possible) specific LSP servers
+-- # Note: the list of available LSP servers can be found via nvim-lspconfig:
+-- # https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        "lua_ls",
+    },
+})
+
+-- # Enable specific LSP servers with default config via nvim-lspconfig
+-- # Note: this is automatically handled via mason-lspconfig
+-- # unless the feature is turned off `automatic_enable = false`
+-- # In this case, each LSP server must be enabled individually with
+-- # `vim.lsp.enable('<lsp_server_name')`
+-- # Optionally, a custom config can be set for specific LSP servers with
+-- # `vim.lsp.config('<lsp_server_name>', {})`
 
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
