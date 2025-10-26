@@ -16,3 +16,5 @@ The following table gathers a list of sources that have inspired me for this rep
 | Alexey Goloburdin's Neovim configuration | [Link](https://github.com/alexey-goloburdin/nvim-config/blob/main) | |
 | Jannik Buhr's Neovim configuration | [Link](https://github.com/jmbuhr/nvim-config/blob/main) | |
 | Jacob Mcauley Penney's Neovim configuration | [Link](https://github.com/mcauley-penney/nvim/tree/main) | |
+| Ajay Yadav's Neovim configuration | [Link](https://smarttech101.com/how-to-configure-neovim) | |
+| Jack Smith's Neovim configuration | [Link](https://jacksmith.xyz/blog/a-beginners-guide-to-neovim-configuration) | |
