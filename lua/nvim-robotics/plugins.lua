@@ -262,7 +262,21 @@ require("mason").setup({
 -- # https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 require("mason-lspconfig").setup({
     ensure_installed = {
+        "arduino_language_server",
+        "bashls",
+        "clangd",
+        "cmake",
+        "cssls",
+        "docker_language_server",
+        "html",
+        "jsonls",
+        "lemminx",
         "lua_ls",
+        "marksman",
+        "matlab_ls",
+        "pyright",
+        "vimls",
+        "yamlls",
     },
 })
 

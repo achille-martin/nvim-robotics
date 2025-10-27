@@ -113,10 +113,17 @@ perform_quick_setup() {
 	# If the package is not available via apt,
 	# refer to the alternative installation methods if desired:
 	# https://github.com/BurntSushi/ripgrep#installation
+    # Further note: the `nodejs` and `npm` dependencies
+    # are only required for the setup of the LSP capabilities
+    # of specific languages
+    # TODO: check whether nodejs and npm exist
+    # so that existing config is not altered
     printf "\nInstalling necessary dependencies...\n"
     sudo apt-get install git
     sudo apt-get install curl
     sudo apt-get install ripgrep
+    sudo apt-get install nodejs
+    sudo apt-get install npm
     printf "...done\n"
 
     # Store the configuration in a specific folder for nvim to find it
