@@ -48,6 +48,17 @@ vim.api.nvim_create_autocmd(
         desc = "Enable spellcheck for defined filetypes",
     }
 )
+-- # Define a default location to store spellcheck files
+-- # without overwhelming the custom configuration
+-- # Note: stdpath for 'data' expands to `~/.local/share/<nvim_name>/`
+local en_spell_file_path = table.concat{
+    vim.fn.stdpath('data'),
+    "/site",
+    "/spell",
+    "/nvim-spelldict",
+    "/en.utf-8.add",
+}
+vim.opt.spellfile = en_spell_file_path
 
 -- =============== TEXT DISPLAY ===============
 
