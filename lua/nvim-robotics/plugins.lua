@@ -274,6 +274,23 @@ require("mason-lspconfig").setup({
 -- # Optionally, a custom config can be set for specific LSP servers with
 -- # `vim.lsp.config('<lsp_server_name>', {})`
 
+-- # Add `vim` variable to globals in Lua
+-- # so that it does not trigger a warning
+vim.lsp.config(
+    "lua_ls", {
+        settings = {
+            Lua = {
+                diagnostics = {
+                    globals = {
+                        "vim"
+                    }
+                }
+            }
+        }
+    }
+)
+
+
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
 
