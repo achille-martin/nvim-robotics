@@ -65,7 +65,7 @@ vim.opt.spellfile = en_spell_file_path
 -- CURSOR
 
 -- # Create group for cursor management
-local cursor_management_group = vim.api.nvim_create_augroup(
+vim.api.nvim_create_augroup(
     "CursorManagement",
     { clear = true }
 )
@@ -154,7 +154,7 @@ vim.opt.breakindent = true
 -- # For instance, full link syntax is shown in markdown
 vim.opt.conceallevel = 0
 -- # Create group for syntax cleanup
-local syntax_cleanup_group = vim.api.nvim_create_augroup(
+vim.api.nvim_create_augroup(
     "SyntaxCleanup",
     { clear = true }
 )
@@ -293,16 +293,16 @@ end
 -- # Note that path may be truncated if too long
 -- # For more information about `filename-modifiers`,
 -- # refer to the Neovim documentation
-local function filepath()
-    local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":p:~:h")
-    return string.format(" [%%<%s/] ", fpath)
-end
+-- local function filepath()
+--     local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":p:~:h")
+--     return string.format(" [%%<%s/] ", fpath)
+-- end
 -- # Filename display
 -- # including a space at the end for aesthetics
-local function filename()
-    local fname = vim.fn.expand "%:t"
-    return fname .. " "
-end
+-- local function filename()
+--     local fname = vim.fn.expand "%:t"
+--     return fname .. " "
+-- end
 -- # Cursor location information
 -- # including line, column and percentage of page
 local function cursorinfo()
