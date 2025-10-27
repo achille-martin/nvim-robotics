@@ -118,12 +118,23 @@ perform_quick_setup() {
     # of specific languages
     # TODO: check whether nodejs and npm exist
     # so that existing config is not altered
+    #
+    # WARNING: the standard installation of nodejs
+    # does not work on Ubuntu 18.04
+    # Another installation method (via NodeSource PPA) is used instead
+    # The installed version is technically deprecated (v16),
+    # therefore it is not the safest to install
+    # To remove the installation, run:
+    # `sudo apt-get purge nodejs`
+    # `sudo rm -r  /etc/apt/sources.list.d/nodesource.list`
     printf "\nInstalling necessary dependencies...\n"
     sudo apt-get install git
     sudo apt-get install curl
     sudo apt-get install ripgrep
-    sudo apt-get install nodejs
-    sudo apt-get install npm
+    curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+    sudo bash /tmp/nodesource_setup.sh
+    sudo apt install nodejs
+    sudo apt install build-essential
     printf "...done\n"
 
     # Store the configuration in a specific folder for nvim to find it

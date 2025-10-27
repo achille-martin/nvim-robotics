@@ -260,12 +260,15 @@ require("mason").setup({
 -- # Install and configure (if possible) specific LSP servers
 -- # Note: the list of available LSP servers can be found via nvim-lspconfig:
 -- # https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+-- #
+-- # WARNING: `cmake-language-server` (or `cmake`) cannot install
+-- # on Ubuntu 18.04 because of python3.10 dependency issues
+-- # It is therefore removed from the list
 require("mason-lspconfig").setup({
     ensure_installed = {
         "arduino_language_server",
         "bashls",
         "clangd",
-        "cmake",
         "cssls",
         "docker_language_server",
         "html",
