@@ -22,7 +22,7 @@ vim.g.maplocalleader = " "
 
 -- # Check whether plugin `blink.cmp` is installed and active
 local function is_blink_cmp_active()
-    local res, error = pcall(
+    local res, _ = pcall(
         function()
             require('blink.cmp')
         end
@@ -164,8 +164,7 @@ vim.api.nvim_set_keymap(
             -- # when plugin `blink.cmp` is installed and active:
             -- # * `Ctrl + c` hides the completion menu
             -- #   if it was visible, but does not leave INSERT mode
-            local is_blink_cmp_active = is_blink_cmp_active()
-            if (is_blink_cmp_active
+            if (is_blink_cmp_active()
                     and require('blink.cmp').is_menu_visible()) then
                     require('blink.cmp').hide()
             else
@@ -198,8 +197,7 @@ vim.api.nvim_set_keymap(
             -- # when plugin `blink.cmp` is installed and active:
             -- # * `Ctrl + c` hides the completion menu
             -- #   if it was visible, but does not leave COMMAND mode
-            local is_blink_cmp_active = is_blink_cmp_active()
-            if (is_blink_cmp_active
+            if (is_blink_cmp_active()
                     and require('blink.cmp').is_menu_visible()) then
                     require('blink.cmp').hide()
             else
@@ -649,14 +647,20 @@ local function n_special_exit()
 end
 
 local function i_special_blink_cmp_menu()
-    local is_blink_cmp_active = is_blink_cmp_active()
-    if is_blink_cmp_active then
+    if is_blink_cmp_active() then
         require('blink.cmp').show()
     end
 end
 
 local function c_special_blink_cmp_menu()
     i_special_blink_cmp_menu()
+end
+
+-- # Show all diagnostics for current buffer
+-- # in a quickfix window
+local function n_special_show_diagnostics()
+    print("[SPECIAL] Showing diagnostics for this buffer (if any)")
+    vim.diagnostic.setloclist()
 end
 
 -- # Store key codes for unusual keys on starting neovim
@@ -726,6 +730,8 @@ local function n_special_mode()
         n_special_save()
     elseif input_char == "q" then
         n_special_exit()
+    elseif input_char == "d" then
+        n_special_show_diagnostics()
     else
         print(special_mode_escape_msg)
     end
