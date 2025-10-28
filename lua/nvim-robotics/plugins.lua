@@ -267,7 +267,6 @@ require("mason").setup({
 require("mason-lspconfig").setup({
     ensure_installed = {
         "arduino_language_server",
-        "bashls",
         "clangd",
         "cssls",
         "docker_language_server",
