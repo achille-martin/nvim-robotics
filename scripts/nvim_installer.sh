@@ -56,6 +56,10 @@ print_usage() {
 }
 
 perform_install() {
+    printf "\n--------------------\n"
+    printf "Starting neovim installation ↺ \n"
+    sleep 1
+
     # Handle the different OS platforms supported
     case "$OS_DETECTED" in
 
@@ -125,6 +129,7 @@ perform_install() {
                             local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
                             if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
                             then
+                                printf "\n" >> "$DEFAULT_BASHRC_PATH"
                                 printf "# Make neovim visible" >> "$DEFAULT_BASHRC_PATH"
                                 printf "\n" >> "$DEFAULT_BASHRC_PATH"
                                 printf 'export PATH="$PATH:/opt/nvim/bin"' >> "$DEFAULT_BASHRC_PATH"
@@ -158,11 +163,19 @@ perform_install() {
             ;;
 
     esac
+
+    printf "\n ✓ Installation done"
+    printf "\n--------------------\n"
+
     # Highlight post-action requests to the user
     source_changes
 }
 
 perform_uninstall() {
+    printf "\n--------------------\n"
+    printf "Starting neovim uninstallation ↺ \n"
+    sleep 1
+
     # Handle the different OS platforms supported
     case "$OS_DETECTED" in
 
@@ -203,6 +216,9 @@ perform_uninstall() {
             ;;
 
     esac
+
+    printf "\n ✓ Uninstallation done"
+    printf "\n--------------------\n"
 
     # Highlight post-action requests to the user
     source_changes

@@ -52,13 +52,13 @@ MIN_SUPPORTED_MAJOR_RELEASE_DICT["linux_ubuntu_x86_64"]="22"
 # Highlight a need to source changes
 # after environment modifications
 source_changes() {
-    printf "\n / ! \\ ACTION: Refresh the state of the environment with the following command\n"
+    printf "\n/ ! \\ ACTION REQUIRED: Refresh the state of the environment with the following command\n"
     case "$OS_DETECTED" in
         linux)
-            printf "↳ source $DEFAULT_BASHRC_PATH\n"
+            printf "➤ source $DEFAULT_BASHRC_PATH\n"
             ;;
         *)
-            printf "✘ Not applicable.\n"
+            printf "✗ Not applicable.\n"
             ;;
     esac
 }
