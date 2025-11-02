@@ -36,7 +36,6 @@ OS_PLATFORM_DETECTED="unknown"
 # OS support
 IS_OS_PLATFORM_SUPPORTED="unknown"
 IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED="unknown"
-
 # Maintain a list of minimum supported (distribution) major releases
 # for the common OS platforms
 # Note: the format of the OS platform string
@@ -45,10 +44,26 @@ IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED="unknown"
 declare -A MIN_SUPPORTED_MAJOR_RELEASE_DICT
 MIN_SUPPORTED_MAJOR_RELEASE_DICT["linux_ubuntu_x86_64"]="22"
 
+# Config management
+DEFAULT_CUSTOM_CONFIG_NAME="nvim-robotics"
+DEFAULT_SHORT_ALIAS="neo"
+DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh"
+DEFAULT_INSTALLER_UTILITY_NAME="nvim_installer.sh"
+
+# Version management
+NVIM_MIN_STABLE_VERSION="v0.11.0"
+NVIM_LATEST_VERSION="unknown"
+VIM_PLUG_MIN_STABLE_VERSION="0.14.0"
+VIM_PLUG_LATEST_VERSION="unknown"
+NVM_MIN_STABLE_VERSION="v0.40.0"
+NVM_LATEST_VERSION="unknown"
+
 # Folder structure
 DEFAULT_DOWNLOADS_FOLDER="$HOME/Downloads"
 DEFAULT_LOCAL_FOLDER="$HOME/.local"
+DEFAULT_CONFIG_FOLDER="$HOME/.config"
 DEFAULT_BASHRC_PATH="$HOME/.bashrc"
+DEFAULT_BASH_ALIASES_PATH="$HOME/.bash_aliases"
 
 # ---- HELPER FUNCTIONS ----
 
@@ -163,3 +178,79 @@ check_os_specifications() {
     fi
 }
 
+# Search and refresh the latest neovim version available
+# accessible via `NVIM_LATEST_VERSION`
+refresh_latest_nvim_version() {
+    sudo apt-get install curl
+    local curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    local curl_cmd_status="$?"
+    # Report any curl error to the user
+    if [[ "$curl_cmd_status" -ne 0 ]];
+    then
+        printf "ERROR: Cannot determine the latest neovim version available.\n"
+        exit 1
+    else
+        NVIM_LATEST_VERSION="$curl_cmd"
+    fi
+}
+
+# Check neovim version to ensure all features are available
+# with the config
+check_nvim_version() {
+    # Get current neovim version
+    local current_nvim_version="unknown"
+    if [[ $(which nvim) ]];
+    then
+        current_nvim_version="$(nvim --version | head -1 | grep -o 'v.*$')"
+    else
+        printf "ERROR: no neovim version has been detected.\n"
+        printf "Make sure to install neovim first.\n"
+        printf "Please refer to the installer utility: \`$DEFAULT_INSTALLER_UTILITY_NAME\`\n"
+        exit 1
+    fi
+
+    # Get latest neovim version available
+    refresh_latest_nvim_version
+
+    # Compare latest neovim / minimum stable neovim with current neovim
+    if [[ "$current_nvim_version" != "$NVIM_LATEST_VERSION" ]];
+    then
+        printf "WARNING: your are currently using neovim version \`$current_nvim_version\`.\n"
+        printf "However, the latest neovim version available is \`$NVIM_LATEST_VERSION\`."
+        printf "Therefore, you might not benefit from the latest features available.\n"
+        printf "Make sure that you are at least using the minimum stable version of neovim \`$NVIM_MIN_STABLE_VERSION\`\n"
+        printf "to get a full-featured config.\n"
+    fi
+}
+
+# Search and refresh the latest vim-plug version available
+# accessible via `VIM_PLUG_LATEST_VERSION`
+refresh_vim_plug_version() {
+    sudo apt-get install curl
+    local curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | head -1 | cut -d " " -f 2 | sed 's/"//g')"
+    local curl_cmd_status="$?"
+    # Report any curl error to the user
+    if [[ "$curl_cmd_status" -ne 0 ]];
+    then
+        printf "ERROR: Cannot determine the latest vim-plug version available.\n"
+        exit 1
+    else
+        VIM_PLUG_LATEST_VERSION="$curl_cmd"
+    fi
+}
+
+# Search and refresh the latest nvm (Node Version Manager) version available
+# accessible via `NVM_LATEST_VERSION`
+refresh_latest_nvm_version() {
+    sudo apt-get install curl
+    local curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    local curl_cmd_status="$?"
+    # Report any curl error to the user
+    if [[ "$curl_cmd_status" -ne 0 ]];
+    then
+        printf "ERROR: Cannot determine the latest nvm version available.\n"
+        exit 1
+    else
+        NVM_LATEST_VERSION="$curl_cmd"
+    fi
+}
