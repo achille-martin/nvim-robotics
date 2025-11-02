@@ -147,6 +147,12 @@ perform_quick_setup() {
             # depending on the support status of the OS platform
             # * latest LTS nodejs version for fully supported OS platforms
             # * gallium/v16 for unsupported distribution major releases?
+            #
+            # NOTE: to uninstall nvm (along with npm and nodejs), run the following
+            # nvm_dir="${NVM_DIR:-~/.nvm}"
+            # nvm unload
+            # rm -rf "$nvm_dir"
+            # (and manually remove the nvm lines in your bashrc)
             local nvm_cmd="$(nvim install --lts)"
             local nvm_cmd_status="$?"
             # Report any nvm error to the user
