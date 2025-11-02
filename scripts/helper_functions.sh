@@ -25,6 +25,7 @@
 
 # ---- GLOBAL VARIABLES ----
 
+# OS Identification
 OS_DETECTED="unknown"
 OS_DISTRIBUTION_DETECTED="unknown"
 OS_DISTRIBUTION_RELEASE_DETECTED="unknown"
@@ -32,12 +33,9 @@ OS_DISTRIBUTION_MAJOR_RELEASE_DETECTED="unknown"
 OS_ARCHITECTURE_DETECTED="unknown"
 OS_PLATFORM_DETECTED="unknown"
 
+# OS support
 IS_OS_PLATFORM_SUPPORTED="unknown"
 IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED="unknown"
-
-DEFAULT_DOWNLOADS_FOLDER="$HOME/Downloads"
-DEFAULT_LOCAL_FOLDER="$HOME/.local"
-DEFAULT_BASHRC_PATH="$HOME/.bashrc"
 
 # Maintain a list of minimum supported (distribution) major releases
 # for the common OS platforms
@@ -46,6 +44,11 @@ DEFAULT_BASHRC_PATH="$HOME/.bashrc"
 # helper function, and the major release number must only be one integer
 declare -A MIN_SUPPORTED_MAJOR_RELEASE_DICT
 MIN_SUPPORTED_MAJOR_RELEASE_DICT["linux_ubuntu_x86_64"]="22"
+
+# Folder structure
+DEFAULT_DOWNLOADS_FOLDER="$HOME/Downloads"
+DEFAULT_LOCAL_FOLDER="$HOME/.local"
+DEFAULT_BASHRC_PATH="$HOME/.bashrc"
 
 # ---- HELPER FUNCTIONS ----
 
