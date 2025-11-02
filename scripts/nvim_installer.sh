@@ -25,6 +25,11 @@
 
 # ---- EXTERNAL SOURCES ----
 
+# WARNING: the external sources need to be located in the same folder
+# as this script
+if [[ $BASH_SOURCE == */* ]]; then
+    cd_cmd="$(cd -- "${BASH_SOURCE%/*}/")"
+fi
 source helper_functions.sh
 
 # ---- HANDY VARIABLES ----
