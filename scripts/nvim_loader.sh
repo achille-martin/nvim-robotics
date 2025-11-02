@@ -27,7 +27,7 @@
 # * Functional only for Linux Ubuntu OS (for now)
 # * Make sure that your bashrc contains the base path of your nvim executable:
 #   `echo 'export PATH="$PATH:/opt/nvim/bin"' >> $HOME/.bashrc`
-# * Move this current script to `$HOME/.config`
+# * Move this current script to `$HOME/.config` (standalone script)
 # * Make the current script executable:
 #   `chmod +x "$HOME/.config/nvim_loader.sh"`
 # * Add a new editor alternative:
