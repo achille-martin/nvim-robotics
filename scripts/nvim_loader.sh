@@ -1,19 +1,19 @@
-#! /bin/bash
+#!/bin/bash
 
 # MIT License
-# 
+#
 # Copyright (c) 2025 Achille MARTIN
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,14 +25,14 @@
 # ---- PRE-REQUISITES ----
 
 # * Functional only for Linux Ubuntu OS (for now)
-# * Make sure that your bashrc contains the base path of your nvim executable: 
+# * Make sure that your bashrc contains the base path of your nvim executable:
 #   `echo 'export PATH="$PATH:/opt/nvim/bin"' >> $HOME/.bashrc`
 # * Move this current script to `$HOME/.config`
-# * Make the current script executable: 
+# * Make the current script executable:
 #   `chmod +x "$HOME/.config/nvim_loader.sh"`
-# * Add a new editor alternative: 
+# * Add a new editor alternative:
 #   `sudo update-alternatives --install /usr/bin/editor editor "$HOME/.config/nvim_loader.sh" 100`
-# * Set new editor as default through auto mode (high priority): 
+# * Set new editor as default through auto mode (high priority):
 #   `sudo update-alternatives --auto editor`
 #   Note: to remove the editor from the alternatives:
 #   `sudo update-alternatives --remove editor "$HOME/.config/nvim_loader.sh"`
@@ -62,18 +62,18 @@ IS_NVIM_FOUND=false
 
 print_usage() {
     multiline_usage_txt="
-    Usage: $(basename "$0") [OPTIONS] [NVIM_ARGS] 
-    
+    Usage: $(basename "$0") [OPTIONS] [NVIM_ARGS]
+
     Purpose: Extend capabililties of nvim command to load a custom config
-	
+
     Options:
         --custom-config NAME    Optional. Set custom config for nvim.
                                 Needs to be set before the nvim arguments.
-        
+
     Other arguments:
 	    NVIM_ARGS               Optional. Arguments for the nvim command.
     "
-    
+
     printf "%s" "$multiline_usage_txt"
 }
 
@@ -110,7 +110,7 @@ check_arguments() {
 check_config() {
     if [[ ! -e "$DEFAULT_CONFIG_FOLDER/$CUSTOM_CONFIG_NAME" ]]
     then
-        printf "WARNING: custom nvim config '$CUSTOM_CONFIG_NAME' does not exist in '$DEFAULT_CONFIG_FOLDER', "
+        printf "WARNING: custom nvim config \`$CUSTOM_CONFIG_NAME\` does not exist in \`$DEFAULT_CONFIG_FOLDER\`, "
         printf "trying with default nvim config.\n"
     fi
 }
@@ -121,7 +121,7 @@ check_nvim() {
         IS_NVIM_FOUND=true
     else
         printf "WARNING: nvim executable cannot be found, "
-        printf "trying with absolute path '$DEFAULT_NVIM_EXECUTABLE'.\n"
+        printf "trying with absolute path \`$DEFAULT_NVIM_EXECUTABLE\`.\n"
     fi
 }
 
