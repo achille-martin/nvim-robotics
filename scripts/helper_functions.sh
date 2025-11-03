@@ -137,8 +137,10 @@ check_os_specifications() {
                     IS_OS_PLATFORM_SUPPORTED=1
                     OS_PLATFORM_DETECTED="$(get_os_platform_string)"
                     # Check status support for distribution release
-                    local get_release_support_cmd="$(get_support_status_for_distribution_major_release)"
-                    local get_release_support_cmd_status="$?"
+                    local get_release_support_cmd=""
+                    local get_release_support_cmd_status=""
+                    get_release_support_cmd="$(get_support_status_for_distribution_major_release)"
+                    get_release_support_cmd_status="$?"
                     if [[ "$get_release_support_cmd_status" -eq 0 ]];
                     then
                         IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED=1
@@ -182,8 +184,10 @@ check_os_specifications() {
 # accessible via `NVIM_LATEST_VERSION`
 refresh_latest_nvim_version() {
     sudo apt-get install curl
-    local curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
-    local curl_cmd_status="$?"
+    local curl_cmd=""
+    local curl_cmd_status=""
+    curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
     then
@@ -198,7 +202,7 @@ refresh_latest_nvim_version() {
 # with the config
 check_nvim_version() {
     # Get current neovim version
-    local current_nvim_version="unknown"
+    local current_nvim_version=""
     if [[ $(which nvim) ]];
     then
         current_nvim_version="$(nvim --version | head -1 | grep -o 'v.*$')"
@@ -227,8 +231,10 @@ check_nvim_version() {
 # accessible via `VIM_PLUG_LATEST_VERSION`
 refresh_vim_plug_version() {
     sudo apt-get install curl
-    local curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | head -1 | cut -d " " -f 2 | sed 's/"//g')"
-    local curl_cmd_status="$?"
+    local curl_cmd=""
+    local curl_cmd_status=""
+    curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | head -1 | cut -d " " -f 2 | sed 's/"//g')"
+    curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
     then
@@ -243,8 +249,10 @@ refresh_vim_plug_version() {
 # accessible via `NVM_LATEST_VERSION`
 refresh_latest_nvm_version() {
     sudo apt-get install curl
-    local curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
-    local curl_cmd_status="$?"
+    local curl_cmd=""
+    local curl_cmd_status=""
+    curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
     then

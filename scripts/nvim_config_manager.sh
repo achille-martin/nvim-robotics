@@ -117,11 +117,11 @@ perform_quick_setup() {
     # so that custom config for these packages is not altered
     local is_nodejs_available="0"
     local is_npm_available="0"
-    if [[ $(which npm) ]]; then
-        is_npm_available="1"
-    fi
     if [[ $(which node) ]]; then
         is_nodejs_available="1"
+    fi
+    if [[ $(which npm) ]]; then
+        is_npm_available="1"
     fi
     # Install nodejs and npm via the node version manager
     # to have full control
@@ -139,8 +139,10 @@ perform_quick_setup() {
         pritnf "Make sure that npm is properly installed\n"
         printf "to benefit from the latest features of the neovim config.\n"
     elif [[ "$is_nodejs_available" -eq 0 && "$is_npm_available" -eq 0 ]]; then
-        local curl_cmd="$(curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_LATEST_VERSION}/install.sh" | bash)"
-        local curl_cmd_status="$?"
+        local curl_cmd=""
+        local curl_cmd_status=""
+        curl_cmd="$(curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_LATEST_VERSION}/install.sh" | bash)"
+        curl_cmd_status="$?"
         # Report any curl error to the user
         if [[ "$curl_cmd_status" -ne 0 ]];
         then
@@ -158,8 +160,10 @@ perform_quick_setup() {
             # nvm unload
             # rm -rf "$nvm_dir"
             # (and manually remove the nvm lines in your bashrc)
-            local nvm_cmd="$(nvim install --lts)"
-            local nvm_cmd_status="$?"
+            local nvm_cmd=""
+            local nvm_cmd_status=""
+            nvm_cmd="$(nvim install --lts)"
+            nvm_cmd_status="$?"
             # Report any nvm error to the user
             if [[ "$nvm_cmd_status" -ne 0 ]];
             then
@@ -174,13 +178,15 @@ perform_quick_setup() {
     # Store the configuration in a specific folder for nvim to find it
     # depending on the availability of SSH
     printf "\nDownloading configuration at specific location...\n"
-    local ssh_cmd="$(ssh -T git@github.com &>/dev/null)"
-    local ssh_cmd_status="$?"
+    local ssh_cmd=""
+    local ssh_cmd_status=""
+    local git_clone_cmd_status=""
+    ssh_cmd="$(ssh -T git@github.com &>/dev/null)"
+    ssh_cmd_status="$?"
     # Note: according to Github docs, the exit status
     # of the ssh user verification command is usually 1
     # if it was successful
     if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
-    local git_clone_cmd_status="unknown"
     then
         git clone git@github.com:achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?"
@@ -216,9 +222,11 @@ perform_quick_setup() {
     # Install the plugin manager (overwrite if existing) to take care of
     # downloading, installing and setting up third-party Neovim plugins
     printf "\nInstalling the plugin manager...\n"
-    local curl_cmd="$(sh -c "curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
+    local curl_cmd=""
+    local curl_cmd_status=""
+    curl_cmd="$(sh -c "curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
                             --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim")"
-    local curl_cmd_status="$?"
+    curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
     then

@@ -34,7 +34,6 @@ source helper_functions.sh
 
 # ---- HANDY VARIABLES ----
 
-NEOVIM_TAG="latest"
 
 # ---- HANDY FUNCTIONS ----
 
@@ -47,7 +46,7 @@ print_usage() {
              (supported platforms: Linux Ubuntu x86_64)
 
     CMD:
-        install             Install neovim \`$NEOVIM_TAG\` version
+        install             Install neovim latest version
                             for the current OS platform
                             Note: automatically installs
                             the \"unsupported\" release of neovim if necessary
@@ -103,19 +102,21 @@ perform_install() {
                             # Adapt the download method
                             # depending on the support status
                             # of the distribution major release
+                            local curl_cmd=""
+                            local curl_cmd_status=""
                             if [[ "$IS_OS_PLATFORM_SUPPORTED" -eq 1 && "$IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED" -eq 1 ]];
                             then
-                                local curl_cmd="$(curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz")"
+                                curl_cmd="$(curl -LO "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz")"
                             elif [[ "$IS_OS_PLATFORM_SUPPORTED" -eq 1 && "$IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED" -eq 0 ]];
                             then
-                                local curl_cmd="$(curl -LO "https://github.com/neovim/neovim-releases/releases/latest/download/nvim-linux-x86_64.tar.gz")"
+                                curl_cmd="$(curl -LO "https://github.com/neovim/neovim-releases/releases/latest/download/nvim-linux-x86_64.tar.gz")"
                             else
                                 printf "ERROR: There has been a problem\n"
                                 printf "while trying to determine the support status of the distribution major release.\n"
                                 printf "Not downloading any archive. Please review the log messages.\n"
                                 exit 1
                             fi
-                            local curl_cmd_status="$?"
+                            curl_cmd_status="$?"
                             # Report any curl error to the user
                             if [[ "$curl_cmd_status" -ne 0 ]];
                             then
