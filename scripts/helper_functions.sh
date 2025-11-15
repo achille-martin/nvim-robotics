@@ -44,6 +44,9 @@ IS_DISTRIBUTION_MAJOR_RELEASE_SUPPORTED="unknown"
 declare -A MIN_SUPPORTED_MAJOR_RELEASE_DICT
 MIN_SUPPORTED_MAJOR_RELEASE_DICT["linux_ubuntu_x86_64"]="22"
 
+# Software support
+IS_NVIM_AVAILABLE=false
+
 # Config management
 DEFAULT_CUSTOM_CONFIG_NAME="nvim-robotics"
 DEFAULT_SHORT_ALIAS="neo"
@@ -64,6 +67,8 @@ DEFAULT_LOCAL_FOLDER="$HOME/.local"
 DEFAULT_CONFIG_FOLDER="$HOME/.config"
 DEFAULT_BASHRC_PATH="$HOME/.bashrc"
 DEFAULT_BASH_ALIASES_PATH="$HOME/.bash_aliases"
+DEFAULT_NVIM_BIN_FOLDER="/opt/nvim/bin"
+DEFAULT_NVIM_EXECUTABLE="$DEFAULT_NVIM_BIN_FOLDER/nvim"
 
 # ---- HELPER FUNCTIONS ----
 
@@ -198,12 +203,24 @@ refresh_latest_nvim_version() {
     fi
 }
 
+# Search and refresh the latest state of neovim presence on current OS
+# accessible via `IS_NVIM_AVAILABLE`
+refresh_nvim_presence() {
+    if [[ $(which nvim) ]]
+    then
+        IS_NVIM_AVAILABLE=true
+    else
+        IS_NVIM_AVAILABLE=false
+    fi
+}
+
 # Check neovim version to ensure all features are available
 # with the config
 check_nvim_version() {
     # Get current neovim version
     local current_nvim_version=""
-    if [[ $(which nvim) ]];
+    refresh_nvim_presence
+    if [[ "$IS_NVIM_AVAILABLE" == "true" ]];
     then
         current_nvim_version="$(nvim --version | head -1 | grep -o 'v.*$')"
     else

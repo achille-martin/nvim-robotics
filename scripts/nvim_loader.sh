@@ -24,12 +24,13 @@
 
 # ---- PRE-REQUISITES ----
 
-# * Functional only for Linux Ubuntu OS (for now)
+# * Script functional only for a selected set of OS (for instance Linux Ubuntu)
 # * Make sure that your bashrc contains the base path of your nvim executable:
 #   `echo 'export PATH="$PATH:/opt/nvim/bin"' >> $HOME/.bashrc`
-# * Move this current script to `$HOME/.config` (standalone script)
-# * Make the current script executable:
-#   `chmod +x "$HOME/.config/nvim_loader.sh"`
+# * Make sure that the current script is executable:
+#   `chmod +x "$HOME/.config/nvim-robotics/scripts/nvim_loader.sh"`
+# * Symlink this current script to `$HOME/.config` (for easier/universal access):
+#   `ln -sf "$HOME/.config/nvim-robotics/scripts/nvim_loader.sh" "$HOME/.config/nvim_loader.sh"`
 # * Add a new editor alternative:
 #   `sudo update-alternatives --install /usr/bin/editor editor "$HOME/.config/nvim_loader.sh" 100`
 # * Set new editor as default through auto mode (high priority):
@@ -37,26 +38,35 @@
 #   Note: to remove the editor from the alternatives:
 #   `sudo update-alternatives --remove editor "$HOME/.config/nvim_loader.sh"`
 
+# ---- EXTERNAL SOURCES ----
+
+# WARNING: the external sources need to be located in the same folder
+# as this script
+# (or in the case of a symlink, in the same folder as the target)
+bash_source_symlink=$(readlink -f $BASH_SOURCE)
+if [[ $bash_source_symlink == */* ]]
+then
+    cd -- "${bash_source_symlink%/*}/"
+fi
+source helper_functions.sh
+
+# SAFETY: make sure that the script operates in the folder
+# it was executed from, to be able to function as expected with neovim commands
+cd - &> /dev/null
+
 # ---- HANDY VARIABLES ----
 
-# Set the default custom config name
-# of a folder existing in the default config folder
-# for update-alternatives and default nvim behaviour
-DEFAULT_CUSTOM_CONFIG_NAME="nvim-robotics"
+# Set the custom config name to default name
+# of a folder existing in the default config folder,
+# as it is useful for update-alternatives and default nvim behaviour
+# Note: the custom config name can also be updated via bash arguments
 CUSTOM_CONFIG_NAME="$DEFAULT_CUSTOM_CONFIG_NAME"
-
-# Set the default config folder and executable folder
-# for nvim
-DEFAULT_CONFIG_FOLDER="$HOME/.config"
-DEFAULT_NVIM_BIN_FOLDER="/opt/nvim/bin"
-DEFAULT_NVIM_EXECUTABLE="$DEFAULT_NVIM_BIN_FOLDER/nvim"
 
 # Collect args for nvim command
 NVIM_ARGS_ARRAY=()
 
 # Set handy flags
 IS_NVIM_ARG_DETECTED=false
-IS_NVIM_FOUND=false
 
 # ---- HANDY FUNCTIONS ----
 
@@ -78,10 +88,11 @@ print_usage() {
 }
 
 check_arguments() {
-    while [[ $# -gt 0 ]]; do
+    while [[ $# -gt 0 ]]
+    do
         case $1 in
             --custom-config)
-                if [[ $IS_NVIM_ARG_DETECTED == "false" ]]
+                if [[ "$IS_NVIM_ARG_DETECTED" == "false" ]]
                 then
                     if [[ -n $2 && $2 != -* ]]
                     then
@@ -116,17 +127,16 @@ check_config() {
 }
 
 check_nvim() {
-    if [[ ! -z "$(which nvim)" ]]
+    refresh_nvim_presence
+    if [[ "$IS_NVIM_AVAILABLE" == "false" ]]
     then
-        IS_NVIM_FOUND=true
-    else
         printf "WARNING: nvim executable cannot be found, "
         printf "trying with absolute path \`$DEFAULT_NVIM_EXECUTABLE\`.\n"
     fi
 }
 
 load_nvim() {
-    if [[ $IS_NVIM_FOUND ]]
+    if [[ "$IS_NVIM_AVAILABLE" == "true" ]]
     then
         NVIM_APPNAME="$CUSTOM_CONFIG_NAME" nvim "$@"
     else
@@ -136,11 +146,11 @@ load_nvim() {
 
 # ---- MAIN ----
 
-main() {
+main_fn() {
     check_arguments "$@"
     check_config
     check_nvim
     load_nvim "${NVIM_ARGS_ARRAY[@]}"
 }
 
-main "$@"
+main_fn "$@"

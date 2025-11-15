@@ -78,7 +78,8 @@ install_plugins() {
 perform_quick_setup() {
     # Confirm the installation of nvim
     printf "\nChecking the presence of neovim...\n"
-    if [[ ! $(which nvim) ]];
+    refresh_nvim_presence
+    if [[ "$IS_NVIM_AVAILABLE" == "false" ]];
     then
         printf "ERROR: no neovim version has been detected.\n"
         printf "Make sure to install neovim before setting up the configuration.\n"
@@ -113,6 +114,15 @@ perform_quick_setup() {
     sudo apt-get install git
     sudo apt-get install curl
     sudo apt-get install ripgrep
+    # Verify shellcheck presence on the current OS
+    local is_shellcheck_available="0"
+    if [[ $(which shellcheck) ]]; then
+        is_shellcheck_available="1"
+    fi
+    # Install shellcheck (if not already available) to improve LSP capabilities
+    if [[ "$is_shellcheck_available" -eq 0 ]]; then
+        sudo apt-get install shellcheck
+    fi
     # Verify nodejs and npm presence on the current OS
     # so that custom config for these packages is not altered
     local is_nodejs_available="0"

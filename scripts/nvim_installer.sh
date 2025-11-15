@@ -69,7 +69,8 @@ perform_install() {
 
         linux)
             printf "\nEnsuring that there is no neovim version clash...\n"
-            if [[ $(which nvim) ]];
+            refresh_nvim_presence
+            if [[ "$IS_NVIM_AVAILABLE" == "true" ]];
             then
                 printf "ERROR: a neovim version has been detected.\n"
                 printf "Make sure to remove existing versions of neovim before installation\n"
