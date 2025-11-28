@@ -300,21 +300,29 @@ require("mason-lspconfig").setup({
 -- # `vim.lsp.config('<lsp_server_name>', {})`
 
 -- # Add `vim` variable to globals in Lua
--- # so that it does not trigger a warning
-vim.lsp.config(
-    "lua_ls", {
-        settings = {
-            Lua = {
-                diagnostics = {
-                    globals = {
-                        "vim"
-                    }
+-- # so that it does not trigger a warning in the LSP
+vim.lsp.config["lua_ls"] = {
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = {
+                    "vim"
                 }
             }
         }
     }
-)
-
+}
+-- # Add filetype to specific LSP
+vim.lsp.config["lemminx"] = {
+    filetypes = {
+        'xml',
+        'launch',
+        'sdf',
+        'urdf',
+        'xacro',
+        'world',
+    },
+}
 
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
