@@ -114,6 +114,8 @@ vim.call('plug#begin', plugs_install_path)
     -- # Target latest `1.x` release for `blink.cmp`
     Plug('saghen/blink.cmp', { ['tag'] = 'v1.*' })
 
+    Plug 'ibhagwan/fzf-lua'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -226,6 +228,15 @@ require('nvim-treesitter.configs').setup({
 -- # * .urdf files (used in ROS)
 -- # * .xacro files (used in ROS)
 -- # * .world files (used in Gazebo)
+vim.filetype.add({
+    extension = {
+        launch = "launch",
+        sdf = "sdf",
+        urdf = "urdf",
+        xacro = "xacro",
+        world = "world",
+    }
+})
 vim.treesitter.language.register('xml', 'launch')
 vim.treesitter.language.register('xml', 'sdf')
 vim.treesitter.language.register('xml', 'urdf')
@@ -468,4 +479,12 @@ require("blink.cmp").setup({
             },
         },
     },
+})
+
+require("fzf-lua").setup({
+    winopts = {
+        preview = {
+            layout = "vertical",
+        }
+    }
 })
