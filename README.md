@@ -31,21 +31,22 @@ First of all, make sure that Neovim is operational on your machine by typing `nv
 
 **Note: rest assured that, if you have already created a personal configuration for Neovim, the following quick configuration setup will not affect it.**
 
-Once Neovim is operational, download the [configuration manager](scripts/nvim_config_manager.sh) and then run the following command from the folder containing the script:
+Once Neovim is operational, apply the quick-setup configuration using the [configuration manager](scripts/nvim_config_manager.sh), via the following command:
 
 ```bash
-bash nvim_config_manager.sh quick-setup
+sudo apt-get install curl &&
+curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/nvim_config_manager.sh" --create-dirs --output "/tmp/nvim-robotics/nvim_config_manager" &&
+curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/helper_functions.sh" --create-dirs --output "/tmp/nvim-robotics/helper_functions.sh" &&
+bash "/tmp/nvim-robotics/nvim_config_manager.sh" quick-setup
 ```
 
-You can now launch Neovim with the repo configuration by using the default alias set:
+You can now launch Neovim with the repo configuration by using the default aliases set:
 
 ```bash
+# Primary alias
 nvim-robotics
-```
 
-You can also launch Neovim with the repo configuration by using a practical alias set:
-
-```bash
+# Secondary alias
 neo
 ```
 
