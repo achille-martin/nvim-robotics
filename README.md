@@ -35,7 +35,7 @@ Once Neovim is operational, apply the quick-setup configuration using the [confi
 
 ```bash
 sudo apt-get install curl &&
-curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/nvim_config_manager.sh" --create-dirs --output "/tmp/nvim-robotics/nvim_config_manager" &&
+curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/nvim_config_manager.sh" --create-dirs --output "/tmp/nvim-robotics/nvim_config_manager.sh" &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/helper_functions.sh" --create-dirs --output "/tmp/nvim-robotics/helper_functions.sh" &&
 bash "/tmp/nvim-robotics/nvim_config_manager.sh" quick-setup
 ```
