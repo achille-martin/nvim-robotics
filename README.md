@@ -55,7 +55,7 @@ neo
 If you wish to craft your own configuration, while using [nvim-robotics](https://github.com/achille-martin/nvim-robotics) as a base:
 * Fork the [nvim-robotics](https://github.com/achille-martin/nvim-robotics) repo
 * Make sure that Neovim is operational on your machine, as detailed in the [quick configuration setup](README.md#quick-config-setup)
-* Download the [configuration manager](scripts/nvim_config_manager.sh) and then run the following command from the folder containing the script:
+* Download the [configuration manager](scripts/nvim_config_manager.sh) along with the [helper functions](scripts/helper_functions.sh) and then run the following command from the folder containing the script:
 
 ```bash
 bash nvim_config_manager.sh quick-setup <your_config_name>
