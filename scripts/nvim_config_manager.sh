@@ -111,9 +111,9 @@ perform_quick_setup() {
     # are only required for the setup of the LSP capabilities
     # of specific languages
     printf "\nInstalling necessary dependencies...\n"
-    sudo apt-get install git
-    sudo apt-get install curl
-    sudo apt-get install ripgrep
+    sudo apt-get install git -y
+    sudo apt-get install curl -y
+    sudo apt-get install ripgrep -y
     # Verify shellcheck presence on the current OS
     local is_shellcheck_available="0"
     if [[ $(which shellcheck) ]]; then
@@ -121,7 +121,7 @@ perform_quick_setup() {
     fi
     # Install shellcheck (if not already available) to improve LSP capabilities
     if [[ "$is_shellcheck_available" -eq 0 ]]; then
-        sudo apt-get install shellcheck
+        sudo apt-get install shellcheck -y
     fi
     # Verify nodejs and npm presence on the current OS
     # so that custom config for these packages is not altered

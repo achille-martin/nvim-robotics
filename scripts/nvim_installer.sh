@@ -93,7 +93,7 @@ perform_install() {
 
                 ubuntu)
                     printf "\nInstalling necessary dependencies...\n"
-                    sudo apt-get install curl
+                    sudo apt-get install curl -y
                     printf "...done\n"
 
                     case "$OS_ARCHITECTURE_DETECTED" in
@@ -202,7 +202,7 @@ perform_uninstall() {
                 ubuntu)
                     # Remove application installed from apt
                     printf "\nRemoving application installed from apt...\n"
-                    sudo apt-get remove neovim
+                    sudo apt-get remove neovim -y
                     printf "...done\n"
                     ;;
 

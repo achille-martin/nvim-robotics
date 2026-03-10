@@ -188,7 +188,7 @@ check_os_specifications() {
 # Search and refresh the latest neovim version available
 # accessible via `NVIM_LATEST_VERSION`
 refresh_latest_nvim_version() {
-    sudo apt-get install curl
+    sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
     curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
@@ -247,7 +247,7 @@ check_nvim_version() {
 # Search and refresh the latest vim-plug version available
 # accessible via `VIM_PLUG_LATEST_VERSION`
 refresh_vim_plug_version() {
-    sudo apt-get install curl
+    sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
     curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | head -1 | cut -d " " -f 2 | sed 's/"//g')"
@@ -265,7 +265,7 @@ refresh_vim_plug_version() {
 # Search and refresh the latest nvm (Node Version Manager) version available
 # accessible via `NVM_LATEST_VERSION`
 refresh_latest_nvm_version() {
-    sudo apt-get install curl
+    sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
     curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"

@@ -5,7 +5,7 @@
 To setup Neovim on your machine, it is recommended to download the custom installer script and then run it, via the following command:
 
 ```bash
-sudo apt-get install curl &&
+sudo apt-get install curl -y &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/nvim_installer.sh" --create-dirs --output "/tmp/nvim-robotics/nvim_installer.sh" &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/helper_functions.sh" --create-dirs --output "/tmp/nvim-robotics/helper_functions.sh" &&
 bash "/tmp/nvim-robotics/nvim_installer.sh" install

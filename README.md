@@ -34,7 +34,7 @@ First of all, make sure that Neovim is operational on your machine by typing `nv
 Once Neovim is operational, apply the quick-setup configuration using the [configuration manager](scripts/nvim_config_manager.sh), via the following command:
 
 ```bash
-sudo apt-get install curl &&
+sudo apt-get install curl -y &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/nvim_config_manager.sh" --create-dirs --output "/tmp/nvim-robotics/nvim_config_manager.sh" &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/helper_functions.sh" --create-dirs --output "/tmp/nvim-robotics/helper_functions.sh" &&
 bash "/tmp/nvim-robotics/nvim_config_manager.sh" quick-setup
