@@ -157,15 +157,15 @@ perform_quick_setup() {
     # on the selection of the versions installed and in use
     if [[ "$is_nodejs_available" -eq 1 && "$is_npm_available" -eq 1 ]]; then
         printf "INFO: nodejs and npm seem to be installed.\n"
-        pritnf "Make sure that a recent version has been installed\n"
+        printf "Make sure that a recent version has been installed\n"
         printf "to benefit from the latest features of the neovim config.\n"
     elif [[ "$is_nodejs_available" -eq 1 && "$is_npm_available" -eq 0 ]]; then
         printf "WARNING: nodejs seems to be installed, but not npm.\n"
-        pritnf "Make sure that npm is installed\n"
+        printf "Make sure that npm is installed\n"
         printf "to benefit from the latest features of the neovim config.\n"
     elif [[ "$is_nodejs_available" -eq 0 && "$is_npm_available" -eq 1 ]]; then
         printf "WARNING: npm seems to be installed, but not nodejs.\n"
-        pritnf "Make sure that nodejs is properly installed\n"
+        printf "Make sure that nodejs is properly installed\n"
         printf "to benefit from the latest features of the neovim config.\n"
     elif [[ "$is_nodejs_available" -eq 0 && "$is_npm_available" -eq 0 ]]; then
         local curl_cmd=""
