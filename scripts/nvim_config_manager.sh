@@ -266,7 +266,7 @@ perform_quick_setup() {
 
     # Highlight post-action requests to the user
     source_changes "warning"
-    install_plugins
+    install_plugins "warning"
 }
 
 perform_cleanup() {
