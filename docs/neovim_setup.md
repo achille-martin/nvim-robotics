@@ -8,8 +8,8 @@ To setup Neovim on your machine, it is recommended to download the custom instal
 sudo apt-get install curl -y &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/nvim_installer.sh" --create-dirs --output "/tmp/nvim-robotics/nvim_installer.sh" &&
 curl "https://raw.githubusercontent.com/achille-martin/nvim-robotics/refs/heads/main/scripts/helper_functions.sh" --create-dirs --output "/tmp/nvim-robotics/helper_functions.sh" &&
-chmod +x "/tmp/nvim-robotics/nvim_installer.sh"
-chmod +x "/tmp/nvim-robotics/helper_functions.sh"
+chmod +x "/tmp/nvim-robotics/nvim_installer.sh" &&
+chmod +x "/tmp/nvim-robotics/helper_functions.sh" &&
 "/tmp/nvim-robotics/nvim_installer.sh" install
 ```
 
