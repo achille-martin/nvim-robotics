@@ -80,7 +80,7 @@ source_changes() {
     case "$OS_DETECTED" in
         linux)
             printf "➤ source $DEFAULT_BASHRC_PATH\n"
-            source "$DEFAULT_BASHRC_PATH" &> /dev/null
+            (source "$DEFAULT_BASHRC_PATH")
             ;;
         *)
             printf "✗ Not applicable.\n"
