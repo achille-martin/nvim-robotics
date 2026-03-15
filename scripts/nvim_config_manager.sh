@@ -153,11 +153,12 @@ perform_quick_setup() {
         printf "to benefit from the latest features of the neovim config.\n"
     elif [[ "$is_nodejs_available" -eq 0 && "$is_npm_available" -eq 1 ]]; then
         printf "WARNING: npm seems to be installed, but not nodejs.\n"
-        pritnf "Make sure that npm is properly installed\n"
+        pritnf "Make sure that nodejs is properly installed\n"
         printf "to benefit from the latest features of the neovim config.\n"
     elif [[ "$is_nodejs_available" -eq 0 && "$is_npm_available" -eq 0 ]]; then
         local curl_cmd=""
         local curl_cmd_status=""
+        refresh_latest_nvm_version
         curl_cmd="$(curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_LATEST_VERSION}/install.sh" | bash)"
         curl_cmd_status="$?"
         # Report any curl error to the user
@@ -241,6 +242,7 @@ perform_quick_setup() {
     printf "\nInstalling the plugin manager...\n"
     local curl_cmd=""
     local curl_cmd_status=""
+    refresh_vim_plug_version
     curl_cmd="$(sh -c "curl -fLo ${CONFIG_FOLDER}/${CONFIG_NAME}/autoload/plug.vim \
                             --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${VIM_PLUG_LATEST_VERSION}/plug.vim")"
     curl_cmd_status="$?"
