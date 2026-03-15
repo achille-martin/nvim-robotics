@@ -76,6 +76,9 @@ install_plugins() {
 }
 
 perform_quick_setup() {
+    printf "\n--------------------\n"
+    printf "Starting quick setup of nvim config ↺ \n"
+
     # Confirm the installation of nvim
     printf "\nChecking the presence of neovim...\n"
     refresh_nvim_presence
@@ -111,6 +114,7 @@ perform_quick_setup() {
     # are only required for the setup of the LSP capabilities
     # of specific languages
     printf "\nInstalling necessary dependencies...\n"
+    sudo apt-get update &&
     sudo apt-get install git -y
     sudo apt-get install curl -y
     sudo apt-get install ripgrep -y
@@ -245,12 +249,18 @@ perform_quick_setup() {
     fi
     printf "...done\n"
 
+    printf "\n ✓ Setup done"
+    printf "\n--------------------\n"
+
     # Highlight post-action requests to the user
     source_changes
     install_plugins
 }
 
 perform_cleanup() {
+    printf "\n--------------------\n"
+    printf "Starting cleanup of nvim config ↺ \n"
+
     # Update variables depending on arguments
     printf "\nReading optional arguments...\n"
     if [[ -n "$1" ]]
@@ -283,6 +293,9 @@ perform_cleanup() {
     grep -v "alias $SHORT_ALIAS=\"$ALIAS\"" "$DEFAULT_BASH_ALIASES_PATH" > "/tmp/.bash_aliases"
     mv "/tmp/.bash_aliases" "$DEFAULT_BASH_ALIASES_PATH"
     printf "...done\n"
+
+    printf "\n ✓ Cleanup done"
+    printf "\n--------------------\n"
 
     # Highlight post-action requests to the user
 	source_changes
