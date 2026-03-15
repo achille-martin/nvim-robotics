@@ -123,6 +123,8 @@ perform_quick_setup() {
     sudo apt-get install git -y
     sudo apt-get install curl -y
     sudo apt-get install ripgrep -y
+    sudo apt-get install zip -y
+    sudo apt-get install unzip -y
     # Verify shellcheck presence on the current OS
     local is_shellcheck_available="0"
     if [[ $(which shellcheck) ]]; then
