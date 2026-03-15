@@ -76,6 +76,7 @@ DEFAULT_NVIM_EXECUTABLE="$DEFAULT_NVIM_BIN_FOLDER/nvim"
 # after environment modifications
 source_changes() {
     printf "\n/ ! \\ ACTION REQUIRED: Refresh the state of the environment with the following command\n"
+    check_os_specifications
     case "$OS_DETECTED" in
         linux)
             printf "➤ source $DEFAULT_BASHRC_PATH\n"
