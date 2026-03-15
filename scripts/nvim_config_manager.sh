@@ -71,8 +71,9 @@ print_usage() {
 }
 
 install_plugins() {
-    printf "\n/ ! \\ ACTION REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
+    printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
     printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
+    $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall
 }
 
 perform_quick_setup() {
@@ -168,6 +169,8 @@ perform_quick_setup() {
             printf "Therefore, some functionalities might not be available\n"
             printf "in this neovim config.\n"
         else
+            # Source changes to make sure `nvm` command is available
+            source_changes
             # TODO: Select nodejs version to use
             # depending on the support status of the OS platform
             # * latest LTS nodejs version for fully supported OS platforms
