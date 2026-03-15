@@ -77,8 +77,7 @@ install_plugins() {
         printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
         printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
     fi
-    source_changes
-    $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall
+    $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> /dev/null
 }
 
 perform_quick_setup() {
