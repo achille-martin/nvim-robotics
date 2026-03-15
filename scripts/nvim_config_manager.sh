@@ -113,7 +113,7 @@ perform_quick_setup() {
     # Further note: the `nodejs` and `npm` dependencies
     # are only required for the setup of the LSP capabilities
     # of specific languages
-    printf "\nInstalling necessary dependencies...\n"
+    printf "\nInstalling necessary apt dependencies...\n"
     sudo apt-get update &&
     sudo apt-get install git -y
     sudo apt-get install curl -y
@@ -127,6 +127,9 @@ perform_quick_setup() {
     if [[ "$is_shellcheck_available" -eq 0 ]]; then
         sudo apt-get install shellcheck -y
     fi
+    printf "...done\n"
+
+    printf "\nInstalling nodejs and npm dependencies...\n"
     # Verify nodejs and npm presence on the current OS
     # so that custom config for these packages is not altered
     local is_nodejs_available="0"
