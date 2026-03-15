@@ -70,9 +70,14 @@ print_usage() {
     printf "%s" "$multiline_usage_txt"
 }
 
+## Optional argument: "warning" to display warnings and actions to the user
 install_plugins() {
-    printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
-    printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
+    if [[ "$1" == "warning" ]];
+    then
+        printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
+        printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
+    fi
+    source_changes
     $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall
 }
 
@@ -261,7 +266,7 @@ perform_quick_setup() {
     printf "\n--------------------\n"
 
     # Highlight post-action requests to the user
-    source_changes
+    source_changes "warning"
     install_plugins
 }
 
@@ -306,7 +311,7 @@ perform_cleanup() {
     printf "\n--------------------\n"
 
     # Highlight post-action requests to the user
-	source_changes
+	source_changes "warning"
 }
 
 # ---- MAIN ----

@@ -175,7 +175,7 @@ perform_install() {
     printf "\n--------------------\n"
 
     # Highlight post-action requests to the user
-    source_changes
+    source_changes "warning"
 }
 
 perform_uninstall() {
@@ -228,7 +228,7 @@ perform_uninstall() {
     printf "\n--------------------\n"
 
     # Highlight post-action requests to the user
-    source_changes
+    source_changes "warning"
 }
 
 # ---- MAIN ----

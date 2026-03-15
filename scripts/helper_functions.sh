@@ -74,12 +74,19 @@ DEFAULT_NVIM_EXECUTABLE="$DEFAULT_NVIM_BIN_FOLDER/nvim"
 
 # Highlight a need to source changes
 # after environment modifications
+## Optional argument: "warning" to display warnings and actions to the user
 source_changes() {
-    printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Refresh the state of the environment with the following command\n"
+    if [[ "$1" == "warning" ]];
+    then
+        printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Refresh the state of the environment with the following command\n"
+    fi
     check_os_specifications
     case "$OS_DETECTED" in
         linux)
-            printf "➤ source $DEFAULT_BASHRC_PATH\n"
+            if [[ "$1" == "warning" ]];
+            then
+                printf "➤ source $DEFAULT_BASHRC_PATH\n"
+            fi
             source "$DEFAULT_BASHRC_PATH" &> /dev/null
             ;;
         *)
