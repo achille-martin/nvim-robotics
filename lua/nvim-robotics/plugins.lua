@@ -128,7 +128,7 @@ require("nvim-treesitter.install").prefer_git = true
 -- # Configure the nvim-treesitter plugin
 -- # to improve syntax highlighting, indentation, folding,
 -- # management of text objects and enhance LSP capabilities
-require('nvim-treesitter.configs').setup({
+require('nvim-treesitter').setup({
     -- # Enable syntax highlighting
     highlight = { enable = true },
     -- # Enable indentation
