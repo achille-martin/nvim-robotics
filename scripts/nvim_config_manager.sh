@@ -180,7 +180,7 @@ perform_quick_setup() {
             # (and manually remove the nvm lines in your bashrc)
             local nvm_cmd=""
             local nvm_cmd_status=""
-            nvm_cmd="$(nvim install --lts)"
+            nvm_cmd="$(nvm install --lts)"
             nvm_cmd_status="$?"
             # Report any nvm error to the user
             if [[ "$nvm_cmd_status" -ne 0 ]];
