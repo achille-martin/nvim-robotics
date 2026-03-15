@@ -129,7 +129,7 @@ perform_quick_setup() {
     ## help with LSP server installation
     sudo apt-get install zip -y
     sudo apt-get install unzip -y
-    sudo apt-get install python3-venv
+    sudo apt-get install python3-venv -y
     # Verify shellcheck presence on the current OS
     local is_shellcheck_available="0"
     if [[ $(which shellcheck) ]]; then
