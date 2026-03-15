@@ -79,8 +79,8 @@ source_changes() {
     check_os_specifications
     case "$OS_DETECTED" in
         linux)
-            source "$DEFAULT_BASHRC_PATH"
             printf "➤ source $DEFAULT_BASHRC_PATH\n"
+            source "$DEFAULT_BASHRC_PATH"
             ;;
         *)
             printf "✗ Not applicable.\n"
