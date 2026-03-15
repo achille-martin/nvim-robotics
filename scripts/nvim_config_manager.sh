@@ -122,9 +122,14 @@ perform_quick_setup() {
     sudo apt-get update &&
     sudo apt-get install git -y
     sudo apt-get install curl -y
+    ## Note: the following apt dependencies
+    ## improve grep capabilities in neovim
     sudo apt-get install ripgrep -y
+    ## Note: the following apt dependencies
+    ## help with LSP server installation
     sudo apt-get install zip -y
     sudo apt-get install unzip -y
+    sudo apt-get install python3-venv
     # Verify shellcheck presence on the current OS
     local is_shellcheck_available="0"
     if [[ $(which shellcheck) ]]; then
