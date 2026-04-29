@@ -250,7 +250,7 @@ perform_quick_setup() {
             ## because rquickjs depends on it
             ## https://github.com/DelSkayn/rquickjs/issues/589
             local apt_cmd=""
-            apt_cmd="$(sudo apt install clang)"
+            apt_cmd="$(sudo apt install clang -y)"
         fi
     fi
     # Install tree-sitter-cli via Rust

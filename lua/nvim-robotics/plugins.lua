@@ -200,7 +200,7 @@ vim.treesitter.language.register('xml', 'xacro')
 vim.treesitter.language.register('xml', 'world')
 
 -- # Define key mappings for tree-sitter navigation
--- # By default, Neovim provides the following in VISUAL mode:
+-- # By default, Neovim (>= v0.12.0) provides the following in VISUAL mode:
 -- # * Previous node: `[n`
 -- # * Next node: `]n`
 -- # * Parent node: `an`
