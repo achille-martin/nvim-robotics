@@ -27,11 +27,15 @@ However, the repo can be used by anyone who wants to discover the Neovim editor 
 <a id="quick-config-setup"></a>
 ### 2.1. Quick configuration setup
 
-First of all, make sure that Neovim is operational on your machine by typing `nvim` in a terminal. If it is not functional, refer to [Neovim setup](docs/neovim_setup.md).
+First of all, make sure that Neovim is operational on your machine by typing the following command in a terminal:
 
-**Note: rest assured that, if you have already created a personal configuration for Neovim, the following quick configuration setup will not affect it.**
+```bash
+nvim --version
+```
 
-Once Neovim is operational, apply the quick-setup configuration using the [configuration manager](scripts/nvim_config_manager.sh), via the following command:
+If Neovim is not functional, or if your Neovim version is lower than `v0.12.0`, refer to [Neovim setup](docs/neovim_setup.md) to unlock all functionalities of Neovim.
+
+Once Neovim is operational, apply the quick-setup configuration (which will not interfere with your existing Neovim configuration), via the following command:
 
 ```bash
 sudo apt-get install curl -y &&
@@ -47,7 +51,9 @@ You can now launch Neovim with the repo configuration by using the default alias
 ```bash
 # Primary alias
 nvim-robotics
+```
 
+```bash
 # Secondary alias
 neo
 ```
