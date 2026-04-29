@@ -130,6 +130,18 @@ perform_quick_setup() {
     sudo apt-get install zip -y
     sudo apt-get install unzip -y
     sudo apt-get install python3-venv -y
+    ## Note: the following apt dependencies
+    ## are required by nvim-treesitter
+    sudo apt-get install tar -y
+    # Verify gcc presence on the current OS
+    local is_gcc_available="0"
+    if [[ $(which gcc) ]]; then
+        is_gcc_available="1"
+    fi
+    # Install gcc (if not already available) for nvim-treesitter
+    if [[ "$is_gcc_available" -eq 0 ]]; then
+        sudo apt-get install build-essential -y
+    fi
     # Verify shellcheck presence on the current OS
     local is_shellcheck_available="0"
     if [[ $(which shellcheck) ]]; then
@@ -204,6 +216,53 @@ perform_quick_setup() {
                 printf "in this neovim config.\n"
             fi
         fi
+    fi
+    printf "...done\n"
+
+    printf "\nInstalling additional nvim-treesitter dependencies via Rust...\n"
+    # Verify Rust presence on the current OS
+    # so that custom config is not altered
+    local is_rust_available="0"
+    if [[ $(which rustc) ]]; then
+        is_rust_available="1"
+    fi
+    if [[ "$is_rust_available" -eq 1 ]]; then
+        printf "INFO: Rust seems to be installed.\n"
+        printf "Make sure that a recent version has been installed\n"
+        printf "to benefit from the latest features of the neovim config.\n"
+    else
+        local curl_cmd=""
+        local curl_cmd_status=""
+        curl_cmd="$(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y)"
+        curl_cmd_status="$?"
+        # Report any curl error to the user
+        if [[ "$curl_cmd_status" -ne 0 ]];
+        then
+            printf "WARNING: Cannot install Rust.\n"
+            printf "Therefore, some functionalities might not be available\n"
+            printf "in this neovim config.\n"
+        else
+            local src_cmd=""
+            src_cmd="$(source $HOME/.cargo/env)"
+            source_changes
+
+            ## NOTE: this dependency installation fixes a bug
+            ## because rquickjs depends on it
+            ## https://github.com/DelSkayn/rquickjs/issues/589
+            local apt_cmd=""
+            apt_cmd="$(sudo apt install clang)"
+        fi
+    fi
+    # Install tree-sitter-cli via Rust
+    local cargo_cmd=""
+    local cargo_cmd_status=""
+    cargo_cmd="$(cargo install --locked tree-sitter-cli)"
+    cargo_cmd_status="$?"
+    # Report any cargo error to the user
+    if [[ "$cargo_cmd_status" -ne 0 ]]; then
+        printf "WARNING: Cannot install tree-sitter-cli.\n"
+        printf "Therefore, some functionalities might not be available\n"
+        printf "in this neovim config.\n"
     fi
     printf "...done\n"
 
