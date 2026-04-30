@@ -66,6 +66,7 @@ local plugs_install_path = table.concat{
     vim.g.custom_nvim_config_name,
     "/autoload/plugs",
 }
+
 local Plug = vim.fn['plug#']
 
 local tree_sitter_parsers = {
@@ -112,6 +113,13 @@ local tree_sitter_parsers = {
     "yaml",
 }
 
+local mason_install_path = table.concat{
+    vim.env.HOME,
+    "/.config/",
+    vim.g.custom_nvim_config_name,
+    "/autoload/mason",
+}
+
 local mason_lsp_servers = {
     "arduino_language_server",
     "bashls",
@@ -134,6 +142,7 @@ local mason_lsp_servers = {
 
 -- # Automatically install missing plugins on startup
 -- # (extracted from: https://github.com/junegunn/vim-plug/wiki/extra)
+
 vim.cmd(
     [[
         autocmd VimEnter *
@@ -153,7 +162,8 @@ vim.call('plug#begin', plugs_install_path)
     -- # when the nvim-treesitter plugin is upgraded
     Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
         -- # Indicate plugins depending on nvim-treesitter via indentation
-        Plug('nvim-treesitter/nvim-treesitter-textobjects')
+        -- # and specify branch `main` where relevant
+        Plug('nvim-treesitter/nvim-treesitter-textobjects', { ['branch'] = 'main' })
         Plug('nvim-treesitter/nvim-treesitter-context')
 
     -- # Update all managed registries
@@ -220,60 +230,113 @@ vim.treesitter.language.register('xml', 'xacro')
 vim.treesitter.language.register('xml', 'world')
 
 -- # Define key mappings for tree-sitter navigation
--- # By default, Neovim (>= min version) provides the following in VISUAL mode:
+-- # By default, Neovim (>= min recommended version) provides the following keymaps:
 -- # * Previous node: `[n`
 -- # * Next node: `]n`
 -- # * Parent node: `an`
 -- # * Child node: `in`
 -- #
--- # The updated commands are, in VISUAL mode:
+-- # The updated commands are, in VISUAL mode (also applicable in OPERATOR-PENDING mode):
 -- # * Parent node: `v`
 -- # * Child node: `<backspace>`
 vim.api.nvim_set_keymap(
-    "v",
+    "x",
     "v",
     "an",
     { noremap=false, silent=true }
 )
 vim.api.nvim_set_keymap(
+    "o",
     "v",
+    "an",
+    { noremap=false, silent=true }
+)
+vim.api.nvim_set_keymap(
+    "x",
+    "<BS>",
+    "in",
+    { noremap=false, silent=true }
+)
+vim.api.nvim_set_keymap(
+    "o",
     "<BS>",
     "in",
     { noremap=false, silent=true }
 )
 
 -- # Configure tree-sitter text objects
--- # TODO: fix text objects with main branch
--- require("nvim-treesitter-textobjects").setup({
---     select = {
---         enable = true,
---         keymaps = {
---             -- # Outer part selection with "a = a-out"
---             -- # Inner part selection with "i = in"
---             -- # Ensuring that keymaps are not prone
---             -- # to mistakes within the VISUAL mode
---
---             -- # Block selection (within brackets)
---             -- # already handled via incremental selection
---
---             -- # Conditional selection ("i" like "if")
---             ["ai"] = "@conditional.outer",
---             ["ii"] = "@conditional.inner",
---             -- # Loop selection
---             ["al"] = "@loop.outer",
---             ["il"] = "@loop.inner",
---             -- # Function selection
---             ["af"] = "@function.outer",
---             ["if"] = "@function.inner",
---             -- # Class selection
---             ["ac"] = "@class.outer",
---             ["ic"] = "@class.inner",
---             -- # Comment selection
---             ["a\""] = "@comment.outer",
---             ["i\""] = "@comment.inner",
---         },
---     },
--- })
+require("nvim-treesitter-textobjects").setup({
+    select = {
+        -- Automatically jump forward to textobject
+        lookahead = true,
+    },
+})
+
+-- # Define key mappings for tree sitter textobjects
+-- #
+-- # Outer part selection with "a = a-out"
+-- # Inner part selection with "i = in"
+-- # Ensuring that keymaps are not prone
+-- # to mistakes within the VISUAL and OPERATOR-PENDING modes
+-- #
+-- # NOTE: Block selection (within brackets or entities)
+-- # is handled via incremental selection
+
+-- # Conditional selection ("i" like "if")
+vim.keymap.set({ "x", "o" }, "ai",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@conditional.outer", "textobjects")
+    end
+)
+vim.keymap.set({ "x", "o" }, "ii",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@conditional.inner", "textobjects")
+    end
+)
+-- # Loop selection (like while and for)
+vim.keymap.set({ "x", "o" }, "al",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@loop.outer", "textobjects")
+    end
+)
+vim.keymap.set({ "x", "o" }, "il",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@loop.inner", "textobjects")
+    end
+)
+-- # Function selection
+vim.keymap.set({ "x", "o" }, "af",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@function.outer", "textobjects")
+    end
+)
+vim.keymap.set({ "x", "o" }, "if",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@function.inner", "textobjects")
+    end
+)
+-- # Class selection
+vim.keymap.set({ "x", "o" }, "ac",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@class.outer", "textobjects")
+    end
+)
+vim.keymap.set({ "x", "o" }, "ic",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@class.inner", "textobjects")
+    end
+)
+-- # Comment selection (similar keymap as commenting out action)
+vim.keymap.set({ "x", "o" }, "a\"",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@comment.outer", "textobjects")
+    end
+)
+vim.keymap.set({ "x", "o" }, "i\"",
+    function()
+        require "nvim-treesitter-textobjects.select".select_textobject("@comment.inner", "textobjects")
+    end
+)
 
 -- # Ensure that nvim-treesitter is configured properly
 -- # for highlighting and indenting
@@ -304,12 +367,6 @@ vim.cmd(
 
 -- # Adjust the configuration of mason plugin
 -- # to be consistent with the other plugins
-local mason_install_path = table.concat{
-    vim.env.HOME,
-    "/.config/",
-    vim.g.custom_nvim_config_name,
-    "/autoload/mason",
-}
 require("mason").setup({
     install_root_dir = mason_install_path,
 })
