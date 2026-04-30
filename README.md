@@ -11,12 +11,14 @@ Neovim configuration. Optimised for Robotics Engineers.
 
 The main motivations of Neovim are:
 * Retain the character and philosophy of [Vim](https://github.com/vim/vim) editor: speed, versatility, minimalism.
-* Encourage new cross-platform applications while focusing on modularity (thanks to native [Lua](https://www.lua.org/about.html) support for plugin development)
-* Promote contributions from new and seasoned authors
+* Encourage new cross-platform applications while focusing on modularity (thanks to native [Lua](https://www.lua.org/about.html) support for plugin development).
+* Promote contributions from new and seasoned authors by making the editor accessible.
 
-Neovim is a continuation and extension of the Vim editor, which is an "improved" version of the [Vi](https://man7.org/linux/man-pages/man1/vi.1p.html) editor, which itself is an accessible and ubiquitous character-based screen editor without a Graphical User Interface.
+_Neovim is a continuation and extension of the Vim editor. Vim is an "improved" version of the [Vi](https://man7.org/linux/man-pages/man1/vi.1p.html) editor. Vi is an accessible and ubiquitous character-based screen editor without a Graphical User Interface._
 
 ### 1.2. Is it only for Robotics Engineers?
+
+No...
 
 The [nvim-robotics](https://github.com/achille-martin/nvim-robotics) repo provides an optimised configuration of Neovim for Robotics Engineers, based on the following [requirements](docs/requirements.md).
 
@@ -33,9 +35,9 @@ First of all, make sure that Neovim is operational on your machine by typing the
 nvim --version
 ```
 
-If Neovim is not functional, or if your Neovim version is lower than `v0.12.0`, refer to [Neovim setup](docs/neovim_setup.md) to unlock all functionalities of Neovim.
+:warning: If Neovim is not functional, or if your Neovim version is lower than `v0.12.0`, refer to [Neovim setup](docs/neovim_setup.md) to unlock all functionalities of Neovim.
 
-Once Neovim is operational, apply the quick-setup configuration (which will not interfere with your existing Neovim configuration), via the following command:
+Once Neovim is operational, apply the quick-setup configuration (**which will not interfere with your existing Neovim configuration**), via the following command:
 
 ```bash
 sudo apt-get install curl -y &&
@@ -60,26 +62,7 @@ neo
 
 ### 2.2. Custom configuration setup
 
-If you wish to craft your own configuration, while using [nvim-robotics](https://github.com/achille-martin/nvim-robotics) as a base:
-* Fork the [nvim-robotics](https://github.com/achille-martin/nvim-robotics) repo
-* Make sure that Neovim is operational on your machine, as detailed in the [quick configuration setup](README.md#quick-config-setup)
-* Download the [configuration manager](scripts/nvim_config_manager.sh) along with the [helper functions](scripts/helper_functions.sh) and then run the following command from the folder containing the script:
-
-```bash
-bash nvim_config_manager.sh quick-setup <your_config_name>
-```
-
-You can now launch Neovim with the forked repo configuration by using the alias you have defined above:
-
-```bash
-<your_config_name>
-```
-
-You can also launch Neovim with the forked repo configuration by using a practical alias set:
-
-```bash
-neo
-```
+If you wish to craft your own Neovim configuration, refer to [custom configuration setup](docs/custom_configuration_setup.md).
 
 ## 3. Support
 
