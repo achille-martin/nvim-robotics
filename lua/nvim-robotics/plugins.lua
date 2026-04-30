@@ -281,6 +281,7 @@ require("nvim-treesitter-textobjects").setup({
 -- #
 -- # NOTE: Block selection (within brackets or entities)
 -- # is handled via incremental selection
+-- # and with "a<bracket>" and "i<bracket>"
 
 -- # Conditional selection ("i" like "if")
 vim.keymap.set({ "x", "o" }, "ai",
