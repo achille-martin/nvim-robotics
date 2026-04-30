@@ -68,6 +68,68 @@ local plugs_install_path = table.concat{
 }
 local Plug = vim.fn['plug#']
 
+local tree_sitter_parsers = {
+    "arduino",
+    "bash",
+    "c",
+    "cmake",
+    "comment",
+    "cpp",
+    "css",
+    "csv",
+    "diff",
+    "dockerfile",
+    "doxygen",
+    "git_config",
+    "git_rebase",
+    "gitattributes",
+    "gitcommit",
+    "gitignore",
+    "gpg",
+    "html",
+    "http",
+    "json",
+    "lua",
+    "luap",
+    "make",
+    "markdown",
+    "markdown_inline",
+    "matlab",
+    "printf",
+    "proto",
+    "python",
+    "pymanifest",
+    "readline",
+    "regex",
+    "requirements",
+    "sql",
+    "ssh_config",
+    "tmux",
+    "toml",
+    "vim",
+    "vimdoc",
+    "xml",
+    "yaml",
+}
+
+local mason_lsp_servers = {
+    "arduino_language_server",
+    "bashls",
+    "clangd",
+    "cmake",
+    "cssls",
+    "docker_language_server",
+    "html",
+    "jsonls",
+    "lemminx",
+    "lua_ls",
+    "marksman",
+    "matlab_ls",
+    "pyright",
+    "vimls",
+    "yamlls",
+}
+
 -- HANDY ROUTINES
 
 -- # Automatically install missing plugins on startup
@@ -134,49 +196,7 @@ require("nvim-treesitter.install").prefer_git = true
 require('nvim-treesitter').setup({})
 
 -- # Install tree-sitter parsers and queries
-require('nvim-treesitter').install({
-    "arduino",
-    "bash",
-    "c",
-    "cmake",
-    "comment",
-    "cpp",
-    "css",
-    "csv",
-    "diff",
-    "dockerfile",
-    "doxygen",
-    "git_config",
-    "git_rebase",
-    "gitattributes",
-    "gitcommit",
-    "gitignore",
-    "gpg",
-    "html",
-    "http",
-    "json",
-    "lua",
-    "luap",
-    "make",
-    "markdown",
-    "markdown_inline",
-    "matlab",
-    "printf",
-    "proto",
-    "python",
-    "pymanifest",
-    "readline",
-    "regex",
-    "requirements",
-    "sql",
-    "ssh_config",
-    "tmux",
-    "toml",
-    "vim",
-    "vimdoc",
-    "xml",
-    "yaml",
-})
+require('nvim-treesitter').install(tree_sitter_parsers)
 
 -- # Specify similar parsers to file types not currently supported:
 -- # * .launch files (used in ROS)
@@ -259,53 +279,8 @@ vim.api.nvim_set_keymap(
 -- # for highlighting and indenting
 -- # via the FileType autocommand
 -- # NOTE: folding is commented out because hard to manipulate
--- #
--- # TODO: replace the pattern list/dictionary with a variable
--- # so that it can be re-used in other places of the config
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = {
-        "arduino",
-        "bash",
-        "c",
-        "cmake",
-        "comment",
-        "cpp",
-        "css",
-        "csv",
-        "diff",
-        "dockerfile",
-        "doxygen",
-        "git_config",
-        "git_rebase",
-        "gitattributes",
-        "gitcommit",
-        "gitignore",
-        "gpg",
-        "html",
-        "http",
-        "json",
-        "lua",
-        "luap",
-        "make",
-        "markdown",
-        "markdown_inline",
-        "matlab",
-        "printf",
-        "proto",
-        "python",
-        "pymanifest",
-        "readline",
-        "regex",
-        "requirements",
-        "sql",
-        "ssh_config",
-        "tmux",
-        "toml",
-        "vim",
-        "vimdoc",
-        "xml",
-        "yaml",
-    },
+    pattern = tree_sitter_parsers,
     callback = function()
         -- vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
         -- vim.wo[0][0].foldmethod = 'expr'
@@ -343,23 +318,7 @@ require("mason").setup({
 -- # Note: the list of available LSP servers can be found via nvim-lspconfig:
 -- # https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 require("mason-lspconfig").setup({
-    ensure_installed = {
-        "arduino_language_server",
-        "bashls",
-        "clangd",
-        "cmake",
-        "cssls",
-        "docker_language_server",
-        "html",
-        "jsonls",
-        "lemminx",
-        "lua_ls",
-        "marksman",
-        "matlab_ls",
-        "pyright",
-        "vimls",
-        "yamlls",
-    },
+    ensure_installed = mason_lsp_servers,
 })
 
 -- # Enable specific LSP servers with default config via nvim-lspconfig
