@@ -399,11 +399,6 @@ vim.lsp.config["lua_ls"] = {
 vim.lsp.config["lemminx"] = {
     filetypes = {
         'xml',
-        'launch',
-        'sdf',
-        'urdf',
-        'xacro',
-        'world',
     },
 }
 
