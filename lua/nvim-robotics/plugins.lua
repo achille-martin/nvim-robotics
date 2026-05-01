@@ -216,18 +216,13 @@ require('nvim-treesitter').install(tree_sitter_parsers)
 -- # * .world files (used in Gazebo)
 vim.filetype.add({
     extension = {
-        launch = "launch",
-        sdf = "sdf",
-        urdf = "urdf",
-        xacro = "xacro",
-        world = "world",
+        launch = "xml",
+        sdf = "xml",
+        urdf = "xml",
+        xacro = "xml",
+        world = "xml",
     }
 })
-vim.treesitter.language.register('xml', 'launch')
-vim.treesitter.language.register('xml', 'sdf')
-vim.treesitter.language.register('xml', 'urdf')
-vim.treesitter.language.register('xml', 'xacro')
-vim.treesitter.language.register('xml', 'world')
 
 -- # Define key mappings for tree-sitter navigation
 -- # By default, Neovim (>= min recommended version) provides the following keymaps:
