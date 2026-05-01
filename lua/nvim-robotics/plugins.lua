@@ -402,6 +402,13 @@ vim.lsp.config["lemminx"] = {
     },
 }
 
+-- # Define the border style for diagnostics floating windows
+vim.diagnostic.config{
+    float = {
+        border = "rounded",
+    }
+}
+
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
 
