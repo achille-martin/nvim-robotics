@@ -13,7 +13,7 @@ chmod +x "/tmp/nvim-robotics/helper_functions.sh" &&
 "/tmp/nvim-robotics/nvim_installer.sh" install
 ```
 
-You can confirm that Neovim has been properly installed by running `nvim` in a terminal.
+You can confirm that Neovim has been properly installed by running `nvim --version` in a terminal.
 
 ## Troubleshooting
 
