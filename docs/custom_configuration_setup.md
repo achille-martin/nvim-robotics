@@ -13,7 +13,7 @@ chmod +x "/tmp/nvim-robotics/nvim_config_manager.sh" &&
 chmod +x "/tmp/nvim-robotics/helper_functions.sh"
 ```
 
-* Run the following command to generate your custom configuration (replacing the config name with your desired config name):
+* Run the following command to generate your custom configuration (replacing the placeholder for config name with your desired config name):
 
 ```bash
 "/tmp/nvim-robotics/nvim_config_manager.sh" quick-setup <your_config_name>
