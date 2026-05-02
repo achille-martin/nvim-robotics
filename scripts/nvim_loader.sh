@@ -43,8 +43,8 @@
 # WARNING: the external sources need to be located in the same folder
 # as this script
 # (or in the case of a symlink, in the same folder as the target)
-bash_source_symlink=$(readlink -f $BASH_SOURCE)
-if [[ $bash_source_symlink == */* ]]
+bash_source_symlink="$(readlink -f "$BASH_SOURCE")"
+if [[ "$bash_source_symlink" == */* ]]
 then
     cd -- "${bash_source_symlink%/*}/"
 fi
@@ -88,13 +88,13 @@ print_usage() {
 }
 
 check_arguments() {
-    while [[ $# -gt 0 ]]
+    while [[ "$#" -gt 0 ]]
     do
-        case $1 in
+        case "$1" in
             --custom-config)
                 if [[ "$IS_NVIM_ARG_DETECTED" == "false" ]]
                 then
-                    if [[ -n $2 && $2 != -* ]]
+                    if [[ -n "$2" && "$2" != -* ]]
                     then
                         CUSTOM_CONFIG_NAME="$2"
                         shift 2
@@ -111,7 +111,7 @@ check_arguments() {
                 ;;
             *)
                 IS_NVIM_ARG_DETECTED=true
-                NVIM_ARGS_ARRAY+=( $1 )
+                NVIM_ARGS_ARRAY+=( "$1" )
                 shift 1
                 ;;
         esac

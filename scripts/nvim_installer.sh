@@ -27,7 +27,7 @@
 
 # WARNING: the external sources need to be located in the same folder
 # as this script
-if [[ $BASH_SOURCE == */* ]]; then
+if [[ "$BASH_SOURCE" == */* ]]; then
     cd -- "${BASH_SOURCE%/*}/"
 fi
 source helper_functions.sh
@@ -86,7 +86,7 @@ perform_install() {
             then
                 mkdir -p "$DEFAULT_DOWNLOADS_FOLDER"
             fi
-            cd $DEFAULT_DOWNLOADS_FOLDER
+            cd "$DEFAULT_DOWNLOADS_FOLDER"
             printf "...done\n"
 
             case "$OS_DISTRIBUTION_DETECTED" in
@@ -132,7 +132,7 @@ perform_install() {
                             printf "...done\n"
 
                             printf "\nAdding neovim path to bashrc (if not there already)...\n"
-                            local bashrc_content=$(sed '' "$DEFAULT_BASHRC_PATH")
+                            local bashrc_content="$(sed '' "$DEFAULT_BASHRC_PATH")"
                             local source_neovim_cmd_txt='export PATH="$PATH:/opt/nvim/bin"'
                             if [[ ! "$bashrc_content" =~ "$source_neovim_cmd_txt" ]];
                             then

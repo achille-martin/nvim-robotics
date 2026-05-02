@@ -141,7 +141,7 @@ check_os_specifications() {
             then
                 OS_DISTRIBUTION_DETECTED="ubuntu"
                 OS_DISTRIBUTION_RELEASE_DETECTED="$(lsb_release -rs)"
-                OS_DISTRIBUTION_MAJOR_RELEASE_DETECTED="$(echo $OS_DISTRIBUTION_RELEASE_DETECTED | cut -d '.' -f 1)"
+                OS_DISTRIBUTION_MAJOR_RELEASE_DETECTED="$(echo "$OS_DISTRIBUTION_RELEASE_DETECTED" | cut -d '.' -f 1)"
                 local architecture_detected="$(uname -i)"
                 if [[ "$architecture_detected" =~ x86_64 ]];
                 then
@@ -215,7 +215,7 @@ refresh_latest_nvim_version() {
 # Search and refresh the latest state of neovim presence on current OS
 # accessible via `IS_NVIM_AVAILABLE`
 refresh_nvim_presence() {
-    if [[ $(which nvim) ]]
+    if [[ "$(which nvim)" ]]
     then
         IS_NVIM_AVAILABLE=true
     else

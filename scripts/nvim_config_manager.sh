@@ -27,7 +27,7 @@
 
 # WARNING: the external sources need to be located in the same folder
 # as this script
-if [[ $BASH_SOURCE == */* ]]; then
+if [[ "$BASH_SOURCE" == */* ]]; then
     cd -- "${BASH_SOURCE%/*}/"
 fi
 source helper_functions.sh
@@ -135,7 +135,7 @@ perform_quick_setup() {
     sudo apt-get install tar -y
     # Verify gcc presence on the current OS
     local is_gcc_available="0"
-    if [[ $(which gcc) ]]; then
+    if [[ "$(which gcc)" ]]; then
         is_gcc_available="1"
     fi
     # Install gcc (if not already available) for nvim-treesitter
@@ -144,7 +144,7 @@ perform_quick_setup() {
     fi
     # Verify shellcheck presence on the current OS
     local is_shellcheck_available="0"
-    if [[ $(which shellcheck) ]]; then
+    if [[ "$(which shellcheck)" ]]; then
         is_shellcheck_available="1"
     fi
     # Install shellcheck (if not already available) to improve LSP capabilities
@@ -158,10 +158,10 @@ perform_quick_setup() {
     # so that custom config for these packages is not altered
     local is_nodejs_available="0"
     local is_npm_available="0"
-    if [[ $(which node) ]]; then
+    if [[ "$(which node)" ]]; then
         is_nodejs_available="1"
     fi
-    if [[ $(which npm) ]]; then
+    if [[ "$(which npm)" ]]; then
         is_npm_available="1"
     fi
     # Install nodejs and npm via the node version manager
@@ -223,7 +223,7 @@ perform_quick_setup() {
     # Verify Rust presence on the current OS
     # so that custom config is not altered
     local is_rust_available="0"
-    if [[ $(which rustc) ]]; then
+    if [[ "$(which rustc)" ]]; then
         is_rust_available="1"
     fi
     if [[ "$is_rust_available" -eq 1 ]]; then
@@ -243,7 +243,7 @@ perform_quick_setup() {
             printf "in this neovim config.\n"
         else
             local src_cmd=""
-            src_cmd="$(source $HOME/.cargo/env)"
+            src_cmd="$(source "$HOME/.cargo/env")"
             source_changes
 
             ## NOTE: this dependency installation fixes a bug
@@ -272,17 +272,17 @@ perform_quick_setup() {
     local ssh_cmd=""
     local ssh_cmd_status=""
     local git_clone_cmd_status=""
-    ssh_cmd="$(ssh -T git@github.com &>/dev/null)"
+    ssh_cmd="$(ssh -T "git@github.com" &> "/dev/null")"
     ssh_cmd_status="$?"
     # Note: according to Github docs, the exit status
     # of the ssh user verification command is usually 1
     # if it was successful
     if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
     then
-        git clone git@github.com:achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
+        git clone "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?"
     else
-        git clone https://github.com/achille-martin/${GIT_REPO_NAME}.git "$CONFIG_FOLDER/$CONFIG_NAME"
+        git clone "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?";
     fi
     # Report any git error to the user
@@ -301,7 +301,7 @@ perform_quick_setup() {
     # Create the alias for the nvim robotics config (making sure it does not exist already)
     # and create a practical alias for the launch of the custom nvim robotics config
     printf "\nCreating the alias for the configuration...\n"
-    if [[ ! ${BASH_ALIASES[$ALIAS]} ]];
+    if [[ ! "${BASH_ALIASES[$ALIAS]}" ]];
     then
         printf "alias $ALIAS=\"$CONFIG_FOLDER/$DEFAULT_LOADER_SCRIPT_NAME --custom-config '$ALIAS'\"\n" >> "$DEFAULT_BASH_ALIASES_PATH"
         printf "alias $SHORT_ALIAS=\"$ALIAS\"" >> "$DEFAULT_BASH_ALIASES_PATH"
