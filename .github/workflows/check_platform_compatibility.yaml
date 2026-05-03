@@ -18,14 +18,15 @@ on:
 # that can run sequentially or in parallel
 jobs:
   # Job aimed at building the code
-  build:
+  build_hello:
     # The type of runner that the job runs on
     runs-on: ubuntu-22.04
     # Sequence of tasks executed as part of the job
     steps:
       # Checks out the repository under $GITHUB_WORKSPACE
       # so that the job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       # Runs a single command example using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
