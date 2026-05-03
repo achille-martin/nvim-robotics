@@ -266,6 +266,44 @@ perform_quick_setup() {
     fi
     printf "...done\n"
 
+    printf "\nInstalling fzf dependency...\n"
+    # Verify fzf presence on the current OS
+    # so that custom config is not altered
+    local is_fzf_available="0"
+    if [[ "$(which fzf)" ]]; then
+        is_fzf_available="1"
+    fi
+    if [[ "$is_fzf_available" -eq 1 ]]; then
+        printf "INFO: fzf seems to be installed.\n"
+        printf "Make sure that a recent version has been installed\n"
+        printf "to benefit from the latest features of the neovim config.\n"
+    else
+        local FZF_FOLDER="$HOME/.fzf"
+        local git_cmd=""
+        local git_cmd_status=""
+        if [[ ! -d "$FZF_FOLDER" ]]; then
+            git_cmd="$(git clone --depth 1 "https://github.com/junegunn/fzf.git" "$FZF_FOLDER" &&
+                "$FZF_FOLDER/install" --key-bindings --completion --update-rc)"
+            git_cmd_status="$?"
+            # Report any git error to the user
+            if [[ "$git_cmd_status" -ne 0 ]]; then
+                printf "WARNING: Cannot install fzf.\n"
+                printf "Therefore, some functionalities might not be available\n"
+                printf "in this neovim config.\n"
+            fi
+        else
+            git_cmd="$(cd "$FZF_FOLDER" && git pull && ./install --key-bindings --completion --update-rc)"
+            git_cmd_status="$?"
+            # Report any git error to the user
+            if [[ "$git_cmd_status" -ne 0 ]]; then
+                printf "WARNING: Cannot install or update fzf.\n"
+                printf "Therefore, some functionalities might not be available\n"
+                printf "in this neovim config.\n"
+            fi
+        fi
+    fi
+    printf "...done\n"
+
     # Store the configuration in a specific folder for nvim to find it
     # depending on the availability of SSH
     printf "\nDownloading configuration at specific location...\n"
