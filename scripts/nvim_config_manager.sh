@@ -35,6 +35,7 @@ source helper_functions.sh
 # ---- HANDY VARIABLES ----
 
 GIT_REPO_NAME="$DEFAULT_CUSTOM_CONFIG_NAME"
+TARGET_GIT_REPO_BRANCH="main"
 
 CONFIG_FOLDER="$DEFAULT_CONFIG_FOLDER"
 
@@ -54,7 +55,7 @@ print_usage() {
     Purpose: Manage the neovim configuration operations
 
     CMD:
-        quick-setup [CONFIG-NAME]     Setup the \`$DEFAULT_CUSTOM_CONFIG_NAME\` configuration
+        quick-setup [CONFIG-NAME]     Setup the \`$GIT_REPO_NAME\` configuration
                                       as it is provided in the repo
                                       Optional argument: CONFIG-NAME
                                       (default = \`$DEFAULT_CONFIG_NAME\`)
@@ -63,6 +64,10 @@ print_usage() {
                                       Optional argument: CONFIG-NAME
                                       If opt arg provided, only cleans up
                                       the configuration related to CONFIG-NAME
+
+        --branch, -b BRANCH-NAME      Specify the target branch or tag
+                                      to use for \`$GIT_REPO_NAME\`
+                                      By default, the branch used is \`main\`
 
         --help, -h                    Show this help
     "
@@ -317,10 +322,10 @@ perform_quick_setup() {
     # if it was successful
     if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
     then
-        git clone "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
+        git clone -b "$TARGET_GIT_REPO_BRANCH" "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?"
     else
-        git clone "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
+        git clone -b "$TARGET_GIT_REPO_BRANCH" "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
         git_clone_cmd_status="$?";
     fi
     # Report any git error to the user
@@ -445,6 +450,17 @@ case "$1" in
 
     cleanup)
         perform_cleanup "$2"
+        ;;
+
+    --branch|-b)
+        if [[ -n "$2" ]];
+        then
+            TARGET_GIT_REPO_BRANCH="$2"
+        else
+            printf "ERROR: the flag \`--branch|-b\` requires one argument"
+            print_usage
+            exit 1
+        fi
         ;;
 
     *)
