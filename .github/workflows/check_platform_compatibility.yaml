@@ -19,15 +19,27 @@ on:
 # that can run sequentially or in parallel
 jobs:
   # Job aimed at building the code
-  build_hello:
+  build:
     # The type of runner that the job runs on
     runs-on: ubuntu-22.04
     # Sequence of tasks executed as part of the job
     steps:
-      # Checks out the repository under $GITHUB_WORKSPACE
+      # Ensure that the OS/distribution is updated
+      - name: Ensure OS updated
+        run: sudo apt-get update -y && sudo apt-get upgrade -y
+      # Check out the repository under $GITHUB_WORKSPACE
       # so that the job can access it
       - name: Checkout code
         uses: actions/checkout@v4
-      # Runs a single command example using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      # Ensure that the scripts are executable
+      # to enable full inter-operability
+      - name: Make scripts executable
+        run: chmod +x "./scripts/helper_functions.sh" &&
+             chmod +x "./scripts/nvim_installer.sh" &&
+             chmod +x "./scripts/nvim_config_manager.sh"
+      # Install Neovim via the dedicated bash script
+      - name: Install Neovim
+        run: ./scripts/nvim_installer.sh install
+      # Check Neovim installation by printing out the version
+      - name: Check Neovim installation
+        run: nvim --version
