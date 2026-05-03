@@ -1,0 +1,31 @@
+# Optional identifier for the workflow
+# that appears in the Github Actions tab
+name: check_platform_compability
+
+# Events that trigger the workflow
+on:
+  # Triggers the workflow on push to the "main" branch
+  push:
+    branches:
+      - "main"
+  # Triggers the workflow on specific actions tied to a pull request
+  # For instance, when a pull request is opened or ready for review
+  pull_request:
+  # Triggers the workflow when manually commanded from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs
+# that can run sequentially or in parallel
+jobs:
+  # Job aimed at building the code
+  build:
+    # The type of runner that the job runs on
+    runs-on: ubuntu-22.04
+    # Sequence of tasks executed as part of the job
+    steps:
+      # Checks out the repository under $GITHUB_WORKSPACE
+      # so that the job can access it
+      - uses: actions/checkout@v4
+      # Runs a single command example using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
