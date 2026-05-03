@@ -40,6 +40,9 @@ jobs:
       # Install Neovim via the dedicated bash script
       - name: Install Neovim
         run: ./scripts/nvim_installer.sh install
+      # Refresh the state of the environment post Neovim installation
+      - name: Refresh env state
+        run: source ~/.bashrc
       # Check Neovim installation by printing out the version
       - name: Check Neovim installation
         run: nvim --version
