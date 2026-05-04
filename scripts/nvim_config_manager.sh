@@ -315,7 +315,9 @@ perform_quick_setup() {
     local ssh_cmd=""
     local ssh_cmd_status=""
     local git_clone_cmd_status=""
-    ssh_cmd="$(ssh -T "git@github.com" &> "/dev/null")"
+    # Note: ensure strict host key checking with SSH
+    # in case the channel is not properly set up
+    ssh_cmd="$(ssh -o StrictHostKeyChecking=yes -T "git@github.com" &> "/dev/null")"
     ssh_cmd_status="$?"
     # Note: according to Github docs, the exit status
     # of the ssh user verification command is usually 1
