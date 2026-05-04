@@ -200,7 +200,7 @@ refresh_latest_nvim_version() {
     sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
-    curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | sed -n 1p | sed 's/"//g')"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
@@ -231,7 +231,7 @@ check_nvim_version() {
     refresh_nvim_presence
     if [[ "$IS_NVIM_AVAILABLE" == "true" ]];
     then
-        current_nvim_version="$(nvim --version | head -1 | grep -o 'v.*$')"
+        current_nvim_version="$(nvim --version | sed -n 1p | grep -o 'v.*$')"
     else
         printf "ERROR: no neovim version has been detected.\n"
         printf "Make sure to install neovim first.\n"
@@ -277,7 +277,7 @@ refresh_latest_nvm_version() {
     sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
-    curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | sed -n 1p | sed 's/"//g')"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
