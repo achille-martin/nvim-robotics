@@ -52,6 +52,7 @@ DEFAULT_CUSTOM_CONFIG_NAME="nvim-robotics"
 DEFAULT_SHORT_ALIAS="neo"
 DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh"
 DEFAULT_INSTALLER_UTILITY_NAME="nvim_installer.sh"
+DEFAULT_TARGET_GIT_REPO_BRANCH="main"
 
 # Version management
 NVIM_MIN_STABLE_VERSION="v0.11.0"
@@ -87,7 +88,7 @@ source_changes() {
             then
                 printf "➤ source $DEFAULT_BASHRC_PATH\n"
             fi
-            source "$DEFAULT_BASHRC_PATH" &> /dev/null
+            source "$DEFAULT_BASHRC_PATH" &> "/dev/null"
             ;;
         *)
             printf "✗ Not applicable.\n"
