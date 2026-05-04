@@ -15,6 +15,13 @@ on:
   # Triggers the workflow when manually commanded from the Actions tab
   workflow_dispatch:
 
+# Set default settings for the workflow
+defaults:
+  run:
+    # Use bash as default shell
+    # to make robust use of ~/.bashrc
+    shell: bash
+
 # A workflow run is made up of one or more jobs
 # that can run sequentially or in parallel
 jobs:
@@ -42,7 +49,7 @@ jobs:
         run: ./scripts/nvim_installer.sh install
       # Refresh the state of the environment post Neovim installation
       - name: Refresh env state
-        run: source ~/.bashrc && cat ~/.bashrc
+        run: source ~/.bashrc
       # Check Neovim installation by printing out the version
       - name: Check Neovim installation
-        run: /opt/nvim/bin/nvim --version
+        run: nvim --version
