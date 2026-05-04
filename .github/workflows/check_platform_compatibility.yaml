@@ -24,6 +24,10 @@ defaults:
     # Also, use extra options for error handling
     shell: bash -ieo pipefail {0}
 
+# Set environment variables for the workflow
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 # A workflow run is made up of one or more jobs
 # that can run sequentially or in parallel
 jobs:
@@ -55,7 +59,7 @@ jobs:
       # Set up the default configuration
       # TODO: retrieve current branch
       - name: Set up default repo configuration
-        run: ./scripts/nvim_config_manager.sh quick-setup
+        run: ./scripts/nvim_config_manager.sh quick-setup --branch ${{ env.BRANCH_NAME }}
       # Check repo configuration aliases
       - name: Check Neovim aliases
         run: nvim-robotics --version && neo --version
