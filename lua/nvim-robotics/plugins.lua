@@ -181,6 +181,11 @@ vim.call('plug#begin', plugs_install_path)
 
     Plug 'windwp/nvim-autopairs'
 
+    -- # This plugin complements the autopairs plugin
+    -- # so that tags are included in the "pairs"
+    -- # Requires treesitter parsers to work
+    Plug 'windwp/nvim-ts-autotag'
+
     Plug 'scottmckendry/cyberdream.nvim'
 
     -- # Target latest `1.x` release for `blink.cmp`
@@ -411,6 +416,15 @@ vim.diagnostic.config{
 
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
+
+-- # Load the autotag plugin
+require("nvim-ts-autotag").setup({
+    opts = {
+        enable_close = true, -- Auto close tags
+        enable_rename = true, -- Auto rename pairs of tags
+        enable_close_on_slash = false -- Auto close on trailing </
+    },
+})
 
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
