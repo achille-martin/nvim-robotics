@@ -19,7 +19,9 @@ on:
 defaults:
   run:
     # Use bash as default shell
-    # to make robust use of ~/.bashrc
+    # and force interactive mode
+    # to make use of ~/.bashrc
+    # Also, use extra options for error handling
     shell: bash -ieo pipefail {0}
 
 # A workflow run is made up of one or more jobs
@@ -46,10 +48,7 @@ jobs:
              chmod +x "./scripts/nvim_config_manager.sh"
       # Install Neovim via the dedicated bash script
       - name: Install Neovim
-        run: ./scripts/nvim_installer.sh install
-      # Refresh the state of the environment post Neovim installation
-      - name: Refresh env state
-        run: echo $PATH && source ~/.bashrc && cat ~/.bashrc && echo $PATH
+        run: ./scripts/nvim_installer.sh install && source ~/.bashrc
       # Check Neovim installation by printing out the version
       - name: Check Neovim installation
         run: nvim --version
