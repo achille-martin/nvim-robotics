@@ -259,7 +259,7 @@ refresh_vim_plug_version() {
     sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
-    curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | head -1 | cut -d " " -f 2 | sed 's/"//g')"
+    curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | tail -n +1 | head -1 | cut -d " " -f 2 | sed 's/"//g')"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
