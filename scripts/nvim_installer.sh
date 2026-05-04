@@ -45,6 +45,8 @@ print_usage() {
              on various OS platforms
              (supported platforms: Linux Ubuntu x86_64)
 
+    Requires: Access to \`helper_functions.sh\`
+
     CMD:
         install             Install neovim latest version
                             for the current OS platform
@@ -245,23 +247,37 @@ then
 fi
 
 # Perform action depending on command entered
-case "$1" in
-    --help|-h)
-        print_usage
-	    exit 1
-        ;;
+while true; do
+    case "$1" in
+        --help|-h)
+            print_usage
+            exit 1
+            ;;
 
-    install)
-        perform_install
-        ;;
+        install)
+            if [[ -n "$2" ]]; then
+                printf "ERROR: only one argument allowed\n"
+                print_usage
+                exit 1
+            else
+                perform_install
+            fi
+            ;;
 
-    uninstall)
-        perform_uninstall
-        ;;
+        uninstall)
+            if [[ -n "$2" ]]; then
+                printf "ERROR: only one argument allowed\n"
+                print_usage
+                exit 1
+            else
+                perform_uninstall
+            fi
+            ;;
 
-    *)
-        printf "ERROR: first argument not valid\n"
-        print_usage
-        exit 1
-        ;;
-esac
+        *)
+            printf "ERROR: first argument not valid\n"
+            print_usage
+            exit 1
+            ;;
+    esac
+done
