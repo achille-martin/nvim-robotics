@@ -52,3 +52,10 @@ jobs:
       # Check Neovim installation by printing out the version
       - name: Check Neovim installation
         run: nvim --version
+      # Set up the default configuration
+      # TODO: retrieve current branch
+      - name: Set up default repo configuration
+        run: ./scripts/nvim_config_manager.sh quick-setup
+      # Check repo configuration aliases
+      - name: Check Neovim aliases
+        run: nvim-robotics --version && neo --version
