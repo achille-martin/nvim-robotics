@@ -35,7 +35,7 @@ source helper_functions.sh
 # ---- HANDY VARIABLES ----
 
 GIT_REPO_NAME="$DEFAULT_CUSTOM_CONFIG_NAME"
-TARGET_GIT_REPO_BRANCH="main"
+TARGET_GIT_REPO_BRANCH="$DEFAULT_TARGET_GIT_REPO_BRANCH"
 
 CONFIG_FOLDER="$DEFAULT_CONFIG_FOLDER"
 
@@ -82,7 +82,8 @@ install_plugins() {
         printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
         printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
     fi
-    $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> /dev/null
+    cat "$DEFAULT_BASH_ALIASES_PATH"
+    # $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
 }
 
 perform_quick_setup() {
@@ -319,8 +320,6 @@ perform_quick_setup() {
     # in case the channel is not properly set up
     ssh_cmd="$(ssh -o StrictHostKeyChecking=yes -T "git@github.com" &> "/dev/null")"
     ssh_cmd_status="$?"
-    echo "TESSST"
-    echo $ssh_cmd_status
     # Note: according to Github docs, the exit status
     # of the ssh user verification command is usually 1
     # if it was successful
