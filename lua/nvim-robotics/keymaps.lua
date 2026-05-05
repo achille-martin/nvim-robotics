@@ -631,7 +631,7 @@ end
 local function n_special_save()
     vim.api.nvim_exec(
         [[
-            w
+            w!
         ]],
         false
     )
@@ -640,6 +640,7 @@ end
 local function n_special_exit()
     vim.api.nvim_exec(
         [[
+            set confirm
             q
         ]],
         false
@@ -658,9 +659,68 @@ end
 
 -- # Show all diagnostics for current buffer
 -- # in a quickfix window
-local function n_special_show_diagnostics()
+local function n_special_show_buffer_diagnostics()
     print("[SPECIAL] Showing diagnostics for this buffer (if any)")
     vim.diagnostic.setloclist()
+end
+
+-- # Show all diagnostics for current buffer
+-- # in a quickfix window
+local function n_special_show_line_diagnostics()
+    print("[SPECIAL] Showing diagnostics for this line (if any)")
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<C-w>d")
+        ]],
+        false
+    )
+end
+
+-- # Go to function definition for word under cursor
+-- # TIP: using `Ctrl + o` helps you get back
+-- # to your state before the jump / go to (the origin)
+-- # TIP: using `Ctrl + i` helps you get back
+-- # to your state after the jump / go to (the increment)
+local function n_special_go_to_definition()
+    print("[SPECIAL] Getting to function definition")
+    require("fzf-lua").lsp_definitions()
+end
+
+-- # Show all files in cwd (current working directory) via fzf
+-- # Equivalent to calling `:FfzLua files`
+local function n_special_show_files()
+    print("[SPECIAL] Showing files in CWD for this buffer (if any)")
+    require("fzf-lua").files()
+end
+
+-- # Perform live grep in cwd (current working directory) via fzf
+-- # Equivalent to calling `:FzfLua live_grep`
+-- # Equivalent to using `grep` command in cwd outside of Neovim
+local function n_special_live_grep()
+    print("[SPECIAL] Live grep in CWD for this buffer")
+    require("fzf-lua").live_grep()
+end
+
+-- # Perform grep for word under cursor in cwd (current working directory) via fzf
+-- # Equivalent to calling `:FzfLua grep_cword`
+-- # Equivalent to using `grep <word>` command in cwd outside of Neovim
+local function n_special_grep_cword()
+    print("[SPECIAL] Grep word under cursor in CWD for this buffer")
+    require("fzf-lua").grep_cword()
+end
+
+-- # Show git status results via fzf
+-- # Equivalent to calling `:FzfLua git_status`
+local function n_special_git_status()
+    print("[SPECIAL] Showing git status results (if any)")
+    require("fzf-lua").git_status()
+end
+
+-- # Show key maps via fzf
+-- # Equivalent to calling `:FzfLua keymaps`
+local function n_special_show_key_maps()
+    print("[SPECIAL] Showing key maps (if any)")
+    require("fzf-lua").keymaps()
 end
 
 -- # Store key codes for unusual keys on starting neovim
@@ -731,7 +791,23 @@ local function n_special_mode()
     elseif input_char == "q" then
         n_special_exit()
     elseif input_char == "d" then
-        n_special_show_diagnostics()
+        n_special_show_line_diagnostics()
+    elseif input_char == "D" then
+        n_special_show_buffer_diagnostics()
+    elseif input_char == "t" then
+        n_special_go_to_definition()
+    elseif input_char == "F" then
+        n_special_show_files()
+    elseif input_char == "G" then
+        n_special_live_grep()
+    elseif input_char == "g" then
+        n_special_grep_cword()
+    elseif input_char == "#" then
+        -- # Assigning `#` to git status
+        -- # because git is a version (#) control system
+        n_special_git_status()
+    elseif input_char == "K" then
+        n_special_show_key_maps()
     else
         print(special_mode_escape_msg)
     end
