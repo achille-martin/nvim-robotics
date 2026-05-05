@@ -31,62 +31,63 @@ env:
 # A workflow run is made up of one or more jobs
 # that can run sequentially or in parallel
 jobs:
-  # Job aimed at building the code
-  build:
+  # Job aimed at building and testing the code
+  # so that there is no struggle around data/environment sharing between jobs
+  build_and_test:
     # The type of runner that the job runs on
     runs-on: ubuntu-22.04
     # Sequence of tasks executed as part of the job
     steps:
+
+      # ---- BUILD ----
+
       # Ensure that the OS/distribution is updated
-      - name: Ensure OS updated
+      - name: (BUILD) Ensure OS updated
         run: sudo apt-get update -y &&
              sudo apt-get upgrade -y
       # Check out the repository under $GITHUB_WORKSPACE
       # so that the job can access it
-      - name: Checkout code
+      - name: (BUILD) Checkout code
         uses: actions/checkout@v4
       # Ensure that the scripts are executable
       # to enable full inter-operability
-      - name: Make scripts executable
+      - name: (BUILD) Make scripts executable
         run: chmod +x "./scripts/helper_functions.sh" &&
              chmod +x "./scripts/nvim_installer.sh" &&
              chmod +x "./scripts/nvim_config_manager.sh"
       # Install Neovim via the dedicated bash script
-      - name: Install Neovim
+      - name: (BUILD) Install Neovim
         run: ./scripts/nvim_installer.sh install &&
              source ~/.bashrc
       # Check Neovim installation by printing out the version
-      - name: Check Neovim installation
+      - name: (BUILD) Check Neovim installation
         run: nvim --version
       # Set up the default repo configuration
-      - name: Set up default repo configuration
+      - name: (BUILD) Set up default repo configuration
         run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
              source ~/.bashrc
       # Install plugins from vim-plug
-      - name: Install Neovim plugins
+      - name: (BUILD) Install Neovim plugins
         run: nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true
       # Install nvim-treesitter parsers
       # NOTE: the installation start automatically in any Neovim mode
       # NOTE: the installation should timeout after 90 seconds
-      - name: Install nvim-treesitter parsers
+      - name: (BUILD) Install nvim-treesitter parsers
         run: nvim-robotics --headless -c TSUpdate -c qall || true
       # Install Mason LSP servers
       # NOTE: make the installation timeout after 90 seconds
       # NOTE: the servers cannot be installed via headless Neovim,
       #       but the installation starts automatically in non-headless mode
-      - name: Install Mason LSP servers
+      - name: (BUILD) Install Mason LSP servers
         run: nvim-robotics -c MasonUpdate -c "call timer_start(90000, { -> execute('qall') })" || true
       # Check repo configuration aliases
-      - name: Check Neovim aliases
+      - name: (BUILD) Check Neovim aliases
         run: nvim-robotics --version &&
              neo --version
 
-  # Job aimed at testing the code
-  test:
-    # Specify starting conditions
-    needs: build
-    runs-on: ubuntu-22.04
-    steps:
+      # ---- TEST ----
+
       # Check health of Neovim
-      - name: Check Neovim health
+      - name: (TEST) Check Neovim health
         run: nvim-robotics --headless -c checkhealth -c qall || true
+
