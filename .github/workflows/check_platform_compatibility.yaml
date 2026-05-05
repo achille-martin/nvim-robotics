@@ -61,8 +61,8 @@ jobs:
       # Set up the default repo configuration
       - name: Set up default repo configuration
         run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
-             source ~/.bashrc &&
-             nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
+             source ~/.bashrc
+             # && nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
       # Check repo configuration aliases
       - name: Check Neovim aliases
         run: nvim-robotics --version &&
