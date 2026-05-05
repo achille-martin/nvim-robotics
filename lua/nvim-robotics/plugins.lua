@@ -212,7 +212,8 @@ vim.call('plug#end')
 require('nvim-treesitter').setup({})
 
 -- # Install tree-sitter parsers and queries
-require('nvim-treesitter').install(tree_sitter_parsers)
+-- # NOTE: wait 1min max to install all parsers and queries the first time
+require('nvim-treesitter').install(tree_sitter_parsers):wait(60000)
 
 -- # Specify similar parsers to file types not currently supported:
 -- # * .launch files (used in ROS)
