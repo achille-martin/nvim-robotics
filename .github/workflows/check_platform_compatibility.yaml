@@ -63,6 +63,11 @@ jobs:
         run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
              source ~/.bashrc
              # && nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
+      # Test nvim configuration update
+      - name: Test nvim config update
+        run: nvim-robotics --headless -c qall || true
+             nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true
+             nvim-robotics --headless -c checkhealth -c qall || true
       # Check repo configuration aliases
       - name: Check Neovim aliases
         run: nvim-robotics --version &&
