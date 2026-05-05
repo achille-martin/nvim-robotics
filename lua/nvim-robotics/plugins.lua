@@ -200,7 +200,7 @@ vim.call('plug#end')
 -- # List plugins setup/activated
 
 -- # Force use of git rather than cURL to download treesitter plugins
-require("nvim-treesitter.install").prefer_git = true
+-- require("nvim-treesitter.install").prefer_git = true
 
 -- # Configure the nvim-treesitter plugin
 -- # to improve syntax highlighting, indentation, folding,
