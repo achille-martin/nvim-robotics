@@ -39,7 +39,8 @@ jobs:
     steps:
       # Ensure that the OS/distribution is updated
       - name: Ensure OS updated
-        run: sudo apt-get update -y && sudo apt-get upgrade -y
+        run: sudo apt-get update -y &&
+             sudo apt-get upgrade -y
       # Check out the repository under $GITHUB_WORKSPACE
       # so that the job can access it
       - name: Checkout code
@@ -52,13 +53,17 @@ jobs:
              chmod +x "./scripts/nvim_config_manager.sh"
       # Install Neovim via the dedicated bash script
       - name: Install Neovim
-        run: ./scripts/nvim_installer.sh install && source ~/.bashrc
+        run: ./scripts/nvim_installer.sh install &&
+             source ~/.bashrc
       # Check Neovim installation by printing out the version
       - name: Check Neovim installation
         run: nvim --version
       # Set up the default repo configuration
       - name: Set up default repo configuration
-        run: ./scripts/nvim_config_manager.sh quick-setup --branch ${{ env.BRANCH_NAME }}
+        run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
+             source ~/.bashrc &&
+             nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
       # Check repo configuration aliases
       - name: Check Neovim aliases
-        run: nvim-robotics --version && neo --version
+        run: nvim-robotics --version &&
+             neo --version
