@@ -13,10 +13,10 @@ chmod +x "/tmp/nvim-robotics/nvim_config_manager.sh" &&
 chmod +x "/tmp/nvim-robotics/helper_functions.sh"
 ```
 
-* Run the following command to generate your custom configuration (replacing the placeholder for config name with your desired config name and specifying the target branch in the dedicated placeholder):
+* Run the following command to generate your custom configuration (specifying the target branch in the dedicated placeholder and replacing the placeholder for config name with your desired config name):
 
 ```bash
-"/tmp/nvim-robotics/nvim_config_manager.sh" quick-setup <your_config_name> --branch <target_branch>
+"/tmp/nvim-robotics/nvim_config_manager.sh" --branch <target_branch> quick-setup <your_config_name>
 ```
 
 You can now launch Neovim with the forked repo configuration by using the alias you have defined above:
