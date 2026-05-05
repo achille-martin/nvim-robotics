@@ -88,7 +88,7 @@ source_changes() {
             then
                 printf "➤ source $DEFAULT_BASHRC_PATH\n"
             fi
-            source "$DEFAULT_BASHRC_PATH" &> "/dev/null"
+            source "$DEFAULT_BASHRC_PATH" &> "/dev/null" || true
             ;;
         *)
             printf "✗ Not applicable.\n"
