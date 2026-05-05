@@ -60,14 +60,16 @@ jobs:
         run: nvim --version
       # Set up the default repo configuration
       - name: Set up default repo configuration
-        run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup && source ~/.bashrc
-             # && nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
+        run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
+             source ~/.bashrc
       # Test nvim configuration update
-      - name: Test nvim config update 1
+      - name: Test nvim config update 1 load plugins
         run: nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true
-      - name: Test nvim config update 2
-        run: nvim-robotics --headless -c MasonUpdate -c qall || true
-      - name: Test nvim config update 3
+      - name: Test nvim config update 2 install treesitter parsers
+        run: nvim-robotics --headless -c qall || true
+      - name: Test nvim config update 3 load mason lsp servers
+        run: nvim-robotics -c "call timer_start(60000, { -> execute('qall') })" -c MasonUpdate || true
+      - name: Test nvim config update 4 check health
         run: nvim-robotics --headless -c checkhealth -c qall || true
       # Check repo configuration aliases
       - name: Check Neovim aliases
