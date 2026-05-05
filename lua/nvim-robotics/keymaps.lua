@@ -794,19 +794,20 @@ local function n_special_mode()
         n_special_show_line_diagnostics()
     elseif input_char == "D" then
         n_special_show_buffer_diagnostics()
-    elseif input_char == "t" then
+    elseif input_char == "f" then
+        -- # Go to "function" definition
+        -- # but also works for other elements
         n_special_go_to_definition()
     elseif input_char == "F" then
         n_special_show_files()
-    elseif input_char == "G" then
-        n_special_live_grep()
     elseif input_char == "g" then
         n_special_grep_cword()
-    elseif input_char == "#" then
-        -- # Assigning `#` to git status
-        -- # because git is a version (#) control system
+    elseif input_char == "G" then
+        n_special_live_grep()
+    elseif input_char == "S" then
         n_special_git_status()
     elseif input_char == "K" then
+        -- # NOTE: a bit limited at the moment
         n_special_show_key_maps()
     else
         print(special_mode_escape_msg)
