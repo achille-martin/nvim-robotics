@@ -54,7 +54,15 @@ print_usage() {
 
     Purpose: Manage the neovim configuration operations
 
+    Requires: Access to \`helper_functions.sh\`
+
     CMD:
+        --help, -h                    Show this help
+
+        --branch, -b BRANCH-NAME      Specify the target branch or tag
+                                      to use for \`$GIT_REPO_NAME\`
+                                      By default, the branch used is \`main\`
+
         quick-setup [CONFIG-NAME]     Setup the \`$GIT_REPO_NAME\` configuration
                                       as it is provided in the repo
                                       Optional argument: CONFIG-NAME
@@ -64,12 +72,6 @@ print_usage() {
                                       Optional argument: CONFIG-NAME
                                       If opt arg provided, only cleans up
                                       the configuration related to CONFIG-NAME
-
-        --branch, -b BRANCH-NAME      Specify the target branch or tag
-                                      to use for \`$GIT_REPO_NAME\`
-                                      By default, the branch used is \`main\`
-
-        --help, -h                    Show this help
     "
 
     printf "%s" "$multiline_usage_txt"
@@ -82,8 +84,7 @@ install_plugins() {
         printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
         printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
     fi
-    cat "$DEFAULT_BASH_ALIASES_PATH"
-    # $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
+    $ALIAS --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null"
 }
 
 perform_quick_setup() {
@@ -441,34 +442,61 @@ then
 fi
 
 # Perform action depending on command entered
-case "$1" in
-    --help|-h)
-        print_usage
-	    exit 1
-        ;;
-
-    quick-setup)
-        perform_quick_setup "$2"
-        ;;
-
-    cleanup)
-        perform_cleanup "$2"
-        ;;
-
-    --branch|-b)
-        if [[ -n "$2" ]];
-        then
-            TARGET_GIT_REPO_BRANCH="$2"
-        else
-            printf "ERROR: the flag \`--branch|-b\` requires one argument"
+while true; do
+    case "$1" in
+        --help|-h)
             print_usage
             exit 1
-        fi
-        ;;
+            ;;
 
-    *)
-        printf "ERROR: first argument not valid\n"
-        print_usage
-        exit 1
-        ;;
-esac
+        --branch|-b)
+            if [[ -n "$2" ]];
+            then
+                TARGET_GIT_REPO_BRANCH="$2"
+                shift 2
+            else
+                printf "ERROR: the flag \`--branch|-b\` requires one argument"
+                print_usage
+                exit 1
+            fi
+            ;;
+
+        quick-setup)
+            if [[ -n "$3" ]]; then
+                printf "ERROR: max one argument allowed for the \`quick-setup\` option\n"
+                print_usage
+                exit 1
+            else
+                if [[ -n "$2" ]]; then
+                    perform_quick_setup "$2"
+                    shift 2
+                else
+                    perform_quick_setup
+                    shift 1
+                fi
+            fi
+            ;;
+
+        cleanup)
+            if [[ -n "$3" ]]; then
+                printf "ERROR: max one argument allowed for the \`perform_cleanup\` option\n"
+                print_usage
+                exit 1
+            else
+                if [[ -n "$2" ]]; then
+                    perform_cleanup "$2"
+                    shift 2
+                else
+                   perform_cleanup
+                    shift 1
+                fi
+            fi
+            ;;
+
+        *)
+            printf "ERROR: command invalid (argument \`"$1"\` not valid)\n"
+            print_usage
+            exit 1
+            ;;
+    esac
+done
