@@ -475,6 +475,7 @@ while true; do
                     shift 1
                 fi
             fi
+            break
             ;;
 
         cleanup)
@@ -491,6 +492,7 @@ while true; do
                     shift 1
                 fi
             fi
+            break
             ;;
 
         *)

@@ -262,6 +262,7 @@ while true; do
             else
                 perform_install
             fi
+            break
             ;;
 
         uninstall)
@@ -272,6 +273,7 @@ while true; do
             else
                 perform_uninstall
             fi
+            break
             ;;
 
         *)
