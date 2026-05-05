@@ -48,14 +48,14 @@ print_usage() {
     Requires: Access to \`helper_functions.sh\`
 
     CMD:
+        --help, -h          Show this help
+
         install             Install neovim latest version
                             for the current OS platform
                             Note: automatically installs
                             the \"unsupported\" release of neovim if necessary
 
         uninstall           Remove all neovim versions from current OS platform
-
-        --help, -h          Show this help
     "
 
     printf "%s" "$multiline_usage_txt"
@@ -275,7 +275,7 @@ while true; do
             ;;
 
         *)
-            printf "ERROR: first argument not valid\n"
+            printf "ERROR: command invalid (argument \`"$1"\` not valid)\n"
             print_usage
             exit 1
             ;;
