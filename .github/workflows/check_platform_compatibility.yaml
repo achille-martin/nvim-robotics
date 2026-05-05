@@ -62,16 +62,31 @@ jobs:
       - name: Set up default repo configuration
         run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
              source ~/.bashrc
-      # Test nvim configuration update
-      - name: Test nvim config update 1 load plugins
+      # Install plugins from vim-plug
+      - name: Install Neovim plugins
         run: nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true
-      - name: Test nvim config update 2 install treesitter parsers
-        run: nvim-robotics --headless -c qall || true
-      - name: Test nvim config update 3 load mason lsp servers
-        run: nvim-robotics -c "call timer_start(60000, { -> execute('qall') })" -c MasonUpdate || true
-      - name: Test nvim config update 4 check health
-        run: nvim-robotics --headless -c checkhealth -c qall || true
+      # Install nvim-treesitter parsers
+      # NOTE: the installation start automatically in any Neovim mode
+      # NOTE: the installation should timeout after 90 seconds
+      - name: Install nvim-treesitter parsers
+        run: nvim-robotics --headless -c TSUpdate -c qall || true
+      # Install Mason LSP servers
+      # NOTE: make the installation timeout after 90 seconds
+      # NOTE: the servers cannot be installed via headless Neovim,
+      #       but the installation starts automatically in non-headless mode
+      - name: Install Mason LSP servers
+        run: nvim-robotics -c MasonUpdate -c "call timer_start(90000, { -> execute('qall') })" || true
       # Check repo configuration aliases
       - name: Check Neovim aliases
         run: nvim-robotics --version &&
              neo --version
+
+  # Job aimed at testing the code
+  test:
+    # Specify starting conditions
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      # Check health of Neovim
+      - name: Check Neovim health
+        run: nvim-robotics --headless -c checkhealth -c qall || true
