@@ -126,6 +126,7 @@ local mason_lsp_servers = {
     "clangd",
     "cmake",
     "cssls",
+    "diagnosticls",
     "docker_language_server",
     "html",
     "jsonls",
@@ -137,6 +138,8 @@ local mason_lsp_servers = {
     "vimls",
     "yamlls",
 }
+
+local installation_timeout_ms = 90000
 
 -- HANDY ROUTINES
 
@@ -213,7 +216,7 @@ require('nvim-treesitter').setup({})
 
 -- # Install tree-sitter parsers and queries
 -- # NOTE: wait 1min max to install all parsers and queries the first time
-require('nvim-treesitter').install(tree_sitter_parsers):wait(60000)
+require('nvim-treesitter').install(tree_sitter_parsers):wait(installation_timeout_ms)
 
 -- # Specify similar parsers to file types not currently supported:
 -- # * .launch files (used in ROS)
