@@ -82,10 +82,13 @@ install_plugins() {
     if [[ "$1" == "warning" ]];
     then
         printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
-        printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
+        printf "➤ $ALIAS --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true && \
+                  $ALIAS --headless -c TSUpdate -c qall || true && \
+                  $ALIAS -c MasonUpdate -c \"call timer_start(90000, { -> execute('qall') })\" || true\n"
     fi
-    $ALIAS --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> "/dev/null" || true
-}
+    install_cmd="$($ALIAS --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true && \
+                 $ALIAS --headless -c TSUpdate -c qall || true && \
+                 $ALIAS -c MasonUpdate -c "call timer_start(90000, { -> execute('qall') })" || true)"
 
 perform_quick_setup() {
     printf "\n--------------------\n"
