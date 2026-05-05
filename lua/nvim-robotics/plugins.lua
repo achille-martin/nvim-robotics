@@ -200,6 +200,7 @@ vim.call('plug#end')
 -- # List plugins setup/activated
 
 -- # Force use of git rather than cURL to download treesitter plugins
+-- # NOTE: function seems discontinued in the `main` branch of nvim-treesitter
 -- require("nvim-treesitter.install").prefer_git = true
 
 -- # Configure the nvim-treesitter plugin
