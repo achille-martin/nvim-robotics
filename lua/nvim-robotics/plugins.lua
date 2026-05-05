@@ -592,6 +592,23 @@ require("fzf-lua").setup({
     winopts = {
         preview = {
             layout = "vertical",
-        }
-    }
+        },
+    },
+    keymap = {
+        -- # Improving navigation in preview window when using fzf-lua
+        -- # `Shift + Up/Down` to move line by line
+        -- # `Ctrl + Up/Down` to move half a page by half a page
+        builtin = {
+            ["<S-down>"] = "preview-down",
+            ["<S-up>"] = "preview-up",
+            ["<C-down>"] = "preview-half-page-down",
+            ["<C-up>"] = "preview-half-page-up",
+        },
+        fzf = {
+            ["shift-down"] = "preview-down",
+            ["shift-up"] = "preview-up",
+            ["ctrl-down"] = "preview-half-page-down",
+            ["ctrl-up"] = "preview-half-page-up",
+        },
+    },
 })
