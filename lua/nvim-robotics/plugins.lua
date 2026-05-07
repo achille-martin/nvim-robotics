@@ -196,6 +196,10 @@ vim.call('plug#begin', plugs_install_path)
 
     Plug 'ibhagwan/fzf-lua'
 
+    -- # Extend vim's `%` motion
+    -- # to find matching elements (parentheses, keywords,...)
+    Plug 'andymass/vim-matchup'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
