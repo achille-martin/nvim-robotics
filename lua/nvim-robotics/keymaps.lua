@@ -361,6 +361,8 @@ vim.api.nvim_set_keymap(
 -- # to select functionality when special mode is entered
 -- # Make sure to make this feature toggleable
 
+local special_mode_escape_msg = "Exited special mode (key not mapped)"
+
 -- # PART 1 = Handy functions
 
 local function any_special_copy_out()
@@ -729,6 +731,89 @@ local function n_special_exit()
     )
 end
 
+local function n_special_create_split()
+    -- # TODO: specify direction with hjkl as well
+    print("[SPECIAL] Specify direction of creation of split with arrows...")
+    local input_code = vim.fn.getchar()
+    if input_code == vim.g.LEFT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                leftabove vnew
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split to the left")
+    elseif input_code == vim.g.RIGHT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                rightbelow vnew
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split to the right")
+    elseif input_code == vim.g.UP_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                aboveleft new
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split above")
+    elseif input_code == vim.g.DOWN_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                belowright new
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split below")
+    else
+        print(special_mode_escape_msg)
+    end
+end
+
+local function n_special_move_to_split()
+    -- # TODO: specify direction with hjkl as well
+    print("[SPECIAL] Specify direction of movement to split with arrows...")
+    local input_code = vim.fn.getchar()
+    local input_char = vim.fn.nr2char(input_code)
+    if input_code == vim.g.LEFT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Left>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split on the left")
+    elseif input_code == vim.g.RIGHT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Right>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split on the right")
+    elseif input_code == vim.g.UP_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Up>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split above")
+    elseif input_code == vim.g.DOWN_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Down>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split below")
+    else
+        print(special_mode_escape_msg)
+    end
+end
+
 local function i_special_blink_cmp_menu()
     if is_blink_cmp_active() then
         require('blink.cmp').show()
@@ -811,6 +896,18 @@ end
 if vim.g.BS_CHAR_CODE == nil then
     vim.g.BS_CHAR_CODE = ""
 end
+if vim.g.LEFT_ARROW_CHAR_CODE == nil then
+    vim.g.LEFT_ARROW_CHAR_CODE = ""
+end
+if vim.g.RIGHT_ARROW_CHAR_CODE == nil then
+    vim.g.RIGHT_ARROW_CHAR_CODE = ""
+end
+if vim.g.UP_ARROW_CHAR_CODE == nil then
+    vim.g.UP_ARROW_CHAR_CODE = ""
+end
+if vim.g.DOWN_ARROW_CHAR_CODE == nil then
+    vim.g.DOWN_ARROW_CHAR_CODE = ""
+end
 vim.api.nvim_create_augroup(
     "UnusualCharCodes",
     { clear = true }
@@ -830,6 +927,62 @@ local function get_unusual_key_codes()
         )
         vim.g.BS_CHAR_CODE = vim.fn.getchar()
     end
+    if vim.g.LEFT_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Left>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.LEFT_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
+    if vim.g.RIGHT_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Right>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.RIGHT_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
+    if vim.g.UP_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Up>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.UP_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
+    if vim.g.DOWN_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Down>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.DOWN_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
 end
 vim.api.nvim_create_autocmd(
     { "VimEnter" },
@@ -839,8 +992,6 @@ vim.api.nvim_create_autocmd(
         callback = get_unusual_key_codes,
     }
 )
-
-local special_mode_escape_msg = "Exited special mode (key not mapped)"
 
 -- # TODO: add key to leave special mode
 -- # by pressing `<Esc>` (or `Ctrl + c`)
@@ -882,6 +1033,10 @@ local function n_special_mode()
         n_special_save()
     elseif input_char == "q" then
         n_special_exit()
+    elseif input_char == "w" then
+        n_special_move_to_split()
+    elseif input_char == "W" then
+        n_special_create_split()
     elseif input_char == "d" then
         n_special_show_line_diagnostics()
     elseif input_char == "D" then
