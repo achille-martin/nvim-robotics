@@ -890,6 +890,18 @@ local function n_special_show_key_maps()
     require("fzf-lua").keymaps()
 end
 
+local function n_special_toggle_preview()
+-- # Toggle current buffer preview
+-- # by opening / closing a browser tab
+    vim.api.nvim_exec(
+        [[
+            MarkdownPreviewToggle
+        ]],
+        false
+    )
+    print("[SPECIAL] Toggling buffer preview in browser tab")
+end
+
 -- # Store key codes for unusual keys on starting neovim
 -- # in SHADA (Shared Data between sessions)
 -- # so that this action is only performed a minimal number of times
@@ -1056,6 +1068,8 @@ local function n_special_mode()
     elseif input_char == "K" then
         -- # NOTE: a bit limited at the moment
         n_special_show_key_maps()
+    elseif input_char == "p" then
+        n_special_toggle_preview()
     else
         print(special_mode_escape_msg)
     end

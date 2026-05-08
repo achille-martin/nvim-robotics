@@ -200,6 +200,16 @@ vim.call('plug#begin', plugs_install_path)
     -- # to find matching elements (parentheses, keywords,...)
     Plug 'andymass/vim-matchup'
 
+    -- # Browser previewer for Markdown
+    Plug('iamcco/markdown-preview.nvim',
+        {
+            ['do'] = function()
+                vim.fn['mkdp#util#install']()
+            end,
+            ['for'] = { 'markdown', 'vim-plug' },
+        }
+    )
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -621,3 +631,12 @@ require("fzf-lua").setup({
         },
     },
 })
+
+-- # Enhance Markdown Preview configuration
+
+-- # Display preview page URL in command line when opening preview page
+vim.g.mkdp_echo_preview_url = 1
+
+-- # Set preview page title to file name
+vim.g.mkdp_page_title = '「${name}」'
+
