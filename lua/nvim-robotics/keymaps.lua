@@ -582,6 +582,27 @@ local function t_special_paste_global()
     print("[SPECIAL] Pasted saved line from register + and updated register a")
 end
 
+local function n_special_add_line_below()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("] ")
+        ]],
+        false
+    )
+    print("[SPECIAL] Added one line below current")
+end
+
+
+local function n_special_remove_line_below()
+    vim.api.nvim_exec(
+        [[
+            +,+1d|norm! ``
+        ]],
+        false
+    )
+    print("[SPECIAL] Removed one line below current")
+end
+
 -- # Note: this "comment" action is based on the native Neovim capability
 -- # to toggle code comments, inherited from the vim-commentary plugin
 -- # Further note: it is complex to get cursor back to initial position
@@ -847,10 +868,13 @@ local function n_special_mode()
         n_special_paste_local()
     elseif input_char == "V" then
         n_special_paste_global()
+    elseif input_char == "+" then
+        n_special_add_line_below()
+    elseif input_char == "-" then
+        n_special_remove_line_below()
     elseif input_char == "\"" then
         n_special_comment()
     elseif input_code == vim.g.BS_CHAR_CODE then
-        -- # Could be set as `input_char = "z"`
         n_special_undo()
     elseif input_code == 13 then
         n_special_redo()
