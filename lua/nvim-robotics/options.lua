@@ -545,4 +545,7 @@ vim.diagnostic.config({
   underline = {
     severity = { min = vim.diagnostic.severity.HINT }
   },
+  jump = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
 })
