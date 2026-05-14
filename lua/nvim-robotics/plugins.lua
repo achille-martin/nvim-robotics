@@ -126,6 +126,7 @@ local mason_lsp_servers = {
     "clangd",
     "cmake",
     "cssls",
+    "diagnosticls",
     "docker_language_server",
     "html",
     "jsonls",
@@ -137,6 +138,8 @@ local mason_lsp_servers = {
     "vimls",
     "yamlls",
 }
+
+local installation_timeout_ms = 90000
 
 -- HANDY ROUTINES
 
@@ -181,12 +184,31 @@ vim.call('plug#begin', plugs_install_path)
 
     Plug 'windwp/nvim-autopairs'
 
+    -- # This plugin complements the autopairs plugin
+    -- # so that tags are included in the "pairs"
+    -- # Requires treesitter parsers to work
+    Plug 'windwp/nvim-ts-autotag'
+
     Plug 'scottmckendry/cyberdream.nvim'
 
     -- # Target latest `1.x` release for `blink.cmp`
     Plug('saghen/blink.cmp', { ['tag'] = 'v1.*' })
 
     Plug 'ibhagwan/fzf-lua'
+
+    -- # Extend vim's `%` motion
+    -- # to find matching elements (parentheses, keywords,...)
+    Plug 'andymass/vim-matchup'
+
+    -- # Browser previewer for Markdown
+    Plug('iamcco/markdown-preview.nvim',
+        {
+            ['do'] = function()
+                vim.fn['mkdp#util#install']()
+            end,
+            ['for'] = { 'markdown', 'vim-plug' },
+        }
+    )
 
 vim.call('plug#end')
 
@@ -195,7 +217,8 @@ vim.call('plug#end')
 -- # List plugins setup/activated
 
 -- # Force use of git rather than cURL to download treesitter plugins
-require("nvim-treesitter.install").prefer_git = true
+-- # NOTE: function seems discontinued in the `main` branch of nvim-treesitter
+-- require("nvim-treesitter.install").prefer_git = true
 
 -- # Configure the nvim-treesitter plugin
 -- # to improve syntax highlighting, indentation, folding,
@@ -206,7 +229,8 @@ require("nvim-treesitter.install").prefer_git = true
 require('nvim-treesitter').setup({})
 
 -- # Install tree-sitter parsers and queries
-require('nvim-treesitter').install(tree_sitter_parsers)
+-- # NOTE: wait 1min max to install all parsers and queries the first time
+require('nvim-treesitter').install(tree_sitter_parsers):wait(installation_timeout_ms)
 
 -- # Specify similar parsers to file types not currently supported:
 -- # * .launch files (used in ROS)
@@ -412,6 +436,15 @@ vim.diagnostic.config{
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
 
+-- # Load the autotag plugin
+require("nvim-ts-autotag").setup({
+    opts = {
+        enable_close = true, -- Auto close tags
+        enable_rename = true, -- Auto rename pairs of tags
+        enable_close_on_slash = false -- Auto close on trailing </
+    },
+})
+
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
 -- # https://github.com/scottmckendry/cyberdream.nvim?tab=readme-ov-file#%EF%B8%8F-configuring
@@ -578,6 +611,32 @@ require("fzf-lua").setup({
     winopts = {
         preview = {
             layout = "vertical",
-        }
-    }
+        },
+    },
+    keymap = {
+        -- # Improving navigation in preview window when using fzf-lua
+        -- # `Shift + Up/Down` to move line by line
+        -- # `Ctrl + Up/Down` to move half a page by half a page
+        builtin = {
+            ["<S-down>"] = "preview-down",
+            ["<S-up>"] = "preview-up",
+            ["<C-down>"] = "preview-half-page-down",
+            ["<C-up>"] = "preview-half-page-up",
+        },
+        fzf = {
+            ["shift-down"] = "preview-down",
+            ["shift-up"] = "preview-up",
+            ["ctrl-down"] = "preview-half-page-down",
+            ["ctrl-up"] = "preview-half-page-up",
+        },
+    },
 })
+
+-- # Enhance Markdown Preview configuration
+
+-- # Display preview page URL in command line when opening preview page
+vim.g.mkdp_echo_preview_url = 1
+
+-- # Set preview page title to file name
+vim.g.mkdp_page_title = '「${name}」'
+
