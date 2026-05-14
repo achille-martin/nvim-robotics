@@ -130,9 +130,13 @@ perform_quick_setup() {
     # are only required for the setup of the LSP capabilities
     # of specific languages
     printf "\nInstalling necessary apt dependencies...\n"
-    sudo apt-get update &&
+    sudo apt-get update
     sudo apt-get install git -y
     sudo apt-get install curl -y
+    ## Note: the following apt dependencies
+    ## enables a clipboard
+    sudo apt-get install xclip -y
+    sudo apt-get install xsel -y
     ## Note: the following apt dependencies
     ## improve grep capabilities in neovim
     sudo apt-get install ripgrep -y
