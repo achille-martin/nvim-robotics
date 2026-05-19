@@ -210,6 +210,9 @@ vim.call('plug#begin', plugs_install_path)
         }
     )
 
+    -- # Improved tabline (for tabs and not for buffers)
+    Plug 'nanozuki/tabby.nvim'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -640,3 +643,32 @@ vim.g.mkdp_echo_preview_url = 1
 -- # Set preview page title to file name
 vim.g.mkdp_page_title = '「${name}」'
 
+-- # Define configuration for `tabby` plugin
+local theme = {
+    fill = 'TabLine',
+    head = 'TabLine',
+    current_tab = { fg='#000000', bg='#FFFDD0' },
+    tab = 'TabLine',
+    win = 'TabLine',
+    tail = 'TabLine',
+}
+require('tabby').setup({
+    -- # Only show tabs and not the files inside the tabs
+    line = function(line)
+    return {
+      line.tabs().foreach(function(tab)
+        local hl = tab.is_current() and theme.current_tab or theme.tab
+        return {
+          line.sep('', hl, theme.fill),
+          tab.is_current(),
+          tab.name(),
+          tab.close_btn('x'),
+          line.sep('', hl, theme.fill),
+          hl = hl,
+          margin = ' ',
+        }
+      end),
+      hl = theme.fill,
+    }
+  end,
+})
