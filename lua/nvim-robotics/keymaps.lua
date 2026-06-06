@@ -361,7 +361,31 @@ vim.api.nvim_set_keymap(
 -- # to select functionality when special mode is entered
 -- # Make sure to make this feature toggleable
 
+local special_mode_escape_msg = "Exited special mode (key not mapped)"
+
 -- # PART 1 = Handy functions
+
+local function any_special_copy_out()
+    -- # Adding a slight delay in the command
+    -- # enables a proper update of the clipboard registers
+    vim.api.nvim_exec(
+        [[
+            call timer_start(1, { -> execute('let @+=@a') })
+        ]],
+        false
+    )
+    print("[SPECIAL] Populated register a from register +")
+end
+
+local function any_special_copy_back_in()
+    vim.api.nvim_exec(
+        [[
+            let @a=@+
+        ]],
+        false
+    )
+    print("[SPECIAL] Populated register a from register +")
+end
 
 local function n_special_reload()
     vim.api.nvim_exec(
@@ -373,7 +397,7 @@ local function n_special_reload()
     print("[SPECIAL] Reloaded current file")
 end
 
-local function n_special_copy()
+local function n_special_copy_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\"ayy")
@@ -383,27 +407,13 @@ local function n_special_copy()
     print("[SPECIAL] Copied current line into the register a")
 end
 
-local function n_special_copy_out()
-    vim.api.nvim_exec(
-        [[
-            let @+=@a
-        ]],
-        false
-    )
-    print("[SPECIAL] Populated register + from register a")
+local function n_special_copy_global()
+    n_special_copy_local()
+    any_special_copy_out()
+    print("[SPECIAL] Copied current line into the register a and updated register +")
 end
 
-local function n_special_copy_back_in()
-    vim.api.nvim_exec(
-        [[
-            let @a=@+
-        ]],
-        false
-    )
-    print("[SPECIAL] Populated register a from register +")
-end
-
-local function vs_special_copy()
+local function vs_special_copy_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\"ay")
@@ -419,7 +429,13 @@ local function vs_special_copy()
     print("[SPECIAL] Selected text copied into the register a")
 end
 
-local function i_special_copy()
+local function vs_special_copy_global()
+    vs_special_copy_local()
+    any_special_copy_out()
+    print("[SPECIAL] Selected text copied into the register a and updated register +")
+end
+
+local function i_special_copy_local()
     -- # Save current cursor location
     local saved_cursor_location = vim.api.nvim_win_get_cursor(0)
     -- # Go into NORMAL mode
@@ -430,7 +446,7 @@ local function i_special_copy()
         false
     )
     -- # Use special copy for the NORMAL mode
-    n_special_copy()
+    n_special_copy_local()
     -- # Move cursor back to initial position (in case it moved)
     vim.api.nvim_win_set_cursor(0, saved_cursor_location)
     -- # Enter back INSERT mode (taking into account the location shift)
@@ -452,7 +468,13 @@ local function i_special_copy()
     print("[SPECIAL] Copied current line into the register a")
 end
 
-local function n_special_cut()
+local function i_special_copy_global()
+    i_special_copy_local()
+    any_special_copy_out()
+    print("[SPECIAL] Copied current line into the register a and updated register +")
+end
+
+local function n_special_cut_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\"add")
@@ -462,7 +484,13 @@ local function n_special_cut()
     print("[SPECIAL] Selected text copied into the register a")
 end
 
-local function vs_special_cut()
+local function n_special_cut_global()
+    n_special_cut_local()
+    any_special_copy_out()
+    print("[SPECIAL] Selected text copied into the register a and updated register +")
+end
+
+local function vs_special_cut_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\"ad")
@@ -472,7 +500,13 @@ local function vs_special_cut()
     print("[SPECIAL] Selected line cut and saved into register a")
 end
 
-local function n_special_paste()
+local function vs_special_cut_global()
+    vs_special_cut_local()
+    any_special_copy_out()
+    print("[SPECIAL] Selected line cut and saved into the register a and updated register +")
+end
+
+local function n_special_paste_local()
     vim.api.nvim_exec(
         [[
             :pu a
@@ -482,7 +516,13 @@ local function n_special_paste()
     print("[SPECIAL] Pasted saved line from register a")
 end
 
-local function vs_special_paste()
+local function n_special_paste_global()
+    any_special_copy_back_in()
+    n_special_paste_local()
+    print("[SPECIAL] Pasted saved line from register + and updated register a")
+end
+
+local function vs_special_paste_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("di\<C-r>a\<Esc>")
@@ -492,7 +532,13 @@ local function vs_special_paste()
     print("[SPECIAL] Pasted saved line from register a")
 end
 
-local function i_special_paste()
+local function vs_special_paste_global()
+    any_special_copy_back_in()
+    vs_special_paste_local()
+    print("[SPECIAL] Pasted saved line from register + and updated register a")
+end
+
+local function i_special_paste_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\<C-r>a")
@@ -502,7 +548,13 @@ local function i_special_paste()
     print("[SPECIAL] Pasted saved line from register a")
 end
 
-local function c_special_paste()
+local function i_special_paste_global()
+    any_special_copy_back_in()
+    i_special_paste_local()
+    print("[SPECIAL] Pasted saved line from register + and updated register a")
+end
+
+local function c_special_paste_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\<C-r>a")
@@ -511,7 +563,12 @@ local function c_special_paste()
     )
 end
 
-local function t_special_paste()
+local function c_special_paste_global()
+    any_special_copy_back_in()
+    c_special_paste_local()
+end
+
+local function t_special_paste_local()
     vim.api.nvim_exec(
         [[
             call feedkeys("\<C-\>\<C-n>\"apa")
@@ -519,6 +576,33 @@ local function t_special_paste()
         false
     )
     print("[SPECIAL] Pasted saved line from register a")
+end
+
+local function t_special_paste_global()
+    any_special_copy_back_in()
+    t_special_paste_local()
+    print("[SPECIAL] Pasted saved line from register + and updated register a")
+end
+
+local function n_special_add_line_below()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("] ")
+        ]],
+        false
+    )
+    print("[SPECIAL] Added one line below current")
+end
+
+
+local function n_special_remove_line_below()
+    vim.api.nvim_exec(
+        [[
+            +,+1d|norm! ``
+        ]],
+        false
+    )
+    print("[SPECIAL] Removed one line below current")
 end
 
 -- # Note: this "comment" action is based on the native Neovim capability
@@ -631,7 +715,7 @@ end
 local function n_special_save()
     vim.api.nvim_exec(
         [[
-            w
+            w!
         ]],
         false
     )
@@ -640,10 +724,94 @@ end
 local function n_special_exit()
     vim.api.nvim_exec(
         [[
+            set confirm
             q
         ]],
         false
     )
+end
+
+local function n_special_create_split()
+    -- # TODO: specify direction with hjkl as well
+    print("[SPECIAL] Specify direction of creation of split with arrows...")
+    local input_code = vim.fn.getchar()
+    if input_code == vim.g.LEFT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                leftabove vnew
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split to the left")
+    elseif input_code == vim.g.RIGHT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                rightbelow vnew
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split to the right")
+    elseif input_code == vim.g.UP_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                aboveleft new
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split above")
+    elseif input_code == vim.g.DOWN_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                belowright new
+            ]],
+            false
+        )
+        print("[SPECIAL] Created a split below")
+    else
+        print(special_mode_escape_msg)
+    end
+end
+
+local function n_special_move_to_split()
+    -- # TODO: specify direction with hjkl as well
+    print("[SPECIAL] Specify direction of movement to split with arrows...")
+    local input_code = vim.fn.getchar()
+    local input_char = vim.fn.nr2char(input_code)
+    if input_code == vim.g.LEFT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Left>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split on the left")
+    elseif input_code == vim.g.RIGHT_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Right>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split on the right")
+    elseif input_code == vim.g.UP_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Up>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split above")
+    elseif input_code == vim.g.DOWN_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("\<C-w>\<Down>")
+            ]],
+            false
+        )
+        print("[SPECIAL] Moved to split below")
+    else
+        print(special_mode_escape_msg)
+    end
 end
 
 local function i_special_blink_cmp_menu()
@@ -658,9 +826,80 @@ end
 
 -- # Show all diagnostics for current buffer
 -- # in a quickfix window
-local function n_special_show_diagnostics()
+local function n_special_show_buffer_diagnostics()
     print("[SPECIAL] Showing diagnostics for this buffer (if any)")
     vim.diagnostic.setloclist()
+end
+
+-- # Show all diagnostics for current buffer
+-- # in a quickfix window
+local function n_special_show_line_diagnostics()
+    print("[SPECIAL] Showing diagnostics for this line (if any)")
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<C-w>d")
+        ]],
+        false
+    )
+end
+
+-- # Go to function definition for word under cursor
+-- # TIP: using `Ctrl + o` helps you get back
+-- # to your state before the jump / go to (the origin)
+-- # TIP: using `Ctrl + i` helps you get back
+-- # to your state after the jump / go to (the increment)
+local function n_special_go_to_definition()
+    print("[SPECIAL] Getting to function definition")
+    require("fzf-lua").lsp_definitions()
+end
+
+-- # Show all files in cwd (current working directory) via fzf
+-- # Equivalent to calling `:FfzLua files`
+local function n_special_show_files()
+    print("[SPECIAL] Showing files in CWD for this buffer (if any)")
+    require("fzf-lua").files()
+end
+
+-- # Perform live grep in cwd (current working directory) via fzf
+-- # Equivalent to calling `:FzfLua live_grep`
+-- # Equivalent to using `grep` command in cwd outside of Neovim
+local function n_special_live_grep()
+    print("[SPECIAL] Live grep in CWD for this buffer")
+    require("fzf-lua").live_grep()
+end
+
+-- # Perform grep for word under cursor in cwd (current working directory) via fzf
+-- # Equivalent to calling `:FzfLua grep_cword`
+-- # Equivalent to using `grep <word>` command in cwd outside of Neovim
+local function n_special_grep_cword()
+    print("[SPECIAL] Grep word under cursor in CWD for this buffer")
+    require("fzf-lua").grep_cword()
+end
+
+-- # Show git status results via fzf
+-- # Equivalent to calling `:FzfLua git_status`
+local function n_special_git_status()
+    print("[SPECIAL] Showing git status results (if any)")
+    require("fzf-lua").git_status()
+end
+
+-- # Show key maps via fzf
+-- # Equivalent to calling `:FzfLua keymaps`
+local function n_special_show_key_maps()
+    print("[SPECIAL] Showing key maps (if any)")
+    require("fzf-lua").keymaps()
+end
+
+local function n_special_toggle_preview()
+-- # Toggle current buffer preview
+-- # by opening / closing a browser tab
+    vim.api.nvim_exec(
+        [[
+            MarkdownPreviewToggle
+        ]],
+        false
+    )
+    print("[SPECIAL] Toggling buffer preview in browser tab")
 end
 
 -- # Store key codes for unusual keys on starting neovim
@@ -668,6 +907,18 @@ end
 -- # so that this action is only performed a minimal number of times
 if vim.g.BS_CHAR_CODE == nil then
     vim.g.BS_CHAR_CODE = ""
+end
+if vim.g.LEFT_ARROW_CHAR_CODE == nil then
+    vim.g.LEFT_ARROW_CHAR_CODE = ""
+end
+if vim.g.RIGHT_ARROW_CHAR_CODE == nil then
+    vim.g.RIGHT_ARROW_CHAR_CODE = ""
+end
+if vim.g.UP_ARROW_CHAR_CODE == nil then
+    vim.g.UP_ARROW_CHAR_CODE = ""
+end
+if vim.g.DOWN_ARROW_CHAR_CODE == nil then
+    vim.g.DOWN_ARROW_CHAR_CODE = ""
 end
 vim.api.nvim_create_augroup(
     "UnusualCharCodes",
@@ -688,6 +939,62 @@ local function get_unusual_key_codes()
         )
         vim.g.BS_CHAR_CODE = vim.fn.getchar()
     end
+    if vim.g.LEFT_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Left>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.LEFT_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
+    if vim.g.RIGHT_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Right>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.RIGHT_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
+    if vim.g.UP_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Up>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.UP_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
+    if vim.g.DOWN_ARROW_CHAR_CODE == "" then
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("\<Down>")
+                    ]],
+                    false
+                )
+            end
+        )
+        vim.g.DOWN_ARROW_CHAR_CODE = vim.fn.getchar()
+    end
 end
 vim.api.nvim_create_autocmd(
     { "VimEnter" },
@@ -697,8 +1004,6 @@ vim.api.nvim_create_autocmd(
         callback = get_unusual_key_codes,
     }
 )
-
-local special_mode_escape_msg = "Exited special mode (key not mapped)"
 
 -- # TODO: add key to leave special mode
 -- # by pressing `<Esc>` (or `Ctrl + c`)
@@ -710,16 +1015,26 @@ local function n_special_mode()
     local input_char = vim.fn.nr2char(input_code)
     if input_char == "r" then
         n_special_reload()
-    elseif input_char == "c" then
-        n_special_copy()
     elseif input_char == "a" then
-        n_special_copy_out()
+        any_special_copy_out()
     elseif input_char == "z" then
-        n_special_copy_back_in()
+        any_special_copy_back_in()
+    elseif input_char == "c" then
+        n_special_copy_local()
+    elseif input_char == "C" then
+        n_special_copy_global()
     elseif input_char == "x" then
-        n_special_cut()
+        n_special_cut_local()
+    elseif input_char == "X" then
+        n_special_cut_global()
     elseif input_char == "v" then
-        n_special_paste()
+        n_special_paste_local()
+    elseif input_char == "V" then
+        n_special_paste_global()
+    elseif input_char == "+" then
+        n_special_add_line_below()
+    elseif input_char == "-" then
+        n_special_remove_line_below()
     elseif input_char == "\"" then
         n_special_comment()
     elseif input_code == vim.g.BS_CHAR_CODE then
@@ -730,8 +1045,31 @@ local function n_special_mode()
         n_special_save()
     elseif input_char == "q" then
         n_special_exit()
+    elseif input_char == "w" then
+        n_special_move_to_split()
+    elseif input_char == "W" then
+        n_special_create_split()
     elseif input_char == "d" then
-        n_special_show_diagnostics()
+        n_special_show_line_diagnostics()
+    elseif input_char == "D" then
+        n_special_show_buffer_diagnostics()
+    elseif input_char == "f" then
+        -- # Go to "function" definition
+        -- # but also works for other elements
+        n_special_go_to_definition()
+    elseif input_char == "F" then
+        n_special_show_files()
+    elseif input_char == "g" then
+        n_special_grep_cword()
+    elseif input_char == "G" then
+        n_special_live_grep()
+    elseif input_char == "S" then
+        n_special_git_status()
+    elseif input_char == "K" then
+        -- # NOTE: a bit limited at the moment
+        n_special_show_key_maps()
+    elseif input_char == "p" then
+        n_special_toggle_preview()
     else
         print(special_mode_escape_msg)
     end
@@ -742,11 +1080,21 @@ local function vs_special_mode()
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
     if input_char == "c" then
-        vs_special_copy()
+        vs_special_copy_local()
+    elseif input_char == "C" then
+        vs_special_copy_global()
     elseif input_char == "x" then
-        vs_special_cut()
+        vs_special_cut_local()
+    elseif input_char == "X" then
+        vs_special_cut_global()
     elseif input_char == "v" then
-        vs_special_paste()
+        vs_special_paste_local()
+    elseif input_char == "V" then
+        vs_special_paste_global()
+    elseif input_char == "a" then
+        any_special_copy_out()
+    elseif input_char == "z" then
+        any_special_copy_back_in()
     elseif input_char == "\"" then
         vs_special_comment()
     else
@@ -759,9 +1107,17 @@ local function i_special_mode()
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
     if input_char == "c" then
-        i_special_copy()
+        i_special_copy_local()
+    elseif input_char == "C" then
+        i_special_copy_global()
     elseif input_char == "v" then
-        i_special_paste()
+        i_special_paste_local()
+    elseif input_char == "V" then
+        i_special_paste_global()
+    elseif input_char == "a" then
+        any_special_copy_out()
+    elseif input_char == "z" then
+        any_special_copy_back_in()
     elseif input_char == "\"" then
         i_special_comment()
     elseif input_code == 9 then
@@ -776,7 +1132,13 @@ local function c_special_mode()
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
     if input_char == "v" then
-        c_special_paste()
+        c_special_paste_local()
+    elseif input_char == "V" then
+        c_special_paste_global()
+    elseif input_char == "a" then
+        any_special_copy_out()
+    elseif input_char == "z" then
+        any_special_copy_back_in()
     elseif input_code == 9 then
         c_special_blink_cmp_menu()
     else
@@ -788,7 +1150,13 @@ local function t_special_mode()
     print("[SPECIAL] Waiting for key input...")
     local input_char = vim.fn.nr2char(vim.fn.getchar())
     if input_char == "v" then
-        t_special_paste()
+        t_special_paste_local()
+    elseif input_char == "V" then
+        t_special_paste_global()
+    elseif input_char == "a" then
+        any_special_copy_out()
+    elseif input_char == "z" then
+        any_special_copy_back_in()
     else
         print(special_mode_escape_msg)
     end

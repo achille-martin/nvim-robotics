@@ -528,3 +528,24 @@ vim.opt.pumheight = 0
 -- # More information about matches is provided in the preview window
 vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "preview" }
 
+-- =============== DIAGNOSTICS ===============
+
+-- # Set minimum severity for diagnostic messages
+-- # depending on notification type
+vim.diagnostic.config({
+  -- virtual_text = {
+  --   severity = { min = vim.diagnostic.severity.WARN }
+  -- },
+  virtual_lines = {
+    severity = { min = vim.diagnostic.severity.WARN }
+  },
+  signs = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
+  underline = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
+  jump = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
+})

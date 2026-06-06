@@ -52,6 +52,7 @@ DEFAULT_CUSTOM_CONFIG_NAME="nvim-robotics"
 DEFAULT_SHORT_ALIAS="neo"
 DEFAULT_LOADER_SCRIPT_NAME="nvim_loader.sh"
 DEFAULT_INSTALLER_UTILITY_NAME="nvim_installer.sh"
+DEFAULT_TARGET_GIT_REPO_BRANCH="main"
 
 # Version management
 NVIM_MIN_STABLE_VERSION="v0.11.0"
@@ -87,7 +88,7 @@ source_changes() {
             then
                 printf "➤ source $DEFAULT_BASHRC_PATH\n"
             fi
-            source "$DEFAULT_BASHRC_PATH" &> /dev/null
+            source "$DEFAULT_BASHRC_PATH" &> "/dev/null" || true
             ;;
         *)
             printf "✗ Not applicable.\n"
@@ -200,7 +201,7 @@ refresh_latest_nvim_version() {
     sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
-    curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    curl_cmd="$(curl -s "https://api.github.com/repos/neovim/neovim/tags" | grep -o '"v.*"' | sed -n 1p | sed 's/"//g')"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
@@ -231,7 +232,7 @@ check_nvim_version() {
     refresh_nvim_presence
     if [[ "$IS_NVIM_AVAILABLE" == "true" ]];
     then
-        current_nvim_version="$(nvim --version | head -1 | grep -o 'v.*$')"
+        current_nvim_version="$(nvim --version | sed -n 1p | grep -o 'v.*$')"
     else
         printf "ERROR: no neovim version has been detected.\n"
         printf "Make sure to install neovim first.\n"
@@ -259,7 +260,7 @@ refresh_vim_plug_version() {
     sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
-    curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | head -1 | cut -d " " -f 2 | sed 's/"//g')"
+    curl_cmd="$(curl -s "https://api.github.com/repos/junegunn/vim-plug/tags" | grep -o '".*"' | sed -n 1p | cut -d " " -f 2 | sed 's/"//g')"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];
@@ -277,7 +278,7 @@ refresh_latest_nvm_version() {
     sudo apt-get install curl -y
     local curl_cmd=""
     local curl_cmd_status=""
-    curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | head -1 | sed 's/"//g')"
+    curl_cmd="$(curl -s "https://api.github.com/repos/nvm-sh/nvm/tags" | grep -o '"v.*"' | sed -n 1p | sed 's/"//g')"
     curl_cmd_status="$?"
     # Report any curl error to the user
     if [[ "$curl_cmd_status" -ne 0 ]];

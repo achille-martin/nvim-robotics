@@ -1,0 +1,93 @@
+# Optional identifier for the workflow
+# that appears in the Github Actions tab
+name: check_platform_compability
+
+# Events that trigger the workflow
+on:
+  # Triggers the workflow on push to the "main" branch
+  push:
+    branches:
+      - "main"
+  # Triggers the workflow on specific actions tied to a pull request
+  # For instance, when a pull request is opened
+  # or when a commit is pushed, or when the PR is ready for review
+  pull_request:
+  # Triggers the workflow when manually commanded from the Actions tab
+  workflow_dispatch:
+
+# Set default settings for the workflow
+defaults:
+  run:
+    # Use bash as default shell
+    # and force interactive mode
+    # to make use of ~/.bashrc
+    # Also, use extra options for error handling
+    shell: bash -ieo pipefail {0}
+
+# Set environment variables for the workflow
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+# A workflow run is made up of one or more jobs
+# that can run sequentially or in parallel
+jobs:
+  # Job aimed at building and testing the code
+  # so that there is no struggle around data/environment sharing between jobs
+  build_and_test:
+    # The type of runner that the job runs on
+    runs-on: ubuntu-22.04
+    # Sequence of tasks executed as part of the job
+    steps:
+
+      # ---- BUILD ----
+
+      # Ensure that the OS/distribution is updated
+      - name: (BUILD) Ensure OS updated
+        run: sudo apt-get update -y &&
+             sudo apt-get upgrade -y
+      # Check out the repository under $GITHUB_WORKSPACE
+      # so that the job can access it
+      - name: (BUILD) Checkout code
+        uses: actions/checkout@v4
+      # Ensure that the scripts are executable
+      # to enable full inter-operability
+      - name: (BUILD) Make scripts executable
+        run: chmod +x "./scripts/helper_functions.sh" &&
+             chmod +x "./scripts/nvim_installer.sh" &&
+             chmod +x "./scripts/nvim_config_manager.sh"
+      # Install Neovim via the dedicated bash script
+      - name: (BUILD) Install Neovim
+        run: ./scripts/nvim_installer.sh install &&
+             source ~/.bashrc
+      # Check Neovim installation by printing out the version
+      - name: (BUILD) Check Neovim installation
+        run: nvim --version
+      # Set up the default repo configuration
+      - name: (BUILD) Set up default repo configuration
+        run: ./scripts/nvim_config_manager.sh --branch ${{ env.BRANCH_NAME }} quick-setup &&
+             source ~/.bashrc
+      # Install plugins from vim-plug
+      - name: (BUILD) Install Neovim plugins
+        run: nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true
+      # Install nvim-treesitter parsers
+      # NOTE: the installation start automatically in any Neovim mode
+      # NOTE: the installation should timeout after 90 seconds
+      - name: (BUILD) Install nvim-treesitter parsers
+        run: nvim-robotics --headless -c TSUpdate -c qall || true
+      # Install Mason LSP servers
+      # NOTE: make the installation timeout after 90 seconds
+      # NOTE: the servers cannot be installed via headless Neovim,
+      #       but the installation starts automatically in non-headless mode
+      - name: (BUILD) Install Mason LSP servers
+        run: nvim-robotics -c MasonUpdate -c "call timer_start(90000, { -> execute('qall') })" || true
+      # Check repo configuration aliases
+      - name: (BUILD) Check Neovim aliases
+        run: nvim-robotics --version &&
+             neo --version
+
+      # ---- TEST ----
+
+      # Check health of Neovim
+      - name: (TEST) Check Neovim health
+        run: nvim-robotics --headless -c checkhealth -c qall || true
+
