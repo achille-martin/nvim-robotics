@@ -849,7 +849,7 @@ end
 -- # TIP: using `Ctrl + i` helps you get back
 -- # to your state after the jump / go to (the increment)
 local function n_special_go_to_definition()
-    print("[SPECIAL] Getting to function definition")
+    print("[SPECIAL] Getting to function definition (if any)")
     require("fzf-lua").lsp_definitions()
 end
 
@@ -893,13 +893,29 @@ end
 local function n_special_toggle_preview()
 -- # Toggle current buffer preview
 -- # by opening / closing a browser tab
+    print("[SPECIAL] Toggling buffer preview in browser tab (if available)")
     vim.api.nvim_exec(
         [[
             MarkdownPreviewToggle
         ]],
         false
     )
-    print("[SPECIAL] Toggling buffer preview in browser tab")
+end
+
+local function n_special_prettify_json()
+    -- # Prettify the output of json files and unidentified files only
+    local current_filetype = vim.bo.filetype
+    if current_filetype == "json" or current_filetype == "" then
+        print("[SPECIAL] Prettifying json output (if able)")
+        vim.api.nvim_exec(
+            [[
+                %!jq .
+            ]],
+            false
+        )
+    else
+        print("[SPECIAL] Current file type is ", current_filetype," so not json, skipping.")
+    end
 end
 
 -- # Store key codes for unusual keys on starting neovim
@@ -1070,6 +1086,8 @@ local function n_special_mode()
         n_special_show_key_maps()
     elseif input_char == "p" then
         n_special_toggle_preview()
+    elseif input_char == "j" then
+        n_special_prettify_json()
     else
         print(special_mode_escape_msg)
     end

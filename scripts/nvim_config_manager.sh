@@ -148,6 +148,9 @@ perform_quick_setup() {
     ## Note: the following apt dependencies
     ## are required by nvim-treesitter
     sudo apt-get install tar -y
+    ## Note: the following apt dependencies
+    ## are required to perform JSON data processing
+    sudo apt-get install jq -y
     # Verify gcc presence on the current OS
     local is_gcc_available="0"
     if [[ "$(which gcc)" ]]; then
