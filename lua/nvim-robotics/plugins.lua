@@ -213,6 +213,9 @@ vim.call('plug#begin', plugs_install_path)
     -- # Improved tabline (for tabs and not for buffers)
     Plug 'nanozuki/tabby.nvim'
 
+    -- # Disable memory-heavy features when handling big files
+    Plug 'LunarVim/bigfile.nvim'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -672,3 +675,28 @@ require('tabby').setup({
     }
   end,
 })
+
+-- # Define configuration for `bigfile` plugin
+require('bigfile').setup({
+    -- # Size of the file in MiB
+    filesize = 2,
+    -- # Autocmd pattern or function
+    -- # Refer to https://github.com/LunarVim/bigfile.nvim
+    -- # for more information
+    pattern = { "*" },
+    -- # Features to disable
+    features = {
+        "indent_blankline",
+        "illuminate",
+        "lsp",
+        "treesitter",
+        "syntax",
+        "matchparen",
+        "vimopts",
+        "filetype",
+    },
+})
+-- # NOTE: there is a deprecated warning in `checkhealth` for `bigfile`
+-- # and targeted at Nvim 1.0
+-- # Refer to https://github.com/LunarVim/bigfile.nvim/issues/30
+-- # for more information
