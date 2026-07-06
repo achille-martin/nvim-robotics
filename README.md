@@ -36,7 +36,7 @@ _WARNING: if Neovim is not functional, or if your Neovim version is lower than `
 <a id="quick-config-setup"></a>
 ### 2.2. Quick configuration setup
 
-_NOTE: the quick-setup configuration does not interfere with your existing Neovim configuration._
+_NOTE: the quick-setup configuration does not interfere with your existing Neovim configuration, it creates an alternative/separate configuration._
 
 Apply the quick-setup configuration by typing the following command in a terminal:
 
