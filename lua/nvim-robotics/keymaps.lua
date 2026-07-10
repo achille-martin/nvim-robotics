@@ -918,6 +918,36 @@ local function n_special_prettify_json()
     end
 end
 
+-- # NOTE for debuggers
+-- # The following calls might be useful during a debugging session:
+-- # * `:DapStepOver` to macro step forward
+-- # * `:DapStepInto` to micro step forward
+-- # * `:DapStepOut` to step out
+-- # * `:DapDisconnect` to stop the debugging session
+
+local function n_special_start_debugger()
+    -- # Start debugger via configured DAP servers
+    -- # Can also resume a stopped debugger
+    local current_filetype = vim.bo.filetype
+    print("[SPECIAL] Starting debugger for ", current_filetype, " (if able)")
+    vim.api.nvim_exec(
+        [[
+            :lua require'dap'.continue()
+        ]],
+        false
+    )
+end
+
+local function n_special_toggle_debugger_breakpoint()
+    print("[SPECIAL] Toggling breakpoint on current line (if able)")
+    vim.api.nvim_exec(
+        [[
+            :lua require'dap'.toggle_breakpoint()
+        ]],
+        false
+    )
+end
+
 -- # Store key codes for unusual keys on starting neovim
 -- # in SHADA (Shared Data between sessions)
 -- # so that this action is only performed a minimal number of times
@@ -1088,6 +1118,10 @@ local function n_special_mode()
         n_special_toggle_preview()
     elseif input_char == "j" then
         n_special_prettify_json()
+    elseif input_char == "B" then
+        n_special_start_debugger()
+    elseif input_char == "b" then
+        n_special_toggle_debugger_breakpoint()
     else
         print(special_mode_escape_msg)
     end

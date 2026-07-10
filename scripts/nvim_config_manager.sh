@@ -151,6 +151,13 @@ perform_quick_setup() {
     ## Note: the following apt dependencies
     ## are required to perform JSON data processing
     sudo apt-get install jq -y
+    ## Note: the following apt dependencies
+    ## help with python pip calls
+    sudo apt-get install python-is-python3
+    ## Note: the following pip dependencies
+    ## help with DAP server setup
+    python3 -m pip install --upgrade pip
+    python3 -m pip install debugpy
     # Verify gcc presence on the current OS
     local is_gcc_available="0"
     if [[ "$(which gcc)" ]]; then

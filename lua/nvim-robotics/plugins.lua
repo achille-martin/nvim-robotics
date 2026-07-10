@@ -139,6 +139,14 @@ local mason_lsp_servers = {
     "yamlls",
 }
 
+local mason_dap_servers = {
+    "python",
+}
+
+local custom_dap_config = {
+    "python",
+}
+
 local installation_timeout_ms = 90000
 
 -- HANDY ROUTINES
@@ -181,6 +189,20 @@ vim.call('plug#begin', plugs_install_path)
         Plug('neovim/nvim-lspconfig')
             -- # Indicate plugins depending on nvim-lspconfig via indentation
             Plug('mason-org/mason-lspconfig.nvim')
+
+    -- # Provide an API (similar to an adapter) to interface existing debuggers
+    -- # via the Debug Adapter Protocol (DAP)
+    Plug 'mfussenegger/nvim-dap'
+        -- # Indicate plugins depending on nvim-dap
+        -- # and used for visualisation purposes
+        Plug 'nvim-neotest/nvim-nio'
+        Plug 'rcarriga/nvim-dap-ui'
+        -- # Indicate plugins depending on nvim-dap
+        -- # and also on mason.nvim to download DAP servers easily
+        Plug 'jay-babu/mason-nvim-dap.nvim'
+        -- # Indicate plugins depending on nvim-dap
+        -- # to provide extra server capabilities
+        Plug 'mfussenegger/nvim-dap-python'
 
     Plug 'windwp/nvim-autopairs'
 
@@ -440,6 +462,38 @@ vim.diagnostic.config{
         border = "rounded",
     }
 }
+
+-- # Install and load DAP servers
+require("mason-nvim-dap").setup({
+    -- # Handlers required for automatic installation
+    handlers = {},
+    -- # Exclude servers if configured by external plugins
+    automatic_installation = {
+        exclude = custom_dap_config,
+    },
+    -- # Call Mason to check whether the DAP servers are installed
+    ensure_installed = mason_dap_servers,
+})
+
+-- # Initialise custom DAP configuration for specific filetypes
+require("dap-python").setup("python3")
+
+-- # Initialise DAP UI on startup
+-- # and trigger it automatically on specific events
+local dap, dap_ui = require("dap"), require("dapui")
+dap_ui.setup({})
+dap.listeners.before.attach.dapui_config = function()
+	dap_ui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+	dap_ui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+	dap_ui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+	dap_ui.close()
+end
 
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
