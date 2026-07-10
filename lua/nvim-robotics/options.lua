@@ -177,7 +177,8 @@ vim.api.nvim_create_autocmd(
 	    end,
     }
 )
-
+-- # Stop highlighting on long lines
+vim.opt.synmaxcol = 300
 
 -- =============== WINDOW DISPLAY ===============
 
