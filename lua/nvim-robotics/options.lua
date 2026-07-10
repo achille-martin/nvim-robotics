@@ -225,6 +225,21 @@ vim.opt.splitbelow = false
 -- # When splitting window vertically,
 -- # show newest window to the right
 vim.opt.splitright = true
+-- # Highlight vertical window separators when creating a new split
+-- # NOTE: the `fg` colour set is the same as the custom colour from cyberdream
+vim.opt.fillchars = { vert = '|' }
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*',
+  callback = function()
+    vim.api.nvim_set_hl(0, 'WinSeparator', {
+      fg = '#FFF8DC',
+      bold = true,
+    })
+  end,
+})
+-- # Highlight horizontal window separators from the status line
+-- # depending on its state (active or non-active)
+vim.opt.fillchars = "stl:·,stlnc:-"
 
 -- WINDOW TITLE
 
