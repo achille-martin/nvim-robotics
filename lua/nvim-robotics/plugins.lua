@@ -193,6 +193,8 @@ vim.call('plug#begin', plugs_install_path)
 
     -- # Target latest `1.x` release for `blink.cmp`
     Plug('saghen/blink.cmp', { ['tag'] = 'v1.*' })
+        -- # Provide optional snippets for the snippet source
+        Plug 'rafamadriz/friendly-snippets'
 
     Plug 'ibhagwan/fzf-lua'
 
@@ -487,20 +489,22 @@ require("cyberdream").setup({
 })
 
 -- # Improve the blink.cmp completion plugin experience
--- # by tweaking the defaults:
+-- # by tweaking the default settings:
 -- # * Download as little noise as possible
--- #   (i.e. no Rust, no NerdFonts)
+-- #   (i.e. prefer Rust if available otherwise Lua, no NerdFonts)
 -- # * Make sure that the plugin does not disturb
 -- #   normal functionalities (like `<Tab>`)
--- # * Only show completion suggestions on `<Tab>` (under certain conditions),
--- #   or use the special mode `<Ctrl + space><Tab>`
+-- # * Only show completion suggestions on `<Tab>` (under certain conditions)
 -- # * Display ghost text only if the completion menu is visible
 -- # * Use `Tab` or `Enter` to accept the suggestion
 -- # * Use `Ctrl + c` to hide completion menu
 require("blink.cmp").setup({
     -- # General settings
     fuzzy = {
-        implementation = "lua",
+        -- # Rust implementation is significantly faster and better
+        -- # but for some users it is not available
+        -- # therefore, prefer Rust implementation but fallback on Lua
+        implementation = "prefer_rust_with_warning",
         -- # Define sorting priority:
         -- # Primary sort: by fuzzy matching score
         -- # Secondary sort: by sortText field if scores are equal
@@ -534,6 +538,7 @@ require("blink.cmp").setup({
             min_width = 15,
             max_height = 10,
             scrolloff = 1,
+            border = "rounded",
             draw = {
                 columns = {
                     { "label", "label_description", gap = 1 },
@@ -548,6 +553,9 @@ require("blink.cmp").setup({
         documentation = {
             auto_show = true,
             auto_show_delay_ms = 500,
+            window = {
+                border = "rounded",
+            },
         },
     },
     -- # INSERT mode settings
@@ -611,12 +619,14 @@ require("blink.cmp").setup({
             },
         },
     },
+
 })
 
 require("fzf-lua").setup({
     winopts = {
         preview = {
             layout = "vertical",
+            vertical = "down:60%",
         },
     },
     keymap = {
