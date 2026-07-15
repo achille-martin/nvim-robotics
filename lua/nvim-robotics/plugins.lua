@@ -577,7 +577,12 @@ require("blink.cmp").setup({
     -- # Note: a function signature consists of the function prototype.
     -- # It specifies the general information about a function like the name,
     -- # scope and parameters.
-    signature = { enabled = true },
+    signature = {
+        enabled = true,
+        window = {
+            border = "rounded",
+        },
+    },
     completion = {
         -- # Range 'prefix' does a fuzzy match on the text before the cursor
         -- # Range 'full' does a fuzzy match on the text
