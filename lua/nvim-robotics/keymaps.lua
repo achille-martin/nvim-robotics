@@ -731,6 +731,16 @@ local function n_special_exit()
     )
 end
 
+local function n_special_force_exit()
+    vim.api.nvim_exec(
+        [[
+            set confirm
+            qall!
+        ]],
+        false
+    )
+end
+
 local function n_special_create_split()
     -- # TODO: specify direction with hjkl as well
     print("[SPECIAL] Specify direction of creation of split with arrows...")
@@ -1091,6 +1101,8 @@ local function n_special_mode()
         n_special_save()
     elseif input_char == "q" then
         n_special_exit()
+    elseif input_char == "Q" then
+        n_special_force_exit()
     elseif input_char == "w" then
         n_special_move_to_split()
     elseif input_char == "W" then
