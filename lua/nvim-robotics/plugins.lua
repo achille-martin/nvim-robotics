@@ -242,6 +242,9 @@ vim.call('plug#begin', plugs_install_path)
     -- # Disable memory-heavy features when handling big files
     Plug 'LunarVim/bigfile.nvim'
 
+    -- # Improved quickfix window and functionalities
+    Plug 'stevearc/quicker.nvim'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -815,3 +818,13 @@ require('bigfile').setup({
 -- # and targeted at Nvim 1.0
 -- # Refer to https://github.com/LunarVim/bigfile.nvim/issues/30
 -- # for more information
+-- # Define configuration for `quicker` plugin
+require('quicker').setup({
+    type_icons = {
+        E = "E",
+        W = "W",
+        I = "I",
+        N = "N",
+        H = "H",
+    },
+})
