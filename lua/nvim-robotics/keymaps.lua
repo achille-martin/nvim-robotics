@@ -239,6 +239,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=all_open_term,
+        desc="Open new terminal",
     }
 )
 vim.api.nvim_set_keymap(
@@ -249,6 +250,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=all_open_term,
+        desc="Open new terminal",
     }
 )
 vim.api.nvim_set_keymap(
@@ -259,6 +261,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=all_open_term,
+        desc="Open new terminal",
     }
 )
 vim.api.nvim_set_keymap(
@@ -269,6 +272,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=all_open_term,
+        desc="Open new terminal",
     }
 )
 vim.api.nvim_set_keymap(
@@ -279,6 +283,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=all_open_term,
+        desc="Open new terminal",
     }
 )
 -- # In TERMINAL mode, use `<F2>` to get into / out of terminal edit
@@ -328,6 +333,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=n_enter_insert,
+        desc="Enter INSERT mode",
     }
 )
 vim.api.nvim_set_keymap(
@@ -338,6 +344,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=i_exit_insert,
+        desc="Exit INSERT or TERMINAL mode, back to NORMAL mode",
     }
 )
 vim.api.nvim_set_keymap(
@@ -348,6 +355,35 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=t_browse_term,
+        desc="Enter TERMINAL mode",
+    }
+)
+
+-- # PRODUCTIVITY MANAGEMENT
+
+-- # In NORMAL mode, jump from current symbol under the cursor
+-- # to the next pair or associated symbol (if any)
+-- # using `<TAB>`
+-- # NOTE: the `<TAB>` key has no built-in keymap in NORMAL mode
+
+local function n_jump_to_next_pair()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("%")
+        ]],
+        false
+    )
+end
+
+vim.api.nvim_set_keymap(
+    "n",
+    "<TAB>",
+    "",
+    {
+        noremap=true,
+        silent=true,
+        callback=n_jump_to_next_pair,
+        desc="Jump to next pair"
     }
 )
 
@@ -786,7 +822,6 @@ local function n_special_move_to_split()
     -- # TODO: specify direction with hjkl as well
     print("[SPECIAL] Specify direction of movement to split with arrows...")
     local input_code = vim.fn.getchar()
-    local input_char = vim.fn.nr2char(input_code)
     if input_code == vim.g.LEFT_ARROW_CHAR_CODE then
         vim.api.nvim_exec(
             [[
@@ -953,6 +988,26 @@ local function n_special_toggle_debugger_breakpoint()
     vim.api.nvim_exec(
         [[
             :lua require'dap'.toggle_breakpoint()
+        ]],
+        false
+    )
+end
+
+local function n_special_create_new_tab()
+    print("[SPECIAL] Creating new tab (if able)")
+    vim.api.nvim_exec(
+        [[
+            :tabnew
+        ]],
+        false
+    )
+end
+
+local function n_special_move_to_next_tab()
+    print("[SPECIAL] Moving to next tab (if able)")
+    vim.api.nvim_exec(
+        [[
+            :tabnext
         ]],
         false
     )
@@ -1134,6 +1189,10 @@ local function n_special_mode()
         n_special_start_debugger()
     elseif input_char == "b" then
         n_special_toggle_debugger_breakpoint()
+    elseif input_char == "T" then
+        n_special_create_new_tab()
+    elseif input_char == "t" then
+        n_special_move_to_next_tab()
     else
         print(special_mode_escape_msg)
     end
@@ -1237,6 +1296,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=n_special_mode,
+        desc="Enter SPECIAL mode",
     }
 )
 -- # VISUAL/SELECT mode
@@ -1248,6 +1308,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=vs_special_mode,
+        desc="Enter SPECIAL mode",
     }
 )
 
@@ -1260,6 +1321,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=i_special_mode,
+        desc="Enter SPECIAL mode",
     }
 )
 
@@ -1272,6 +1334,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=c_special_mode,
+        desc="Enter SPECIAL mode",
     }
 )
 
@@ -1284,6 +1347,7 @@ vim.api.nvim_set_keymap(
         noremap=true,
         silent=true,
         callback=t_special_mode,
+        desc="Enter SPECIAL mode",
     }
 )
 
@@ -1382,15 +1446,20 @@ vim.api.nvim_set_keymap(
 -- # use `:q`
 -- #
 -- # OPTION 2: for advanced Neovim users
--- # In NORMAL mode, exit without saving with `<Ctrl-space> + q`
+-- # In NORMAL mode, force exit without saving with `<Ctrl-space> + Q`
 --
 -- # 7) Window shortcuts
 -- #
--- # TODO: use `arrows` to move between windows
--- # once you are in the window motion special mode?
+-- # Use `<arrows>` to move between windows
+-- # once you are in the window motion special mode (`<Ctrl-space> + w`)
 -- #
+-- # Use `<arrows>` to create a new window
+-- # once you are in the window creation special mode (`<Ctrl-space> + W`)
+--
 -- # 8) Tab shortcuts
 -- #
--- # TODO: use the `tab` key for instance to manipulate tabs
--- # TODO: use `arrows` to move between tabs
--- # once you are in the tab motion special mode?
+-- # Use `<Ctrl-space> + T` to create a new tab
+-- #
+-- # Use `<Ctrl-space> + t` to move to next tab
+-- #
+-- # TODO: improve creation and navigation between tabs
