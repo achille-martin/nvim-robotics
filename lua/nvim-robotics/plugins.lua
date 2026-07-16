@@ -819,12 +819,16 @@ require('bigfile').setup({
 -- # Refer to https://github.com/LunarVim/bigfile.nvim/issues/30
 -- # for more information
 -- # Define configuration for `quicker` plugin
+vim.api.nvim_set_hl(0, 'BrighterLineNr', { fg = '#A9A9A9' })
 require('quicker').setup({
+    opts = {
+        winhighlight = "QuickFixLineNr:BrighterLineNr",
+    },
     type_icons = {
         E = "E",
         W = "W",
         I = "I",
-        N = "N",
+        N = "H",
         H = "H",
     },
 })
