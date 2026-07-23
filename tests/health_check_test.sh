@@ -45,7 +45,7 @@ then
     printf "\nERROR: Neovim checkhealth command failed.\n"
     exit 1
 fi
-grep_cmd="$(grep -ir "error" "$health_log_filename")"
+grep_cmd="$(grep -E "ERROR|error" "$health_log_filename")"
 grep_cmd="$?"
 if [[ "$grep_cmd_status" -ne 0 ]];
 then
@@ -55,6 +55,4 @@ fi
 
 cd -
 printf "\n\nSUCCESS: all health check tests passed.\n\n"
-
-
 
