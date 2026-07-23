@@ -70,7 +70,7 @@ jobs:
       - name: (BUILD) Install Neovim plugins
         run: nvim-robotics --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true
       # Install nvim-treesitter parsers
-      # NOTE: the installation start automatically in any Neovim mode
+      # NOTE: the installation starts automatically in any Neovim mode
       # NOTE: the installation should timeout after 90 seconds
       - name: (BUILD) Install nvim-treesitter parsers
         run: nvim-robotics --headless -c TSUpdate -c qall || true
@@ -87,7 +87,11 @@ jobs:
 
       # ---- TEST ----
 
+      # Ensure that the scripts are executable
+      # to enable full inter-operability
+      - name: (TEST) Make scripts executable
+        run: chmod +x "./tests/health_check_test.sh"
       # Check health of Neovim
       - name: (TEST) Check Neovim health
-        run: nvim-robotics --headless -c checkhealth -c qall || true
+        run: ./tests/health_check_test.sh
 
