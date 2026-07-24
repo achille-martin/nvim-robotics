@@ -1000,6 +1000,20 @@ local function n_special_toggle_debugger_breakpoint()
     )
 end
 
+-- # Show DAP commands via fzf
+-- # Equivalent to calling `:FzfLua dap_commands`
+local function n_special_show_debugger_commands()
+    print("[SPECIAL] Showing DAP commands (if any)")
+    require("fzf-lua").dap_commands()
+end
+
+-- # Show DAP variables via fzf
+-- # Equivalent to calling `:FzfLua dap_variables`
+local function n_special_show_debugger_variables()
+    print("[SPECIAL] Showing DAP variables (if any)")
+    require("fzf-lua").dap_variables()
+end
+
 local function n_special_create_new_tab()
     print("[SPECIAL] Creating new tab (if able)")
     vim.api.nvim_exec(
@@ -1198,6 +1212,10 @@ local function n_special_mode()
         n_special_start_debugger()
     elseif input_char == "b" then
         n_special_toggle_debugger_breakpoint()
+    elseif input_char == "O" then
+        n_special_show_debugger_commands()
+    elseif input_char == "o" then
+        n_special_show_debugger_variables()
     elseif input_char == "T" then
         n_special_create_new_tab()
     elseif input_char == "t" then
