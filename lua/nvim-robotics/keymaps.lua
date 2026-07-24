@@ -928,6 +928,13 @@ local function n_special_git_status()
     require("fzf-lua").git_status()
 end
 
+-- # Show git blame results via fzf
+-- # Equivalent to calling `:FzfLua git_blame`
+local function n_special_git_blame()
+    print("[SPECIAL] Showing git blame results (if any)")
+    require("fzf-lua").git_blame()
+end
+
 -- # Show key maps via fzf
 -- # Equivalent to calling `:FzfLua keymaps`
 local function n_special_show_key_maps()
@@ -1178,6 +1185,8 @@ local function n_special_mode()
         n_special_live_grep()
     elseif input_char == "S" then
         n_special_git_status()
+    elseif input_char == "M" then
+        n_special_git_blame()
     elseif input_char == "K" then
         -- # NOTE: a bit limited at the moment
         n_special_show_key_maps()
