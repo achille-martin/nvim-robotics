@@ -156,8 +156,29 @@ perform_quick_setup() {
     sudo apt-get install python-is-python3
     ## Note: the following pip dependencies
     ## help with DAP server setup
-    python3 -m pip install --upgrade pip
-    python3 -m pip install debugpy
+    local apt_cmd=""
+    local apt_cmd_status=""
+    local py3_lib_debugpy="python3 library debugpy"
+    printf "Trying to install $py3_lib_debugpy...\n"
+    apt_cmd="$(sudo apt-get install python3-debugpy -y)"
+    apt_cmd_status="$?"
+    if [[ "$apt_cmd_status" -ne 0 ]];
+    then
+        printf "WARNING: Cannot install $py3_lib_debugpy via apt.\n"
+        printf "Trying via pip.\n"
+        local pip_cmd=""
+        local pip_cmd_status=""
+        pip_cmd="$(python3 -m pip install --upgrade pip && python3 -m pip install debugpy)"
+        pip_cmd_status="$?"
+        if [[ "$pip_cmd_status" -ne 0 ]];
+        then
+            printf "WARNING: Cannot find or use python3 pip to install $py3_lib_debugpy.\n"
+            printf "Therefore, some functionalities might not be available\n"
+            printf "in this neovim config.\n"
+        fi
+    else
+        echo "$apt_cmd"
+    fi
     # Verify gcc presence on the current OS
     local is_gcc_available="0"
     if [[ "$(which gcc)" ]]; then
