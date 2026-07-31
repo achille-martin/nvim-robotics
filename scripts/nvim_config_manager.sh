@@ -165,7 +165,7 @@ perform_quick_setup() {
     if [[ "$apt_cmd_status" -ne 0 ]];
     then
         printf "WARNING: Cannot install $py3_lib_debugpy via apt.\n"
-        printf "Trying via pip.\n"
+        printf "Trying to install $py3_lib_debugpy via python3 pip...\n"
         local pip_cmd=""
         local pip_cmd_status=""
         pip_cmd="$(python3 -m pip install --upgrade pip && python3 -m pip install debugpy)"
@@ -175,6 +175,8 @@ perform_quick_setup() {
             printf "WARNING: Cannot find or use python3 pip to install $py3_lib_debugpy.\n"
             printf "Therefore, some functionalities might not be available\n"
             printf "in this neovim config.\n"
+        else
+            echo "$pip_cmd"
         fi
     else
         echo "$apt_cmd"
