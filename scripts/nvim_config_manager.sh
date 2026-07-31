@@ -65,6 +65,7 @@ print_usage() {
 
         quick-setup [CONFIG-NAME]     Setup the \`$GIT_REPO_NAME\` configuration
                                       as it is provided in the repo
+                                      Or update the configuration if already existing
                                       Optional argument: CONFIG-NAME
                                       (default = \`$DEFAULT_CONFIG_NAME\`)
 
@@ -355,29 +356,36 @@ perform_quick_setup() {
     # Store the configuration in a specific folder for nvim to find it
     # depending on the availability of SSH
     printf "\nDownloading configuration at specific location...\n"
-    local ssh_cmd=""
-    local ssh_cmd_status=""
-    local git_clone_cmd_status=""
-    # Note: ensure strict host key checking with SSH
-    # in case the channel is not properly set up
-    ssh_cmd="$(ssh -o StrictHostKeyChecking=yes -T "git@github.com" &> "/dev/null")"
-    ssh_cmd_status="$?"
-    # Note: according to Github docs, the exit status
-    # of the ssh user verification command is usually 1
-    # if it was successful
-    if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
+    # Ensure that the specific location is available to receive the download
+    if [[ -d "$CONFIG_FOLDER/$CONFIG_NAME" ]];
     then
-        git clone -b "$TARGET_GIT_REPO_BRANCH" "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
-        git_clone_cmd_status="$?"
+        printf "WARNING: directory \`$CONFIG_FOLDER/$CONFIG_NAME\` already exists.\n"
+        printf "Therefore, assuming that the configuration has already been downloaded.\n"
     else
-        git clone -b "$TARGET_GIT_REPO_BRANCH" "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
-        git_clone_cmd_status="$?";
-    fi
-    # Report any git error to the user
-    if [[ "$git_clone_cmd_status" -ne 0 ]];
-    then
-        printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
-        exit 1
+        # Note: ensure strict host key checking with SSH
+        # in case the channel is not properly set up
+        local ssh_cmd=""
+        local ssh_cmd_status=""
+        local git_clone_cmd_status=""
+        ssh_cmd="$(ssh -o StrictHostKeyChecking=yes -T "git@github.com" &> "/dev/null")"
+        ssh_cmd_status="$?"
+        # Note: according to Github docs, the exit status
+        # of the ssh user verification command is usually 1
+        # if it was successful
+        if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
+        then
+            git clone -b "$TARGET_GIT_REPO_BRANCH" "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
+            git_clone_cmd_status="$?"
+        else
+            git clone -b "$TARGET_GIT_REPO_BRANCH" "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
+            git_clone_cmd_status="$?";
+        fi
+        # Report any git error to the user
+        if [[ "$git_clone_cmd_status" -ne 0 ]];
+        then
+            printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
+            exit 1
+        fi
     fi
     printf "...done\n"
 
