@@ -66,3 +66,68 @@ vim.api.nvim_create_autocmd("FileType", {
         })
     end,
 })
+
+-- # Custom rosinstall file syntax highlighting definition
+
+vim.api.nvim_create_autocmd(
+    { "BufRead", "BufNewFile" },
+    {
+        pattern = "*.rosinstall",
+        callback = function()
+            vim.bo.filetype = "my_custom_rosinstall"
+        end,
+    }
+)
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "my_custom_rosinstall",
+    callback = function()
+        -- # Define syntax highlighting with regex
+        -- # by order of application
+        vim.cmd([[
+            syntax region RosInstStringDoubleQuotes start=/"/ end=/"/
+            syntax region RosInstStringSingleQuotes start=/'/ end=/'/
+            syntax match RosInstBracketSquare /\[\|\]/
+            syntax match RosInstBracketCircular /(\|)/
+            syntax match RosInstBracketCurly /{\|}/
+            syntax match RosInstDash /-/
+            syntax match RosInstGitField /git:/
+            syntax match RosInstLocalNameField /local-name:/
+            syntax match RosInstUriField /uri:/
+            syntax match RosInstVersionField /version:/
+        ]])
+        -- # Define custom colours for specific groups
+        -- # and try to re-use the colorscheme hues
+        vim.api.nvim_set_hl(0, "RosInstBracketSquare", {
+            fg = "#FF2BF5",
+        })
+        vim.api.nvim_set_hl(0, "RosInstBracketCircular", {
+            fg = "#FF2BF5",
+        })
+        vim.api.nvim_set_hl(0, "RosInstBracketCurly", {
+            fg = "#FF2BF5",
+        })
+        vim.api.nvim_set_hl(0, "RosInstDash", {
+            fg = "#FF2BF5",
+        })
+        vim.api.nvim_set_hl(0, "RosInstGitField", {
+            fg = "#71797E",
+        })
+        vim.api.nvim_set_hl(0, "RosInstLocalNameField", {
+            fg = "#6699FF",
+        })
+        vim.api.nvim_set_hl(0, "RosInstUriField", {
+            fg = "#F2AB38",
+        })
+        vim.api.nvim_set_hl(0, "RosInstVersionField", {
+            fg = "#DE3163",
+        })
+        vim.api.nvim_set_hl(0, "RosInstStringDoubleQuotes", {
+            fg = "#00A36C",
+        })
+        vim.api.nvim_set_hl(0, "RosInstStringSingleQuotes", {
+            fg = "#00A36C",
+        })
+    end,
+})
+
