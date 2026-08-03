@@ -34,8 +34,14 @@ jobs:
   # Job aimed at building and testing the code
   # so that there is no struggle around data/environment sharing between jobs
   build_and_test:
+    # The strategy configured for each job
+    strategy:
+      fail-fast: true
+      max-parallel: 2
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
     # The type of runner that the job runs on
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
     # Sequence of tasks executed as part of the job
     steps:
 
