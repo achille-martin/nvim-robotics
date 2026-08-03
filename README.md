@@ -2,6 +2,8 @@
 
 Neovim configuration. Optimised for Robotics Engineers.
 
+Placeholder status badge CI here.
+
 <a id="overview"></a>
 ## 1. Overview
 
