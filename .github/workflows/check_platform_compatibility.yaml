@@ -1,6 +1,6 @@
 # Optional identifier for the workflow
 # that appears in the Github Actions tab
-name: check_platform_compability
+name: check_platform_compatibility
 
 # Events that trigger the workflow
 on:
