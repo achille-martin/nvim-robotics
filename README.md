@@ -2,9 +2,7 @@
 
 Neovim configuration. Optimised for Robotics Engineers.
 
-(TODO: check renaming of workflow)
-
-[![check_platform_compability](https://github.com/achille-martin/nvim-robotics/actions/workflows/check_platform_compatibility.yaml/badge.svg)](https://github.com/achille-martin/nvim-robotics/actions/workflows/check_platform_compatibility.yaml)
+[![Check Platform Compatibility](https://github.com/achille-martin/nvim-robotics/actions/workflows/check_platform_compatibility.yaml/badge.svg)](https://github.com/achille-martin/nvim-robotics/actions/workflows/check_platform_compatibility.yaml)
 
 <a id="overview"></a>
 ## 1. Overview
