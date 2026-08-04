@@ -908,8 +908,8 @@ end
 -- #
 -- # NOTE: for best results with cpp-related code, use clangd
 -- # Refer to LSP tips at the bottom of this file for more information
-local function n_special_go_to_reference_finder()
-    print("[SPECIAL] Getting to reference finder (if any)")
+local function n_special_show_reference_finder()
+    print("[SPECIAL] Showing reference finder (if any)")
     require("fzf-lua").lsp_finder()
 end
 
@@ -918,6 +918,13 @@ end
 local function n_special_show_files()
     print("[SPECIAL] Showing files in CWD for this buffer (if any)")
     require("fzf-lua").files()
+end
+
+-- # Show file and buffer history (previously opened) via fzf
+-- # Equivalent to calling `:FfzLua history`
+local function n_special_show_file_history()
+    print("[SPECIAL] Showing file history (if any)")
+    require("fzf-lua").history()
 end
 
 -- # Perform live grep in cwd (current working directory) via fzf
@@ -1207,11 +1214,13 @@ local function n_special_mode()
         -- # but also works for other elements
         n_special_go_to_definition()
     elseif input_char == "r" then
-        -- # Go to reference finder
+        -- # Show reference finder
         -- # to identify the references and related symbol types
-        n_special_go_to_reference_finder()
+        n_special_show_reference_finder()
     elseif input_char == "F" then
         n_special_show_files()
+    elseif input_char == "H" then
+        n_special_show_file_history()
     elseif input_char == "g" then
         n_special_grep_cword()
     elseif input_char == "G" then
