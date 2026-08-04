@@ -898,6 +898,21 @@ local function n_special_go_to_definition()
     require("fzf-lua").lsp_definitions()
 end
 
+-- # Go to reference finder for word under cursor
+-- # Displays a list of symbols and particularly:
+-- # * Declarations
+-- # * Definitions
+-- # * Type definitions
+-- # * Implementations
+-- # * References (gathering all of the above)
+-- #
+-- # NOTE: for best results with cpp-related code, use clangd
+-- # Refer to LSP tips at the bottom of this file for more information
+local function n_special_go_to_reference_finder()
+    print("[SPECIAL] Getting to reference finder (if any)")
+    require("fzf-lua").lsp_finder()
+end
+
 -- # Show all files in cwd (current working directory) via fzf
 -- # Equivalent to calling `:FfzLua files`
 local function n_special_show_files()
@@ -1145,7 +1160,7 @@ local function n_special_mode()
     print("[SPECIAL] Waiting for key input...")
     local input_code = vim.fn.getchar()
     local input_char = vim.fn.nr2char(input_code)
-    if input_char == "r" then
+    if input_char == "R" then
         n_special_reload()
     elseif input_char == "a" then
         any_special_copy_out()
@@ -1191,6 +1206,10 @@ local function n_special_mode()
         -- # Go to "function" definition
         -- # but also works for other elements
         n_special_go_to_definition()
+    elseif input_char == "r" then
+        -- # Go to reference finder
+        -- # to identify the references and related symbol types
+        n_special_go_to_reference_finder()
     elseif input_char == "F" then
         n_special_show_files()
     elseif input_char == "g" then
@@ -1474,7 +1493,7 @@ vim.api.nvim_set_keymap(
 -- #
 -- # OPTION 2: for advanced Neovim users
 -- # In NORMAL mode, force exit without saving with `<Ctrl-space> + Q`
---
+
 -- # 7) Window shortcuts
 -- #
 -- # Use `<arrows>` to move between windows
@@ -1482,7 +1501,7 @@ vim.api.nvim_set_keymap(
 -- #
 -- # Use `<arrows>` to create a new window
 -- # once you are in the window creation special mode (`<Ctrl-space> + W`)
---
+
 -- # 8) Tab shortcuts
 -- #
 -- # Use `<Ctrl-space> + T` to create a new tab
@@ -1490,3 +1509,16 @@ vim.api.nvim_set_keymap(
 -- # Use `<Ctrl-space> + t` to move to next tab
 -- #
 -- # TODO: improve creation and navigation between tabs
+
+-- # 9) LSP tips
+-- #
+-- # WARNING: for cpp-related code, you need to configure clangd properly
+-- # * For cpp projects, run `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build`
+-- #   to generate a source file compilation description file
+-- #   `compile_commands.json` in your `/build` folder
+-- # * For ros1 projects, run `catkin_make -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
+-- #   and the `compile_commands.json` will be put in your `<ws>/build` folder
+-- #
+-- # Use `<Ctrl-space> + f` to go to a function definition
+-- #
+-- # Use `<Ctrl-space> + r` to open the reference finder
