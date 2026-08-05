@@ -1219,7 +1219,7 @@ local function n_special_mode()
         n_special_show_reference_finder()
     elseif input_char == "F" then
         n_special_show_files()
-    elseif input_char == "H" then
+    elseif input_char == "!" then
         n_special_show_file_history()
     elseif input_char == "g" then
         n_special_grep_cword()
