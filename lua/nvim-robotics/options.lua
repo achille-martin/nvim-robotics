@@ -106,12 +106,28 @@ vim.api.nvim_exec(
 )
 -- # Create autocommand to restore cursor position
 -- # when reading a file into the buffer
--- # (vimscript used here because does not work in lua otherwise)
-vim.api.nvim_exec(
-    [[
-        autocmd CursorManagement BufReadPost * call RestoreCursorPosition()
-    ]],
-    false
+-- # by looking for marks if they exist
+-- # NOTE: if a plugin (e.g. fzf-lua) manually moved the cursor
+-- # before the autocommand,
+-- # then the cursor will have been moved and that cursor won't be sitting
+-- # on the first line of the file (standard file opening behaviour).
+-- # In that case, do not restore cursor position, because it was already
+-- # manually set.
+vim.api.nvim_create_augroup(
+    "CursorManagement",
+    { clear = true }
+)
+vim.api.nvim_create_autocmd(
+    "BufReadPost",
+    {
+        group = "CursorManagement",
+        pattern = "*",
+        callback = function()
+            if vim.fn.line("'\"") > 1 and vim.fn.line(".") == 1 then
+                vim.fn.RestoreCursorPosition()
+            end
+        end,
+    }
 )
 -- # Highlight current horizontal cursor line
 -- # Might make screen redrawing slower though
