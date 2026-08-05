@@ -131,81 +131,138 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
--- # Display a floating help window on Ctrl + h
--- # TODO: move the keymap to `Ctrl+space` then `h`
--- # and add a welcome message in the status line if nvim is opened
--- # without a file
--- # TODO: fix the fact that keys can be used to create new help windows
--- # when the help window is shown. Only q should unlock the editor.
--- # TODO: fix the title [Scratch] at the top.
--- # TODO: actually understand how to instantiate a proper floating window
--- # like fzf, with all the functionalities and locks in place.
+-- ========== DISPLAY MANAGEMENT ===========
+
+-- # Display a floating help window on `Ctrl + h` in Normal mode
 local function open_help()
     -- # Define local handy variables
-    local display_screen_percentage = 0.8
+    local screen_width_percentage = 0.9
+    local screen_height_percentage = 0.7
 
     -- # Define the text lines to display
     local lines = {
-        " Welcome to the help (nvim-robotics)",
-        " ==================================================",
+        " Welcome to the help doc",
+        " =======================",
         "",
-        "Press 'q' to close this window.",
+        "[Press 'q' or 'Esc' to close this window]",
         "",
-        "Press <Ctrl + space> at any time to enter the special mode.",
-        "Follow-up with the following keys to perform specific actions",
-        "| Key | Action                               |",
-        "| F   | Open the files picker                |",
-        "| f   | Go to definition (word under cursor) |",
+        "To enter the special mode, press 'Ctrl + space'",
+        "and follow up with a key to perform quick actions.",
+        "",
+        "| Key    | Action                                                   |",
+        "| ------ | -------------------------------------------------------- |",
+        "| R      | Reload lua config (only works with .lua)                 |",
+        "| c      | Copy locally (internal clipboard)                        |",
+        "| C      | Copy globally (external clipboard)                       |",
+        "| v      | Paste locally (internal clipboard)                       |",
+        "| V      | Paste globally (external clipboard)                      |",
+        "| x      | Cut locally (internal clipboard)                         |",
+        "| X      | Cut globally (external clipboard)                        |",
+        "| +      | Add line below                                           |",
+        "| -      | Remove line below                                        |",
+        "| \"     | Comment out / uncomment line                             |",
+        "| Enter  | Redo action                                              |",
+        "| Back   | Undo action                                              |",
+        "| F      | Open the files picker                                    |",
+        "| f      | Go to definition (word under cursor)                     |",
     }
 
     -- # Create an unlisted, scratch buffer (not saved to a file)
-    -- # and overwrite the [Scratch] name displayed on top of the window
+    -- # and set a name for uniqueness
+    -- # (empty name here so that the title of the window does not show up)
     local buf = vim.api.nvim_create_buf(false, true)
-    -- vim.api.nvim_buf_set_name(buf, " ")
+    vim.api.nvim_buf_set_name(buf, " ")
 
     -- # Get the total screen dimensions to center the window
-    local stats = vim.api.nvim_list_uis()[1]
-    local screen_width = stats.width
-    local screen_height = stats.height
+    local main_ui_info = vim.api.nvim_list_uis()[1]
+    local screen_width = main_ui_info.width
+    local screen_height = main_ui_info.height
 
     -- # Calculate dimensions to fit the window
-    local win_width = math.ceil(screen_width * display_screen_percentage)
-    local win_height = math.ceil(screen_height * display_screen_percentage)
+    local win_width = math.ceil(screen_width * screen_width_percentage)
+    local win_height = math.ceil(screen_height * screen_height_percentage)
     local row = math.ceil((screen_height - win_height) / 2)
     local col = math.ceil((screen_width - win_width) / 2)
 
-    -- # Set configuration options for the float
+    -- # Set configuration options for the floating window
     local win_opts = {
         relative = "editor",
         width = win_width,
         height = win_height,
         row = row,
         col = col,
-        style = "minimal",     -- Removes line numbers, statuslines, etc.
-        border = "rounded",    -- Options: "none", "single", "double", "rounded", "shadow"
+        style = "minimal",
+        border = "rounded",
     }
 
     -- # Open the window and focus it
     local win = vim.api.nvim_open_win(buf, true, win_opts)
 
     -- # Populate the buffer with the custom text
-    -- Arguments: buffer_id, start_line, end_line, strict_indexing, lines_table
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
-    -- # Optional: Set buffer options (make it read-only for text viewing)
+    -- # Set buffer options to make it read-only for text viewing
     vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
     vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf })
 
-    -- # Keymap to close the window easily by hitting 'q'
+    -- # Create custom highlighting for the window
+    vim.cmd([[
+        highlight MyHelpDocBg guibg=#373737
+        highlight MyHelpDocBorder guifg=#6699FF
+    ]])
+    vim.wo[win].winhl = "Normal:MyHelpDocBg,FloatBorder:MyHelpDocBorder"
+    -- # Set text highlighting to markdown
+    vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
+
+    -- # Create a unique group to auto-close the buffer
+    local auto_close_group = vim.api.nvim_create_augroup("AutoClose" .. win, { clear = true })
+
+    -- # Create a function to close the window and clear the buffer
+    local function close_and_clear()
+        vim.schedule(function()
+            if vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_win_close(win, true)
+            end
+            if vim.api.nvim_buf_is_valid(buf) then
+                -- # Delete the buffer to reset uniqueness
+                vim.api.nvim_buf_delete(buf, { force = true })
+            end
+        end)
+        -- # Delete the autocommand group to prevent redundant execution loops
+        vim.api.nvim_del_augroup_by_id(auto_close_group)
+    end
+
+    -- # Trigger close and clear function
+    -- # when the cursor switches windows or the buffer loses focus
+    vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
+        group = auto_close_group,
+        buffer = buf, -- Only track events originating from this specific buffer
+        callback = function()
+            close_and_clear()
+        end,
+    })
+
+    -- # Trigger close and clear function
+    -- # when standard window opening techniques are bypassed (e.g. by `fzf`)
+    vim.api.nvim_create_autocmd({ "FileType", "TermOpen" }, {
+        group = auto_close_group,
+        callback = function(args)
+            -- # NOTE: fzf-lua sets the filetype of its terminal buffer to "fzf"
+            if vim.bo[args.buf].filetype == "fzf" or string.match(vim.api.nvim_buf_get_name(args.buf), "fzf") then
+                close_and_clear()
+            end
+        end,
+    })
+
+    -- # Set keymaps to close the window easily
+    local closing_keys = { '<Esc>', '<C-c>', 'q' }
     local map_opts = { silent = true, buffer = buf }
-    vim.keymap.set("n", "q", function()
-        if vim.api.nvim_win_is_valid(win) then
-            vim.api.nvim_win_close(win, true)
-        end
-    end, map_opts)
+    for _, key in ipairs(closing_keys) do
+        vim.keymap.set("n", key, close_and_clear, map_opts)
+    end
 end
 
--- Execute the function to open the window
+-- # Execute the function to open the window
 vim.keymap.set(
     "n",
     "<C-h>",
@@ -213,13 +270,19 @@ vim.keymap.set(
     { desc = "Open floating help window", silent = true }
 )
 
--- -- Create an autocommand that fires when Neovim finishes initializing
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function()
---     -- Check if Neovim was launched without any file arguments
---     if vim.fn.argc() == 0 then
---       -- Print the message in the command bar
---       vim.api.nvim_echo({ { "Press Ctrl+h to open the help (nvim-robotics)", "Title" } }, false, {})
---     end
---   end,
--- })
+-- # Create an autocommand that triggers when Neovim finishes initialising
+-- # to write a subtle welcome message in the command bar
+-- # NOTE: the message is only displayed if no specific file as been opened
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        -- # Check if Neovim was launched without any file arguments
+        if vim.fn.argc() == 0 then
+            -- # Print the message in the command bar
+            vim.api.nvim_echo({
+                { "Press 'Ctrl + h' to open the help doc", "Title" } },
+                false,
+                {}
+            )
+        end
+    end,
+})
