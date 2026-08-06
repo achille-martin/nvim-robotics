@@ -216,11 +216,12 @@ vim.api.nvim_set_keymap(
 
 -- TERMINAL MANAGEMENT
 
--- # In any mode, use `<F3>` to open a new terminal
+-- # In any mode, use `<Ctrl + space>` and `e` to open a new terminal
 -- # at the bottom of the current session window (split horizontally)
 -- # Bonus: the TERMINAL-NORMAL mode is skipped on first entry
 -- # and the terminal can be used right away
-local function all_open_term()
+local function any_special_open_terminal()
+    print("[SPECIAL] Starting a terminal in split below (if able)")
     vim.api.nvim_exec(
         [[
             sp
@@ -231,61 +232,6 @@ local function all_open_term()
         false
     )
 end
-vim.api.nvim_set_keymap(
-    "n",
-    "<F3>",
-    "",
-    {
-        noremap=true,
-        silent=true,
-        callback=all_open_term,
-        desc="Open new terminal",
-    }
-)
-vim.api.nvim_set_keymap(
-    "v",
-    "<F3>",
-    "",
-    {
-        noremap=true,
-        silent=true,
-        callback=all_open_term,
-        desc="Open new terminal",
-    }
-)
-vim.api.nvim_set_keymap(
-    "i",
-    "<F3>",
-    "",
-    {
-        noremap=true,
-        silent=true,
-        callback=all_open_term,
-        desc="Open new terminal",
-    }
-)
-vim.api.nvim_set_keymap(
-    "c",
-    "<F3>",
-    "",
-    {
-        noremap=true,
-        silent=true,
-        callback=all_open_term,
-        desc="Open new terminal",
-    }
-)
-vim.api.nvim_set_keymap(
-    "t",
-    "<F3>",
-    "",
-    {
-        noremap=true,
-        silent=true,
-        callback=all_open_term,
-        desc="Open new terminal",
-    }
-)
 -- # In TERMINAL mode, use `<F2>` to get into / out of terminal edit
 -- # Note: you can use `<F2>` in NORMAL mode
 -- # to get into / out of INSERT mode
@@ -1248,6 +1194,8 @@ local function n_special_mode()
         n_special_create_new_tab()
     elseif input_char == "t" then
         n_special_move_to_next_tab()
+    elseif input_char == "e" then
+        any_special_open_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1275,6 +1223,8 @@ local function vs_special_mode()
         any_special_copy_back_in()
     elseif input_char == "\"" then
         vs_special_comment()
+    elseif input_char == "e" then
+        any_special_open_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1300,6 +1250,8 @@ local function i_special_mode()
         i_special_comment()
     elseif input_code == 9 then
         i_special_blink_cmp_menu()
+    elseif input_char == "e" then
+        any_special_open_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1319,6 +1271,8 @@ local function c_special_mode()
         any_special_copy_back_in()
     elseif input_code == 9 then
         c_special_blink_cmp_menu()
+    elseif input_char == "e" then
+        any_special_open_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1335,6 +1289,8 @@ local function t_special_mode()
         any_special_copy_out()
     elseif input_char == "z" then
         any_special_copy_back_in()
+    elseif input_char == "e" then
+        any_special_open_terminal()
     else
         print(special_mode_escape_msg)
     end
