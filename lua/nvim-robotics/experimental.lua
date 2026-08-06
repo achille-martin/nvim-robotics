@@ -249,7 +249,7 @@ local function open_help()
 
     -- # Create custom highlighting for the window
     vim.cmd([[
-        highlight MyHelpDocBg guibg=#373737
+        highlight MyHelpDocBg guibg=#242424
         highlight MyHelpDocBorder guifg=#6699FF
     ]])
     vim.wo[win].winhl = "Normal:MyHelpDocBg,FloatBorder:MyHelpDocBorder"
