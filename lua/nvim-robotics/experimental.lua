@@ -146,48 +146,71 @@ local function open_help()
         "",
         "[Press 'q' or 'Esc' to close this window]",
         "",
-        "To enter the special mode, press 'Ctrl + space'",
-        "and follow up with a key to perform quick actions.",
+        "Press 'Ctrl + space' to enter the special mode,",
+        "and follow up with one of the following keys to perform quick actions.",
         "",
         "| Key    | Action                                                   |",
         "| ------ | -------------------------------------------------------- |",
-        "| =================== FILE MANAGEMENT ===================           |",
-        "| R      | Reload lua config (only works with .lua)                 |",
+        "| ======================= WINDOW MANAGEMENT ======================= |",
+        "| W      | Create split (arrow for direction of split)              |",
+        "| w      | Move to split (arrow for direction of movement)          |",
+        "| T      | Create new tab                                           |",
+        "| t      | Move to next tab (repeat to cycle through)               |",
+        "| ======================== FILE MANAGEMENT ======================== |",
+        "| R      | Reload lua config (only works with `.lua` nvim config)   |",
         "| c      | Copy locally (internal clipboard)                        |",
         "| C      | Copy globally (external clipboard)                       |",
-        "| v      | Paste locally (internal clipboard)                       |",
-        "| V      | Paste globally (external clipboard)                      |",
-        "| x      | Cut locally (internal clipboard)                         |",
-        "| X      | Cut globally (external clipboard)                        |",
+        "| a      | Copy from local to global                                |",
+        "| z      | Copy from global to local                                |",
+        "| v      | Paste locally                                            |",
+        "| V      | Paste globally                                           |",
+        "| x      | Cut locally                                              |",
+        "| X      | Cut globally                                             |",
         "| s      | Save file                                                |",
         "| q      | Close file (asking to save)                              |",
-        "| Q      | Force close session                                      |",
+        "| Q      | Force close session (not asking to save)                 |",
         "| Enter  | Redo action                                              |",
         "| Back   | Undo action                                              |",
-        "| W      | Create split                                             |",
-        "| w      | Move to split                                            |",
+        "| ======================== LINE MANAGEMENT ======================== |",
         "| +      | Add line below                                           |",
         "| -      | Remove line below                                        |",
         "| \"      | Comment out / uncomment line                             |",
-        "| F      | Open the files picker                                    |",
-        "| d      | Show line diagnostics                                    |",
-        "| D      | Show file diagnostics                                    |",
+        "| ======================= SEARCH MANAGEMENT ======================= |",
+        "| F      | Open the files picker (select a file to open)            |",
+        "| !      | Show file history (list opened files)                    |",
         "| g      | Grep (word under cursor)                                 |",
         "| G      | Live grep (search any word)                              |",
         "| f      | Go to definition (word under cursor)                     |",
-        "| f      | Open the reference finder (word under cursor)            |",
+        "| r      | Open the reference finder (word under cursor)            |",
+        "| K      | Show key maps (Work In Progress)                         |",
+        "| ======================= ERROR MANAGEMENT ======================== |",
+        "| d      | Show line diagnostics                                    |",
+        "| D      | Show file diagnostics                                    |",
+        "| ===================== DEBUGGING MANAGEMENT ====================== |",
+        "| b      | Toggle debugger breakpoint (on current line)             |",
+        "| B      | Start debugger (if available for filetype)               |",
+        "| o      | Show debugger variables                                  |",
+        "| O      | Show debugger commands                                   |",
+        "| ======================== GIT MANAGEMENT ========================= |",
         "| S      | Open git status                                          |",
         "| M      | Open git blame                                           |",
-        "| !      | Show file history                                        |",
+        "| ====================== MARKDOWN MANAGEMENT ====================== |",
         "| p      | Toggle markdown preview in separate web window           |",
+        "| ======================== JSON MANAGEMENT ======================== |",
         "| j      | Prettify json file                                       |",
     }
 
     -- # Create an unlisted, scratch buffer (not saved to a file)
     -- # and set a name for uniqueness
     -- # (empty name here so that the title of the window does not show up)
+    -- # NOTE: make sure that there is only one such buffer at a time
+    local buf_name = " "
+    local existing_buf = vim.fn.bufnr(buf_name)
+    if existing_buf ~= -1 and vim.api.nvim_buf_is_valid(existing_buf) then
+        return nil
+    end
     local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_name(buf, " ")
+    vim.api.nvim_buf_set_name(buf, buf_name)
 
     -- # Get the total screen dimensions to center the window
     local main_ui_info = vim.api.nvim_list_uis()[1]
