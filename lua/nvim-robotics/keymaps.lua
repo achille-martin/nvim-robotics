@@ -30,6 +30,9 @@ local function is_blink_cmp_active()
     return res
 end
 
+-- # Load experimental module
+local experimental_module = require('nvim-robotics.experimental')
+
 -- ========== UNIVERSAL ===========
 
 -- CONTROL MANAGEMENT
@@ -1196,6 +1199,8 @@ local function n_special_mode()
         n_special_move_to_next_tab()
     elseif input_char == "e" then
         any_special_open_terminal()
+    elseif input_char == "h" then
+        experimental_module.open_help()
     else
         print(special_mode_escape_msg)
     end

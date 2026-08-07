@@ -2,6 +2,9 @@
 -- | EXPERIMENTAL |
 -- ----------------
 
+-- # Define as re-usable module
+local M = {}
+
 -- ========== SYNTAX HIGHLIGHTING ===========
 
 -- # Custom log file syntax highlighting definition
@@ -133,8 +136,11 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- ========== DISPLAY MANAGEMENT ===========
 
--- # Display a floating help window on `Ctrl + h` in Normal mode
-local function open_help()
+-- # Display a floating help window
+function M.open_help()
+    -- # Indicate loading of the help
+    print("[SPECIAL] Opening help doc (if able)")
+
     -- # Define local handy variables
     local screen_width_percentage = 0.9
     local screen_height_percentage = 0.7
@@ -252,7 +258,11 @@ local function open_help()
         highlight MyHelpDocBg guibg=#242424
         highlight MyHelpDocBorder guifg=#6699FF
     ]])
-    vim.wo[win].winhl = "Normal:MyHelpDocBg,FloatBorder:MyHelpDocBorder"
+    vim.api.nvim_win_set_option(
+        win,
+        "winhighlight",
+        "Normal:MyHelpDocBg,FloatBorder:MyHelpDocBorder"
+    )
     -- # Set text highlighting to markdown
     vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
 
@@ -261,6 +271,7 @@ local function open_help()
 
     -- # Create a function to close the window and clear the buffer
     local function close_and_clear()
+        print("[SPECIAL] Closing help doc")
         vim.schedule(function()
             if vim.api.nvim_win_is_valid(win) then
                 vim.api.nvim_win_close(win, true)
@@ -304,14 +315,6 @@ local function open_help()
     end
 end
 
--- # Execute the function to open the window
-vim.keymap.set(
-    "n",
-    "<C-h>",
-    open_help,
-    { desc = "Open floating help window", silent = true }
-)
-
 -- # Create an autocommand that triggers when Neovim finishes initialising
 -- # to write a subtle welcome message in the command bar
 -- # NOTE: the message is only displayed if no specific file as been opened
@@ -321,10 +324,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
         if vim.fn.argc() == 0 then
             -- # Print the message in the command bar
             vim.api.nvim_echo({
-                { "Press `Ctrl + h` to open the help doc", "Title" } },
+                { "Press `Ctrl + space`, then press `h`, to open the help doc", "Title" } },
                 false,
                 {}
             )
         end
     end,
 })
+
+return M
