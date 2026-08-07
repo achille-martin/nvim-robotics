@@ -3,7 +3,12 @@
 -- ----------------
 
 -- # Define as re-usable module
+
 local M = {}
+
+-- # Define re-usable variables
+
+local fzf_intervention_flag = false
 
 -- ========== SYNTAX HIGHLIGHTING ===========
 
@@ -271,7 +276,10 @@ function M.open_help()
 
     -- # Create a function to close the window and clear the buffer
     local function close_and_clear()
-        print("[SPECIAL] Closing help doc")
+        -- # Clarify closing action, except for fzf interventions
+        if not fzf_intervention_flag then
+            print("[SPECIAL] Closing help doc")
+        end
         vim.schedule(function()
             if vim.api.nvim_win_is_valid(win) then
                 vim.api.nvim_win_close(win, true)
@@ -283,6 +291,7 @@ function M.open_help()
         end)
         -- # Delete the autocommand group to prevent redundant execution loops
         vim.api.nvim_del_augroup_by_id(auto_close_group)
+        fzf_intervention_flag = false
     end
 
     -- # Trigger close and clear function
@@ -302,6 +311,7 @@ function M.open_help()
         callback = function(args)
             -- # NOTE: fzf-lua sets the filetype of its terminal buffer to "fzf"
             if vim.bo[args.buf].filetype == "fzf" or string.match(vim.api.nvim_buf_get_name(args.buf), "fzf") then
+                fzf_intervention_flag = true
                 close_and_clear()
             end
         end,
