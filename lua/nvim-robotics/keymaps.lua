@@ -1035,6 +1035,16 @@ local function n_special_move_to_next_tab()
     )
 end
 
+local function n_special_fix_indentation()
+    print("[SPECIAL] Fixing file identation (if able)")
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gg=G\`\`")
+        ]],
+        false
+    )
+end
+
 -- # Store key codes for unusual keys on starting neovim
 -- # in SHADA (Shared Data between sessions)
 -- # so that this action is only performed a minimal number of times
@@ -1231,6 +1241,8 @@ local function n_special_mode()
         any_special_open_terminal()
     elseif input_char == "h" then
         experimental_module.open_help()
+    elseif input_char == "i" then
+        n_special_fix_indentation()
     else
         print(special_mode_escape_msg)
     end

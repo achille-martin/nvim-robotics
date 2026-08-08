@@ -186,6 +186,7 @@ function M.open_help()
         "| `+`    | Add line below                                           |",
         "| `-`    | Remove line below                                        |",
         "| `\"`    | Comment out / uncomment line                             |",
+        "| `i`    | Fix indentation (for current file)                       |",
         "| ======================= SEARCH MANAGEMENT ======================= |",
         "| `F`    | Open the files picker (select a file to open)            |",
         "| `!`    | Show file history (list opened files)                    |",
