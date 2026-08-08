@@ -319,8 +319,9 @@ vim.api.nvim_set_keymap(
 
 -- # In NORMAL mode, jump from current symbol under the cursor
 -- # to the next pair or associated symbol (if any)
--- # using `<TAB>`
--- # NOTE: the `<TAB>` key has no built-in keymap in NORMAL mode
+-- # using `<S-TAB>`
+-- # NOTE: the `<S-TAB>` key has no built-in keymap in NORMAL mode
+-- # NOTE: this is preferred to `<TAB>` because `<C-i>` would be affected
 
 local function n_jump_to_next_pair()
     vim.api.nvim_exec(
@@ -333,7 +334,7 @@ end
 
 vim.api.nvim_set_keymap(
     "n",
-    "<TAB>",
+    "<S-TAB>",
     "",
     {
         noremap=true,
