@@ -157,7 +157,7 @@ function M.open_help()
         "",
         "[Press `q` or `Esc` to close this window]",
         "",
-        "Press `Ctrl + space` to enter the special mode,",
+        "Press `Ctrl + Space` to enter the special mode,",
         "and follow up with one of the following keys to perform quick actions:",
         "",
         "| Key    | Action                                                   |",
@@ -334,7 +334,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
         if vim.fn.argc() == 0 then
             -- # Print the message in the command bar
             vim.api.nvim_echo({
-                { "Press `Ctrl + space`, then press `h`, to open the help doc", "Title" } },
+                { "Press `Ctrl + Space`, then press `h`, to open the help doc", "Title" } },
                 false,
                 {}
             )
