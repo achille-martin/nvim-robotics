@@ -33,12 +33,11 @@ Make sure that Neovim is operational on your machine by typing the following com
 nvim --version
 ```
 
-_WARNING: if Neovim is not functional, or if your Neovim version is lower than `v0.12.0`, refer to [Neovim setup](docs/neovim_setup.md) to install Neovim easily, and unlock all its functionalities._
+> [!WARNING]  
+> If Neovim is not functional, or if your Neovim version is lower than `v0.12.0`, refer to [Neovim setup](docs/neovim_setup.md) to install Neovim easily, and unlock all its functionalities.
 
 <a id="quick-config-setup"></a>
 ### 2.2. Quick configuration setup
-
-_NOTE: the quick-setup configuration does not interfere with your existing Neovim configuration, it creates an alternative/separate configuration._
 
 Apply the quick-setup configuration by typing the following command in a terminal:
 
@@ -62,6 +61,9 @@ nvim-robotics
 # Secondary alias
 neo
 ```
+
+> [!NOTE]  
+> The quick-setup configuration does not interfere with your existing Neovim configuration, it creates an alternative/separate configuration.
 
 ### 2.3. Custom configuration setup
 
