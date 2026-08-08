@@ -2,6 +2,8 @@
 -- | GENERAL OPTIONS |
 -- -------------------
 
+local M = {}
+
 -- =============== FILETYPE MANAGEMENT ===============
 
 -- AUTOMATIC CONFIG
@@ -181,6 +183,15 @@ vim.opt.breakindent = true
 -- # and that no block of text is replaced by a character
 -- # For instance, full link syntax is shown in markdown
 vim.opt.conceallevel = 0
+-- # Stop highlighting on long lines
+vim.opt.synmaxcol = 300
+-- # Define a function to remove trailing Windows-specific characters
+-- # such as `^M`
+function M.remove_trailing_win_chars()
+    local save = vim.fn.winsaveview()
+    vim.cmd([[keeppatterns %s/\r$//ge]])
+    vim.fn.winrestview(save)
+end
 -- # Create group for syntax cleanup
 vim.api.nvim_create_augroup(
     "SyntaxCleanup",
@@ -192,6 +203,9 @@ vim.api.nvim_create_augroup(
 -- # do not flag errors,
 -- # and do not add anything to the search history
 -- # (do not modify the last substitute pattern or substitute string)
+-- #
+-- # BONUS: remove undesirable trailing characters
+-- # like Windows-specific end line characters
 vim.api.nvim_create_autocmd(
     "BufWritePre",
     {
@@ -202,11 +216,10 @@ vim.api.nvim_create_autocmd(
             local curpos = vim.api.nvim_win_get_cursor(0)
             vim.cmd([[keeppatterns %s/\s\+$//ge]])
             vim.api.nvim_win_set_cursor(0, curpos)
+            M.remove_trailing_win_chars()
 	    end,
     }
 )
--- # Stop highlighting on long lines
-vim.opt.synmaxcol = 300
 
 -- =============== WINDOW DISPLAY ===============
 
@@ -583,3 +596,5 @@ vim.diagnostic.config({
     severity = { min = vim.diagnostic.severity.HINT }
   },
 })
+
+return M

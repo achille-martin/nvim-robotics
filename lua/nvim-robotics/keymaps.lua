@@ -18,6 +18,10 @@ vim.g.mapleader = " "
 -- # for consistency
 vim.g.maplocalleader = " "
 
+-- ========== HANDY VARIABLES ==========
+
+local std_fn_exec_delay_ms = 1
+
 -- ========== HANDY FUNCTIONS ==========
 
 -- # Check whether plugin `blink.cmp` is installed and active
@@ -29,6 +33,9 @@ local function is_blink_cmp_active()
     )
     return res
 end
+
+-- # Load options module
+local options_module = require('nvim-robotics.options')
 
 -- # Load experimental module
 local experimental_module = require('nvim-robotics.experimental')
@@ -498,6 +505,13 @@ local function n_special_paste_local()
         ]],
         false
     )
+    -- # Remove trailing Windows characters on paste
+    vim.fn.timer_start(
+        std_fn_exec_delay_ms,
+        function ()
+            options_module.remove_trailing_win_chars()
+        end
+    )
     print("[SPECIAL] Pasted saved line from register a")
 end
 
@@ -513,6 +527,13 @@ local function vs_special_paste_local()
             call feedkeys("di\<C-r>a\<Esc>")
         ]],
         false
+    )
+    -- # Remove trailing Windows characters on paste
+    vim.fn.timer_start(
+        std_fn_exec_delay_ms,
+        function ()
+            options_module.remove_trailing_win_chars()
+        end
     )
     print("[SPECIAL] Pasted saved line from register a")
 end
@@ -530,6 +551,13 @@ local function i_special_paste_local()
         ]],
         false
     )
+    -- # Remove trailing Windows characters on paste
+    vim.fn.timer_start(
+        std_fn_exec_delay_ms,
+        function ()
+            options_module.remove_trailing_win_chars()
+        end
+    )
     print("[SPECIAL] Pasted saved line from register a")
 end
 
@@ -546,6 +574,8 @@ local function c_special_paste_local()
         ]],
         false
     )
+    -- # TODO: update function to remove trailing Windows-specific characters
+    -- # in command-line
 end
 
 local function c_special_paste_global()
