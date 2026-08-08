@@ -71,9 +71,12 @@ vim.api.nvim_create_augroup(
 )
 -- # Define vimscript function to restore cursor position
 -- # when reading a file into the buffer
--- # and centering the screen around the cursor when relevant
--- # but excluding specific file types and buffer types
--- # (vimscript function because lua function slower)
+-- # and centering the screen around the cursor when relevant.
+-- # Excluding specific file types and buffer types.
+-- # Also not restoring cursor position if the cursor has just been moved
+-- # by an external command or plugin for instance.
+-- #
+-- # NOTE: vimscript function because lua function slower.
 vim.api.nvim_exec(
     [[
         function! RestoreCursorPosition()
@@ -82,7 +85,7 @@ vim.api.nvim_exec(
             " and the current file is not for editing commits
             " and the buffer is not the help,
             " or quickfix, or terminal, or even a nofile
-            " Note: the \" mark is the cursor position
+            " NOTE: the \" mark is the cursor position
             " when last exited the file
             if line("'\"")
                 \ && line("'\"") <= line("$")
@@ -91,15 +94,32 @@ vim.api.nvim_exec(
                 \ && &buftype != "nofile"
                 \ && &buftype != "quickfix"
                 \ && &buftype != "terminal"
-                " Adding a short delay helps unfreeze
-                " the first few frames of buffer opening
-                " after jumping to mark
-                " execute "normal! g`\""
-                call timer_start(1, {tid -> execute("normal! g`\"")})
-                " To force centre screen around cursor, uncomment below
-                " call timer_start(1, {tid -> execute("normal! zz")})
+                " Save the position at which the buffer was initially opened
+                let l:initial_line = line(".")
+                let l:initial_col = col(".")
+                " Delay the restore position slightly
+                " so normal buffer-opening operations can finish first
+                call timer_start(
+                    \ 1,
+                    \ {tid -> s:RestoreIfUnchanged(
+                        \ tid, l:initial_line,
+                        \ l:initial_col,
+                        \ )
+                    \ }
+                \ )
                 return 1
             endif
+        endfunction
+
+        function! s:RestoreIfUnchanged(timer_id, initial_line, initial_col)
+            " If something else has already moved the cursor,
+            " do not overwrite the position
+            if line(".") != a:initial_line || col(".") != a:initial_col
+                return
+            endif
+            execute "normal! g`\""
+            " Force centre screen around cursor (uncomment below)
+            " execute "normal! zz"
         endfunction
     ]],
     false
@@ -107,12 +127,6 @@ vim.api.nvim_exec(
 -- # Create autocommand to restore cursor position
 -- # when reading a file into the buffer
 -- # by looking for marks if they exist
--- # NOTE: if a plugin (e.g. fzf-lua) manually moved the cursor
--- # before the autocommand,
--- # then the cursor will have been moved and that cursor won't be sitting
--- # on the first line of the file (standard file opening behaviour).
--- # In that case, do not restore cursor position, because it was already
--- # manually set.
 vim.api.nvim_create_augroup(
     "CursorManagement",
     { clear = true }
@@ -123,9 +137,7 @@ vim.api.nvim_create_autocmd(
         group = "CursorManagement",
         pattern = "*",
         callback = function()
-            if vim.fn.line("'\"") > 1 and vim.fn.line(".") == 1 then
-                vim.fn.RestoreCursorPosition()
-            end
+            vim.fn.RestoreCursorPosition()
         end,
     }
 )
