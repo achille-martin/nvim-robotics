@@ -668,6 +668,22 @@ local function vs_special_comment()
     )
 end
 
+local function vs_special_fix_indentation()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("=")
+        ]],
+        false
+    )
+    -- # Move cursor back to initial location
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("gv\<Esc>")
+        ]],
+        false
+    )
+end
+
 local function i_special_comment()
     -- # Save current cursor location using VISUAL mode
     vim.api.nvim_exec(
@@ -1272,6 +1288,8 @@ local function vs_special_mode()
         vs_special_comment()
     elseif input_char == "e" then
         any_special_open_terminal()
+    elseif input_char == "i" then
+        vs_special_fix_indentation()
     else
         print(special_mode_escape_msg)
     end
