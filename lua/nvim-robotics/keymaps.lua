@@ -524,7 +524,7 @@ end
 local function vs_special_paste_local()
     vim.api.nvim_exec(
         [[
-            call feedkeys("di\<C-r>a\<Esc>")
+            call feedkeys("\"_di\<C-r>a\<Esc>")
         ]],
         false
     )
