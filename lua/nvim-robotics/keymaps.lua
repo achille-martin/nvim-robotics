@@ -1051,8 +1051,18 @@ local function n_special_move_to_next_tab()
     )
 end
 
-local function n_special_fix_indentation()
-    print("[SPECIAL] Fixing file identation (if able)")
+local function n_special_fix_local_indentation()
+    print("[SPECIAL] Fixing current line identation (if able)")
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("==")
+        ]],
+        false
+    )
+end
+
+local function n_special_fix_global_indentation()
+    print("[SPECIAL] Fixing whole file identation (if able)")
     vim.api.nvim_exec(
         [[
             call feedkeys("gg=G\`\`")
@@ -1258,7 +1268,9 @@ local function n_special_mode()
     elseif input_char == "h" then
         experimental_module.open_help()
     elseif input_char == "i" then
-        n_special_fix_indentation()
+        n_special_fix_local_indentation()
+    elseif input_char == "I" then
+        n_special_fix_global_indentation()
     else
         print(special_mode_escape_msg)
     end
