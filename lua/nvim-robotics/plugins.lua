@@ -149,6 +149,9 @@ local custom_dap_config = {
 
 local installation_timeout_ms = 90000
 
+local winresizer_width_step_resize = 5
+local winresizer_height_step_resize = 2
+
 -- HANDY ROUTINES
 
 -- # Automatically install missing plugins on startup
@@ -244,6 +247,9 @@ vim.call('plug#begin', plugs_install_path)
 
     -- # Improved quickfix window and functionalities
     Plug 'stevearc/quicker.nvim'
+
+    -- # Resize splits easily
+    Plug 'simeji/winresizer'
 
 vim.call('plug#end')
 
@@ -832,3 +838,30 @@ require('quicker').setup({
         H = "H",
     },
 })
+
+-- # Define configuration for `winresizer` plugin
+-- # NOTE: this plugin does not use the `setup` paradigm
+-- #
+-- # By default:
+-- # * The plugin can be started with `Ctrl + e`
+-- # * Switch modes (resize, move, focus) with `e`
+-- # * The resizing operation needs to be accepted with `Enter`
+-- # * Equalise all window sizes with `=`
+
+-- ## Resize windows using arrow keys
+vim.g.winresizer_keycode_up = vim.g.UP_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_down = vim.g.DOWN_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_left = vim.g.LEFT_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_right = vim.g.RIGHT_ARROW_CHAR_CODE
+
+-- ## Define the step length during resize
+vim.g.winresizer_vert_resize = winresizer_width_step_resize
+vim.g.winresizer_horiz_resize = winresizer_height_step_resize
+
+-- ## Maximise current window width with `Ctrl + arrow right`
+-- ## Maximise current window height with `Ctrl + arrow up`
+vim.g.winresizer_keycode_hfull = vim.g.CTRL_UP_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_vfull = vim.g.CTRL_RIGHT_ARROW_CHAR_CODE
+
+-- # Cancel resize using `Ctrl + c` (ASCII code 3)
+vim.g.winresizer_keycode_cancel = 3

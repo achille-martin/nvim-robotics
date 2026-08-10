@@ -167,6 +167,8 @@ function M.open_help()
         "| `w`    | Move to split (arrow for direction of movement)          |",
         "| `T`    | Create new tab                                           |",
         "| `t`    | Move to next tab (repeat to cycle through)               |",
+        "| `E`    | Resize split (arrows to resize, `=` to equalise splits,  |",
+        "|        |               `Enter` to accept, `Ctrl + c` to cancel)   |",
         "| ======================== FILE MANAGEMENT ======================== |",
         "| `R`    | Reload lua config (only works with `.lua` nvim config)   |",
         "| `c`    | Copy locally (internal clipboard)                        |",

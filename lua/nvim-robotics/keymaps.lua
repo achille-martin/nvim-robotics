@@ -1052,6 +1052,20 @@ local function n_special_move_to_next_tab()
     )
 end
 
+-- # Trigger the winresize plugin
+-- # to resize, move, and focus splits
+-- # NOTE: you can also use the default keymap `Ctrl + e`
+local function n_special_resize_windows()
+    -- # NOTE: there is a live command-line help with the winresize plugin
+    -- # so there is no need to add a "SPECIAL" command-line message
+    vim.api.nvim_exec(
+        [[
+            :WinResizerStartResize
+        ]],
+        false
+    )
+end
+
 local function n_special_fix_local_indentation()
     print("[SPECIAL] Fixing current line identation (if able)")
     vim.api.nvim_exec(
@@ -1074,106 +1088,30 @@ end
 
 -- # Store key codes for unusual keys on starting neovim
 -- # in SHADA (Shared Data between sessions)
--- # so that this action is only performed a minimal number of times
+-- # so that this action is only performed a minimal number of times.
+-- # And make the variables global,
+-- # so that they can be used in other config files
 if vim.g.BS_CHAR_CODE == nil then
-    vim.g.BS_CHAR_CODE = ""
+    vim.g.BS_CHAR_CODE = vim.api.nvim_replace_termcodes("<Bs>", true, false, true)
 end
 if vim.g.LEFT_ARROW_CHAR_CODE == nil then
-    vim.g.LEFT_ARROW_CHAR_CODE = ""
+    vim.g.LEFT_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<Left>", true, false, true)
 end
 if vim.g.RIGHT_ARROW_CHAR_CODE == nil then
-    vim.g.RIGHT_ARROW_CHAR_CODE = ""
+    vim.g.RIGHT_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<Right>", true, false, true)
+end
+if vim.g.CTRL_RIGHT_ARROW_CHAR_CODE == nil then
+    vim.g.CTRL_RIGHT_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<C-Right>", true, false, true)
 end
 if vim.g.UP_ARROW_CHAR_CODE == nil then
-    vim.g.UP_ARROW_CHAR_CODE = ""
+    vim.g.UP_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<Up>", true, false, true)
+end
+if vim.g.CTRL_UP_ARROW_CHAR_CODE == nil then
+    vim.g.CTRL_UP_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<C-Up>", true, false, true)
 end
 if vim.g.DOWN_ARROW_CHAR_CODE == nil then
-    vim.g.DOWN_ARROW_CHAR_CODE = ""
+    vim.g.DOWN_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<Down>", true, false, true)
 end
-vim.api.nvim_create_augroup(
-    "UnusualCharCodes",
-    { clear = true }
-)
-local function get_unusual_key_codes()
-    if vim.g.BS_CHAR_CODE == "" then
-        vim.fn.timer_start(
-            1,
-            function()
-                vim.api.nvim_exec(
-                    [[
-                        call feedkeys("\<BS>")
-                    ]],
-                    false
-                )
-            end
-        )
-        vim.g.BS_CHAR_CODE = vim.fn.getchar()
-    end
-    if vim.g.LEFT_ARROW_CHAR_CODE == "" then
-        vim.fn.timer_start(
-            1,
-            function()
-                vim.api.nvim_exec(
-                    [[
-                        call feedkeys("\<Left>")
-                    ]],
-                    false
-                )
-            end
-        )
-        vim.g.LEFT_ARROW_CHAR_CODE = vim.fn.getchar()
-    end
-    if vim.g.RIGHT_ARROW_CHAR_CODE == "" then
-        vim.fn.timer_start(
-            1,
-            function()
-                vim.api.nvim_exec(
-                    [[
-                        call feedkeys("\<Right>")
-                    ]],
-                    false
-                )
-            end
-        )
-        vim.g.RIGHT_ARROW_CHAR_CODE = vim.fn.getchar()
-    end
-    if vim.g.UP_ARROW_CHAR_CODE == "" then
-        vim.fn.timer_start(
-            1,
-            function()
-                vim.api.nvim_exec(
-                    [[
-                        call feedkeys("\<Up>")
-                    ]],
-                    false
-                )
-            end
-        )
-        vim.g.UP_ARROW_CHAR_CODE = vim.fn.getchar()
-    end
-    if vim.g.DOWN_ARROW_CHAR_CODE == "" then
-        vim.fn.timer_start(
-            1,
-            function()
-                vim.api.nvim_exec(
-                    [[
-                        call feedkeys("\<Down>")
-                    ]],
-                    false
-                )
-            end
-        )
-        vim.g.DOWN_ARROW_CHAR_CODE = vim.fn.getchar()
-    end
-end
-vim.api.nvim_create_autocmd(
-    { "VimEnter" },
-    {
-        group = "UnusualCharCodes",
-        desc = "Collect unusual char codes on starting Neovim",
-        callback = get_unusual_key_codes,
-    }
-)
 
 -- # TODO: add key to leave special mode
 -- # by pressing `<Esc>` (or `Ctrl + c`)
@@ -1266,6 +1204,8 @@ local function n_special_mode()
         n_special_move_to_next_tab()
     elseif input_char == "e" then
         any_special_open_terminal()
+    elseif input_char == "E" then
+        n_special_resize_windows()
     elseif input_char == "h" then
         experimental_module.open_help()
     elseif input_char == "i" then
