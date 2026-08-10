@@ -148,7 +148,7 @@ function M.open_help()
 
     -- # Define local handy variables
     local screen_width_percentage = 0.9
-    local screen_height_percentage = 0.7
+    local screen_height_percentage = 0.8
 
     -- # Define the text lines to display
     local lines = {
@@ -235,7 +235,7 @@ function M.open_help()
     -- # Get the total screen dimensions to center the window
     local main_ui_info = vim.api.nvim_list_uis()[1]
     local screen_width = main_ui_info.width
-    local screen_height = main_ui_info.height
+    local screen_height = main_ui_info.height - vim.o.cmdheight
 
     -- # Calculate dimensions to fit the window
     local win_width = math.ceil(screen_width * screen_width_percentage)
@@ -266,7 +266,7 @@ function M.open_help()
 
     -- # Create custom highlighting for the window
     vim.cmd([[
-        highlight MyHelpDocBg guibg=#242424
+        highlight MyHelpDocBg guibg=#090912
         highlight MyHelpDocBorder guifg=#6699FF
     ]])
     vim.api.nvim_win_set_option(
@@ -276,6 +276,9 @@ function M.open_help()
     )
     -- # Set text highlighting to markdown
     vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
+
+    -- # Remove winbar for style
+    vim.api.nvim_win_set_option(win, "winbar", "")
 
     -- # Create a unique group to auto-close the buffer
     local auto_close_group = vim.api.nvim_create_augroup("AutoClose" .. win, { clear = true })
