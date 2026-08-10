@@ -451,6 +451,31 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+-- =============== TERMINAL MANAGEMENT ===============
+
+-- # Group to force terminal insert mode
+local force_term_insert_group = vim.api.nvim_create_augroup(
+    "ForceTermInsert",
+    { clear = true }
+)
+
+-- # Function execution
+-- # when focusing on a new window or buffer
+vim.api.nvim_create_autocmd(
+    { "WinEnter", "BufEnter" },
+    {
+        group = force_term_insert_group,
+        desc = "Force terminal insert mode",
+        callback = function()
+            vim.schedule(function()
+                if vim.bo.buftype == "terminal" then
+                    vim.cmd("startinsert")
+                end
+            end)
+        end,
+    }
+)
+
 -- =============== CONTROL ===============
 
 -- MOUSE

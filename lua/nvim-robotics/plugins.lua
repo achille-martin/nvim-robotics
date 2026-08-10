@@ -152,6 +152,9 @@ local installation_timeout_ms = 90000
 local winresizer_width_step_resize = 5
 local winresizer_height_step_resize = 2
 
+local toggleterm_float_width_percentage = 0.85
+local toggleterm_float_height_percentage = 0.85
+
 -- HANDY ROUTINES
 
 -- # Automatically install missing plugins on startup
@@ -250,6 +253,9 @@ vim.call('plug#begin', plugs_install_path)
 
     -- # Resize splits easily
     Plug 'simeji/winresizer'
+
+    -- # Manage persistent terminals better
+    Plug ('akinsho/toggleterm.nvim', { ['tag'] = '*' })
 
 vim.call('plug#end')
 
@@ -677,6 +683,7 @@ require("blink.cmp").setup({
         preset = 'super-tab',
         ["<Up>"] = { "select_prev", "fallback" },
         ["<Down>"] = { "select_next", "fallback" },
+        ["<S-Tab>"] = { "select_next", "fallback" },
         ["<CR>"] = { "select_and_accept", "fallback" },
         ['<C-space>'] = {},
         -- # (Experimental) Only allow manual trigger of completion menu
@@ -717,6 +724,7 @@ require("blink.cmp").setup({
             preset = 'super-tab',
             ["<Up>"] = { "select_prev", "fallback" },
             ["<Down>"] = { "select_next", "fallback" },
+            ["<S-Tab>"] = { "select_next", "fallback" },
             ["<CR>"] = { "select_and_accept", "fallback" },
             ['<C-space>'] = {},
             -- # Manually trigger completion menu with `<Tab>`
@@ -865,3 +873,54 @@ vim.g.winresizer_keycode_vfull = vim.g.CTRL_RIGHT_ARROW_CHAR_CODE
 
 -- # Cancel resize using `Ctrl + c` (ASCII code 3)
 vim.g.winresizer_keycode_cancel = 3
+
+-- # Define configuration for `toggleterm` plugin
+-- # to have a persistent floating terminal
+-- # (to run commands when needed)
+require("toggleterm").setup({
+    direction = 'float',
+    float_opts = {
+        border = "rounded",
+        width = function()
+            return math.floor(vim.o.columns * toggleterm_float_width_percentage)
+        end,
+        height = function()
+            return math.floor(vim.o.lines * toggleterm_float_height_percentage)
+        end,
+    },
+    shade_terminals = false,
+    highlights = {
+        NormalFloat = {
+            guibg = "#070D0B",
+        },
+        FloatBorder = {
+            guifg = "#00A36C",
+        },
+    },
+    hide_numbers = false,
+    autochdir = true,
+    close_on_exit = true,
+    auto_scroll = true,
+    on_open = function(term)
+        -- # Force enter into proper terminal mode
+        vim.schedule(function()
+            if vim.api.nvim_win_is_valid(term.window) then
+                vim.cmd("startinsert")
+            end
+        end)
+        -- # Set title of floating window
+        vim.api.nvim_win_set_config(term.window, {
+            title = " Persistent Floating Terminal ",
+            title_pos = "center",
+        })
+        -- # Display custom statusline, outside of the floating window
+        vim.wo[term.window].statusline = "%!v:lua.Statusline.active()"
+        vim.opt.laststatus = 3
+        -- # Hide winbar
+        vim.wo[term.window].winbar = ""
+    end,
+    on_close = function(term)
+        -- # Reset statusline display option
+        vim.opt.laststatus = 2
+    end,
+})

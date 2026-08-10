@@ -315,6 +315,22 @@ vim.api.nvim_set_keymap(
     }
 )
 
+local function any_special_toggle_float_terminal()
+    -- # Delay print to display the message after closing the floating window
+    vim.fn.timer_start(
+        1,
+        function()
+            print("[SPECIAL] Toggling the persistent floating terminal (if able)")
+        end
+    )
+    vim.api.nvim_exec(
+        [[
+            :ToggleTerm
+        ]],
+        false
+    )
+end
+
 -- # PRODUCTIVITY MANAGEMENT
 
 -- # In NORMAL mode, jump from current symbol under the cursor
@@ -763,6 +779,19 @@ local function n_special_exit()
     )
 end
 
+local function t_special_exit()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<F2>")
+        ]],
+        false
+    )
+    vim.fn.timer_start(
+        1,
+        n_special_exit
+    )
+end
+
 local function n_special_force_exit()
     vim.api.nvim_exec(
         [[
@@ -814,6 +843,19 @@ local function n_special_create_split()
     end
 end
 
+local function t_special_create_split()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<F2>")
+        ]],
+        false
+    )
+    vim.fn.timer_start(
+        1,
+        n_special_create_split
+    )
+end
+
 local function n_special_move_to_split()
     -- # TODO: specify direction with hjkl as well
     print("[SPECIAL] Specify direction of movement to split with arrows...")
@@ -853,6 +895,19 @@ local function n_special_move_to_split()
     else
         print(special_mode_escape_msg)
     end
+end
+
+local function t_special_move_to_split()
+    vim.api.nvim_exec(
+        [[
+            call feedkeys("\<F2>")
+        ]],
+        false
+    )
+    vim.fn.timer_start(
+        1,
+        n_special_move_to_split
+    )
 end
 
 local function i_special_blink_cmp_menu()
@@ -1091,8 +1146,8 @@ end
 -- # so that this action is only performed a minimal number of times.
 -- # And make the variables global,
 -- # so that they can be used in other config files
-if vim.g.BS_CHAR_CODE == nil then
-    vim.g.BS_CHAR_CODE = vim.api.nvim_replace_termcodes("<Bs>", true, false, true)
+if vim.g.BACKSPACE_CHAR_CODE == nil then
+    vim.g.BACKSPACE_CHAR_CODE = vim.api.nvim_replace_termcodes("<Bs>", true, false, true)
 end
 if vim.g.LEFT_ARROW_CHAR_CODE == nil then
     vim.g.LEFT_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<Left>", true, false, true)
@@ -1111,6 +1166,15 @@ if vim.g.CTRL_UP_ARROW_CHAR_CODE == nil then
 end
 if vim.g.DOWN_ARROW_CHAR_CODE == nil then
     vim.g.DOWN_ARROW_CHAR_CODE = vim.api.nvim_replace_termcodes("<Down>", true, false, true)
+end
+if vim.g.TABULAR_CHAR_CODE == nil then
+    vim.g.TABULAR_CHAR_CODE = 9
+end
+if vim.g.SHIFT_TABULAR_CHAR_CODE == nil then
+    vim.g.SHIFT_TABULAR_CHAR_CODE = vim.api.nvim_replace_termcodes("<S-Tab>", true, false, true)
+end
+if vim.g.ENTER_CHAR_CODE == nil then
+    vim.g.ENTER_CHAR_CODE = 13
 end
 
 -- # TODO: add key to leave special mode
@@ -1145,9 +1209,9 @@ local function n_special_mode()
         n_special_remove_line_below()
     elseif input_char == "\"" then
         n_special_comment()
-    elseif input_code == vim.g.BS_CHAR_CODE then
+    elseif input_code == vim.g.BACKSPACE_CHAR_CODE then
         n_special_undo()
-    elseif input_code == 13 then
+    elseif input_code == vim.g.ENTER_CHAR_CODE then
         n_special_redo()
     elseif input_char == "s" then
         n_special_save()
@@ -1198,13 +1262,11 @@ local function n_special_mode()
         n_special_show_debugger_commands()
     elseif input_char == "o" then
         n_special_show_debugger_variables()
-    elseif input_char == "T" then
+    elseif input_code == vim.g.SHIFT_TABULAR_CHAR_CODE then
         n_special_create_new_tab()
-    elseif input_char == "t" then
+    elseif input_code == vim.g.TABULAR_CHAR_CODE then
         n_special_move_to_next_tab()
     elseif input_char == "e" then
-        any_special_open_terminal()
-    elseif input_char == "E" then
         n_special_resize_windows()
     elseif input_char == "h" then
         experimental_module.open_help()
@@ -1212,6 +1274,10 @@ local function n_special_mode()
         n_special_fix_local_indentation()
     elseif input_char == "I" then
         n_special_fix_global_indentation()
+    elseif input_char == "T" then
+        any_special_open_terminal()
+    elseif input_char== "t" then
+        any_special_toggle_float_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1239,10 +1305,12 @@ local function vs_special_mode()
         any_special_copy_back_in()
     elseif input_char == "\"" then
         vs_special_comment()
-    elseif input_char == "e" then
-        any_special_open_terminal()
     elseif input_char == "i" then
         vs_special_fix_indentation()
+    elseif input_char == "T" then
+        any_special_open_terminal()
+    elseif input_char== "t" then
+        any_special_toggle_float_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1266,10 +1334,12 @@ local function i_special_mode()
         any_special_copy_back_in()
     elseif input_char == "\"" then
         i_special_comment()
-    elseif input_code == 9 then
+    elseif input_code == vim.g.TABULAR_CHAR_CODE then
         i_special_blink_cmp_menu()
-    elseif input_char == "e" then
+    elseif input_char == "T" then
         any_special_open_terminal()
+    elseif input_char== "t" then
+        any_special_toggle_float_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1287,10 +1357,12 @@ local function c_special_mode()
         any_special_copy_out()
     elseif input_char == "z" then
         any_special_copy_back_in()
-    elseif input_code == 9 then
+    elseif input_code == vim.g.TABULAR_CHAR_CODE then
         c_special_blink_cmp_menu()
-    elseif input_char == "e" then
+    elseif input_char == "T" then
         any_special_open_terminal()
+    elseif input_char== "t" then
+        any_special_toggle_float_terminal()
     else
         print(special_mode_escape_msg)
     end
@@ -1307,8 +1379,16 @@ local function t_special_mode()
         any_special_copy_out()
     elseif input_char == "z" then
         any_special_copy_back_in()
-    elseif input_char == "e" then
+    elseif input_char == "q" then
+        t_special_exit()
+    elseif input_char == "w" then
+        t_special_move_to_split()
+    elseif input_char == "W" then
+        t_special_create_split()
+    elseif input_char == "T" then
         any_special_open_terminal()
+    elseif input_char== "t" then
+        any_special_toggle_float_terminal()
     else
         print(special_mode_escape_msg)
     end
