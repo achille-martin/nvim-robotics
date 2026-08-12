@@ -221,6 +221,26 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+-- FOLDS
+
+-- # The default mappings for fold manipulation are:
+-- # * `zM` to close all folds
+-- # * `zR` to open all folds
+-- # * `za` to toggle fold at cursor
+
+-- # Select treesitter for fold determination
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- # Do not display fold information, only fold presence
+vim.opt.foldcolumn = "0"
+vim.opt.foldtext = ""
+-- # Define max level for folds
+vim.opt.foldlevel = 99
+-- # Define start level for folds on opening a buffer
+vim.opt.foldlevelstart = 99
+-- # Define max nested fold level
+vim.opt.foldnestmax = 4
+
 -- =============== WINDOW DISPLAY ===============
 
 -- TABLINE
