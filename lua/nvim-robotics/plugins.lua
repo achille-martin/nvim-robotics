@@ -922,11 +922,16 @@ require("toggleterm").setup({
         -- # Hide winbar
         vim.wo[term.window].winbar = ""
     end,
-    on_close = function(term)
+    on_close = function()
         -- # Reset statusline display option
         vim.opt.laststatus = 2
     end,
 })
 
 -- # Define configuration for indent-blankline
-require("ibl").setup({})
+require("ibl").setup({
+    scope = {
+        -- # Disable scope because distracting
+        enabled = false,
+    }
+})
