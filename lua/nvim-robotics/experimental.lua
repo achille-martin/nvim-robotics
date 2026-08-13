@@ -191,6 +191,7 @@ function M.open_help()
         "| `i`    | Fix local indentation (NORMAL mode: current line,        |",
         "|        |                        VISUAL mode: selection)           |",
         "| `I`    | Fix global indentation (NORMAL mode: whole file)         |",
+        "| `Tab`  | Fix selected indentation (VISUAL mode, for convenience)  |",
         "| ======================= SEARCH MANAGEMENT ======================= |",
         "| `F`    | Open the files picker (select a file to open)            |",
         "| `!`    | Show file history (list opened files)                    |",

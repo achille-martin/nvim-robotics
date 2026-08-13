@@ -1307,6 +1307,8 @@ local function vs_special_mode()
         vs_special_comment()
     elseif input_char == "i" then
         vs_special_fix_indentation()
+    elseif input_code == vim.g.TABULAR_CHAR_CODE then
+        vs_special_fix_indentation()
     elseif input_char == "T" then
         any_special_open_terminal()
     elseif input_char== "t" then
