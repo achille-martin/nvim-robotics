@@ -1363,7 +1363,7 @@ local function n_special_mode()
         n_special_git_status()
     elseif input_char == "M" then
         n_special_git_blame()
-    elseif input_char == "m" then
+    elseif input_char == "%" then
         n_special_toggle_git_diff_view()
     elseif input_char == "K" then
         -- # NOTE: a bit limited at the moment
