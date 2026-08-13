@@ -1257,6 +1257,18 @@ local function n_special_fix_global_indentation()
     )
 end
 
+local function n_special_substitute()
+    print("[SPECIAL] Preparing for word under cursor substitution (if able): type new word")
+    local word_under_cursor = vim.fn.escape(vim.fn.expand("<cword>"), [[\/]])
+    local keys = vim.api.nvim_replace_termcodes(
+        ":%s/" .. word_under_cursor .. "//g<Left><Left>",
+        true,
+        false,
+        true
+    )
+    vim.api.nvim_feedkeys(keys, "n", false)
+end
+
 -- # Store key codes for unusual keys on starting neovim
 -- # in SHADA (Shared Data between sessions)
 -- # so that this action is only performed a minimal number of times.
@@ -1398,6 +1410,8 @@ local function n_special_mode()
         any_special_toggle_float_terminal()
     elseif input_char== "<" then
         n_special_manipulate_folds()
+    elseif input_char== "/" then
+        n_special_substitute()
     else
         print(special_mode_escape_msg)
     end
