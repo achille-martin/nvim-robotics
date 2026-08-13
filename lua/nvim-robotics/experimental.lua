@@ -192,6 +192,7 @@ function M.open_help()
         "|        |                        VISUAL mode: selection)           |",
         "| `I`    | Fix global indentation (NORMAL mode: whole file)         |",
         "| `Tab`  | Fix selected indentation (VISUAL mode, for convenience)  |",
+        "| `<`    | Manipulate folds (read command-line for commands)        |",
         "| ======================= SEARCH MANAGEMENT ======================= |",
         "| `F`    | Open the files picker (select a file to open)            |",
         "| `!`    | Show file history (list opened files)                    |",

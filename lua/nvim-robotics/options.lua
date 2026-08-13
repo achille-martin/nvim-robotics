@@ -239,7 +239,8 @@ vim.opt.foldlevel = 99
 -- # Define start level for folds on opening a buffer
 vim.opt.foldlevelstart = 99
 -- # Define max nested fold level
-vim.opt.foldnestmax = 4
+-- # but it does trigger an error with treesitter on autocommand
+-- vim.opt.foldnestmax = 4
 
 -- =============== WINDOW DISPLAY ===============
 

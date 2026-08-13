@@ -910,6 +910,111 @@ local function t_special_move_to_split()
     )
 end
 
+local function n_special_manipulate_folds()
+    print("[SPECIAL] Manipulating folds: `s`=switch_current; `r`=reveal_all; `e`=enclose_all; `a`=amend_all; `arrows`=move")
+    local input_code = vim.fn.getchar()
+    local input_char = vim.fn.nr2char(input_code)
+    if input_char == "s" then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("zA")
+            ]],
+            false
+        )
+        print("[SPECIAL] Switched state of current fold recursively (if able)")
+    elseif input_char == "r" then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("zR")
+            ]],
+            false
+        )
+        print("[SPECIAL] Revealed all folds (if able)")
+    elseif input_char == "e" then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("zM")
+            ]],
+            false
+        )
+        print("[SPECIAL] Enclosed all folds (if able)")
+    elseif input_char == "a" then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("zX")
+            ]],
+            false
+        )
+        print("[SPECIAL] Amended all folds (if able)")
+    elseif input_code == vim.g.UP_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("99[z")
+            ]],
+            false
+        )
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("zk")
+                    ]],
+                    false
+                )
+
+            end
+        )
+        vim.fn.timer_start(
+            2,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("99[z")
+                    ]],
+                    false
+                )
+
+            end
+        )
+        print("[SPECIAL] Moved to beginning of previous fold (if able)")
+    elseif input_code == vim.g.DOWN_ARROW_CHAR_CODE then
+        vim.api.nvim_exec(
+            [[
+                call feedkeys("99]z")
+            ]],
+            false
+        )
+        vim.fn.timer_start(
+            1,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("zj")
+                    ]],
+                    false
+                )
+
+            end
+        )
+        vim.fn.timer_start(
+            2,
+            function()
+                vim.api.nvim_exec(
+                    [[
+                        call feedkeys("99[z")
+                    ]],
+                    false
+                )
+
+            end
+        )
+        print("[SPECIAL] Moved to beginning of next fold block (if able)")
+    else
+        print(special_mode_escape_msg)
+    end
+end
+
 local function i_special_blink_cmp_menu()
     if is_blink_cmp_active() then
         require('blink.cmp').show()
@@ -1291,6 +1396,8 @@ local function n_special_mode()
         any_special_open_terminal()
     elseif input_char== "t" then
         any_special_toggle_float_terminal()
+    elseif input_char== "<" then
+        n_special_manipulate_folds()
     else
         print(special_mode_escape_msg)
     end
