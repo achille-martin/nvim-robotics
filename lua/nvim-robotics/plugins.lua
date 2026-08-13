@@ -260,6 +260,9 @@ vim.call('plug#begin', plugs_install_path)
     -- # Show indent lines
     Plug 'lukas-reineke/indent-blankline.nvim'
 
+    -- # Improved diff view
+    Plug 'sindrets/diffview.nvim'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -935,3 +938,19 @@ require("ibl").setup({
         enabled = false,
     }
 })
+
+-- # Define configuration for diffview plugin
+require("diffview").setup({
+    use_icons = false,
+    show_help_hints = false,
+    file_panel = {
+        listing_styles = "tree",
+        win_config = {
+            position = "bottom",
+            height = 5,
+            win_opts = {},
+        },
+    },
+})
+-- # Set fill characters for diff view
+vim.opt.fillchars:append { diff = " " }

@@ -1008,6 +1008,17 @@ local function n_special_git_blame()
     require("fzf-lua").git_blame()
 end
 
+-- # Toggle enhanced git diff view
+local function n_special_toggle_git_diff_view()
+    print("[SPECIAL] Toggling git diff view (if able)")
+    -- # Check whether the diffview.lib.views is a populated table
+    if next(require("diffview.lib").views) == nil then
+        vim.cmd("DiffviewOpen")
+    else
+        vim.cmd("DiffviewClose")
+    end
+end
+
 -- # Show key maps via fzf
 -- # Equivalent to calling `:FzfLua keymaps`
 local function n_special_show_key_maps()
@@ -1247,6 +1258,8 @@ local function n_special_mode()
         n_special_git_status()
     elseif input_char == "M" then
         n_special_git_blame()
+    elseif input_char == "m" then
+        n_special_toggle_git_diff_view()
     elseif input_char == "K" then
         -- # NOTE: a bit limited at the moment
         n_special_show_key_maps()

@@ -215,6 +215,7 @@ function M.open_help()
         "| ======================== GIT MANAGEMENT ========================= |",
         "| `S`    | Open git status                                          |",
         "| `M`    | Open git blame                                           |",
+        "| `m`    | Toggle enhanced git diff view                            |",
         "| ====================== MARKDOWN MANAGEMENT ====================== |",
         "| `p`    | Toggle markdown preview in separate web window           |",
         "| ======================== JSON MANAGEMENT ======================== |",
