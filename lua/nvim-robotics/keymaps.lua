@@ -1266,7 +1266,12 @@ local function n_special_substitute()
         false,
         true
     )
-    vim.api.nvim_feedkeys(keys, "n", false)
+    vim.fn.timer_start(
+        2000,
+        function()
+            vim.api.nvim_feedkeys(keys, "n", false)
+        end
+    )
 end
 
 -- # Store key codes for unusual keys on starting neovim
