@@ -257,6 +257,9 @@ vim.call('plug#begin', plugs_install_path)
     -- # Manage persistent terminals better
     Plug ('akinsho/toggleterm.nvim', { ['tag'] = '*' })
 
+    -- # Show indent lines
+    Plug 'lukas-reineke/indent-blankline.nvim'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -924,3 +927,6 @@ require("toggleterm").setup({
         vim.opt.laststatus = 2
     end,
 })
+
+-- # Define configuration for indent-blankline
+require("ibl").setup({})
