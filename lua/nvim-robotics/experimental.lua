@@ -220,6 +220,8 @@ function M.open_help()
         "| `%`    | Toggle enhanced git diff view                            |",
         "| ====================== MARKDOWN MANAGEMENT ====================== |",
         "| `p`    | Toggle markdown preview in separate web window           |",
+        "| ====================== PLANTUML MANAGEMENT ====================== |",
+        "| `P`    | Toggle plantuml server renderer for live web view        |",
         "| ======================== JSON MANAGEMENT ======================== |",
         "| `j`    | Prettify json file                                       |",
     }

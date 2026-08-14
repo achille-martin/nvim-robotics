@@ -267,6 +267,10 @@ vim.call('plug#begin', plugs_install_path)
     -- # By default, create PlantUml files with `.puml` extension
     Plug 'achille-martin/plantuml-syntax'
 
+    -- # Enable rendering of PlantUml diagrams
+    -- # using vibe-coded plugin
+    Plug 'charlesnicholson/plantuml.nvim'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -958,3 +962,10 @@ require("diffview").setup({
 })
 -- # Set fill characters for diff view
 vim.opt.fillchars:append { diff = " " }
+
+-- # Define configuration for plantuml renderer
+require("plantuml").setup({
+    auto_start = false,
+    auto_update = true,
+    auto_launch_browser = "always",
+})

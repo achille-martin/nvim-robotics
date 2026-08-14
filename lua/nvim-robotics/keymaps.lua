@@ -1143,6 +1143,47 @@ local function n_special_toggle_preview()
     )
 end
 
+-- # Check whether plantuml server is running on default IP
+-- # provided by plantuml plugin
+local function is_plantuml_server_running()
+    local ok, channel_id = pcall(vim.fn.sockconnect, "tcp", "127.0.0.1:8764")
+    if ok and channel_id > 0 then
+        vim.fn.chanclose(channel_id)
+        return true
+    end
+    return false
+end
+
+local function n_special_toggle_plantuml_rendering()
+-- # Toggle server to render plantuml diagram from `.puml` files (and similar)
+-- # directly within the browser, on saving the file
+    print("[SPECIAL] Toggling plantuml server renderer (if able)")
+    -- # Check that plantuml plugin has been loaded
+    local ok, plantuml = pcall(require, "plantuml")
+    if not ok then
+        print("[SPECIAL] {ERROR} Cannot find plantuml plugin")
+        return
+    end
+    -- # Issue commands depending on server state
+    if is_plantuml_server_running() then
+        vim.cmd("PlantumlServerStop")
+        vim.fn.timer_start(
+            1,
+            function()
+                print("[SPECIAL] Stopped plantuml server renderer")
+            end
+        )
+    else
+        vim.cmd("PlantumlServerStart")
+        vim.fn.timer_start(
+            1,
+            function()
+                print("[SPECIAL] Started plantuml server renderer: save `.puml` to show live rendering in browser tab")
+            end
+        )
+    end
+end
+
 local function n_special_prettify_json()
     -- # Prettify the output of json files and unidentified files only
     local current_filetype = vim.bo.filetype
@@ -1387,6 +1428,8 @@ local function n_special_mode()
         n_special_show_key_maps()
     elseif input_char == "p" then
         n_special_toggle_preview()
+    elseif input_char == "P" then
+        n_special_toggle_plantuml_rendering()
     elseif input_char == "j" then
         n_special_prettify_json()
     elseif input_char == "B" then
