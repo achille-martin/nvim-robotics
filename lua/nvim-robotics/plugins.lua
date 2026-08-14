@@ -263,6 +263,10 @@ vim.call('plug#begin', plugs_install_path)
     -- # Improved diff view
     Plug 'sindrets/diffview.nvim'
 
+    -- # Enable PlantUml syntax highlighting
+    -- # By default, create PlantUml files with `.puml` extension
+    Plug 'achille-martin/plantuml-syntax'
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
