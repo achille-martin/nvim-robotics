@@ -1114,6 +1114,8 @@ local function n_special_git_blame()
 end
 
 -- # Toggle enhanced git diff view
+-- # By default, opening the view and showing the comparison
+-- # between current (working tree) and HEAD
 local function n_special_toggle_git_diff_view()
     print("[SPECIAL] Toggling git diff view (if able)")
     -- # Check whether the diffview.lib.views is a populated table
@@ -1122,6 +1124,24 @@ local function n_special_toggle_git_diff_view()
     else
         vim.cmd("DiffviewClose")
     end
+end
+
+-- # Open enhanced git diff view
+-- # and show the comparison
+-- # between current (working tree) and a `target` specified by the user
+-- # NOTE: the target can be a branch (like `development`)
+-- # or a commit (like `HEAD~4` or <commit_hash>)
+local function n_special_open_git_target_diff_view()
+    -- # Request user to input target
+    vim.ui.input(
+        { prompt = "[SPECIAL] Opening diff view between current and target. Enter the target: " },
+        function(target)
+            if target and target ~= "" then
+                print("[SPECIAL] Opening git diff view between current and " .. vim.fn.fnameescape(target) .. " (if able)")
+                vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(target) .. "..HEAD")
+            end
+        end
+    )
 end
 
 -- # Show key maps via fzf
@@ -1423,6 +1443,8 @@ local function n_special_mode()
         n_special_git_blame()
     elseif input_char == "%" then
         n_special_toggle_git_diff_view()
+    elseif input_char == "@" then
+        n_special_open_git_target_diff_view()
     elseif input_char == "K" then
         -- # NOTE: a bit limited at the moment
         n_special_show_key_maps()

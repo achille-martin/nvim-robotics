@@ -949,6 +949,12 @@ require("ibl").setup({
 
 -- # Define configuration for diffview plugin
 require("diffview").setup({
+    -- # Enable LSP features in the diff view on the right side
+    -- # by showing the working tree versions (including local changes if any)
+    -- # of the changed files
+    default_args = {
+        DiffviewOpen = { "--imply-local" },
+    },
     use_icons = false,
     show_help_hints = false,
     file_panel = {
