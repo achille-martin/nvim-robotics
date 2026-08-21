@@ -299,6 +299,7 @@ require('nvim-treesitter').install(tree_sitter_parsers):wait(installation_timeou
 -- # * .urdf files (used in ROS)
 -- # * .xacro files (used in ROS)
 -- # * .world files (used in Gazebo)
+-- # * .dox files (used by Doxygen, but does not provide highlighting)
 vim.filetype.add({
     extension = {
         launch = "xml",
@@ -306,6 +307,7 @@ vim.filetype.add({
         urdf = "xml",
         xacro = "xml",
         world = "xml",
+        dox = "markdown",
     }
 })
 
