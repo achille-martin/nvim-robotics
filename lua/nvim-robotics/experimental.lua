@@ -188,6 +188,7 @@ function M.open_help()
         "| `+`    | Add line below                                           |",
         "| `-`    | Remove line below                                        |",
         "| `\"`    | Comment out / uncomment line                             |",
+        "| `'`    | Surround word under cursor(NORMAL) or selection (VISUAL) |",
         "| `i`    | Fix local indentation (NORMAL mode: current line,        |",
         "|        |                        VISUAL mode: selection)           |",
         "| `I`    | Fix global indentation (NORMAL mode: whole file)         |",

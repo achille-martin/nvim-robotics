@@ -34,6 +34,16 @@ local function is_blink_cmp_active()
     return res
 end
 
+-- # Check whether plugin `nvim-surround` is installed and active
+local function is_nvim_surround_active()
+    local res, _ = pcall(
+        function()
+            require('nvim-surround')
+        end
+    )
+    return res
+end
+
 -- # Load options module
 local options_module = require('nvim-robotics.options')
 
@@ -635,6 +645,124 @@ local function n_special_remove_line_below()
         false
     )
     print("[SPECIAL] Removed one line below current")
+end
+
+-- # This "surround" action helps with "surrounding" words and selections
+-- # with specific symbols. This is particularly handing to add quotes
+-- # or brackets around words.
+-- # In NORMAL mode, the word under the cursor is selected as target to surround.
+-- # In INSERT mode, the word under the cursor is selected as target to surround.
+-- # In VISUAL mode, the selection is the target to surround.
+local function n_special_surround()
+
+    -- # Make sure that there is a word under the cursor (and not only whitespaces)
+    local target = vim.fn.expand('<cword>')
+    if target == "" or target:match("^%s*$") then return end
+
+    -- # Get position of cursor to restablish it after the surround operation
+    local pos = vim.api.nvim_win_get_cursor(0)
+
+    -- # Request user for surrounding symbol
+    print("[SPECIAL] Enter a (closing) symbol to surround the word under cursor: " .. target)
+    local input_symbol_code = vim.fn.getchar()
+    local input_symbol_char = vim.fn.nr2char(input_symbol_code)
+    -- # Abort if symbol is an Escape
+    if input_symbol_char == vim.keycode("<Esc>") or input_symbol_char == vim.keycode("<C-c>") or input_symbol_char == "" then
+        print("[SPECIAL] Surrounding operation aborted")
+        return
+    end
+    -- # Perform the surrounding operation if symbol is valid
+    if is_nvim_surround_active() then
+        local keys = "<Plug>(nvim-surround-normal)iw" .. input_symbol_char
+        vim.api.nvim_feedkeys(
+            vim.api.nvim_replace_termcodes(keys, true, false, true),
+            'm', -- 'm' respects remappings, necessary for <Plug> to trigger
+            false
+        )
+        print("[SPECIAL] Surrounded word under cursor with (closing) symbols: " .. input_symbol_char)
+    end
+
+    -- # Restore cursor position after the surrounding operation
+    vim.fn.timer_start(
+        1,
+        function()
+            vim.api.nvim_win_set_cursor(0, pos)
+        end
+    )
+end
+
+local function vs_special_surround()
+
+    -- # Get position of cursor to restablish it after the surround operation
+    local pos = vim.api.nvim_win_get_cursor(0)
+
+    -- # Request user for surrounding symbol
+    print("[SPECIAL] Enter a (closing) symbol to surround the selected area")
+    local input_symbol_code = vim.fn.getchar()
+    local input_symbol_char = vim.fn.nr2char(input_symbol_code)
+    -- # Abort if symbol is an Escape
+    if input_symbol_char == vim.keycode("<Esc>") or input_symbol_char == vim.keycode("<C-c>") or input_symbol_char == "" then
+        print("[SPECIAL] Surrounding operation aborted")
+        return
+    end
+    -- # Perform the surrounding operation if symbol is valid
+    if is_nvim_surround_active() then
+        local keys = "<Plug>(nvim-surround-visual)" .. input_symbol_char
+        vim.api.nvim_feedkeys(
+            vim.api.nvim_replace_termcodes(keys, true, false, true),
+            'm', -- 'm' respects remappings, necessary for <Plug> to trigger
+            false
+        )
+        print("[SPECIAL] Surrounded area with (closing) symbols: " .. input_symbol_char)
+    end
+
+    -- # Restore cursor position after the surrounding operation
+    vim.fn.timer_start(
+        1,
+        function()
+            vim.api.nvim_win_set_cursor(0, pos)
+        end
+    )
+
+end
+
+local function i_special_surround()
+
+    -- # Make sure that there is a word under the cursor (and not only whitespaces)
+    local target = vim.fn.expand('<cword>')
+    if target == "" or target:match("^%s*$") then return end
+
+    -- # Get position of cursor to restablish it after the surround operation
+    local pos = vim.api.nvim_win_get_cursor(0)
+
+    -- # Request user for surrounding symbol
+    print("[SPECIAL] Enter a (closing) symbol to surround the word under cursor: " .. target)
+    local input_symbol_code = vim.fn.getchar()
+    local input_symbol_char = vim.fn.nr2char(input_symbol_code)
+    -- # Abort if symbol is an Escape
+    if input_symbol_char == vim.keycode("<Esc>") or input_symbol_char == vim.keycode("<C-c>") or input_symbol_char == "" then
+        print("[SPECIAL] Surrounding operation aborted")
+        return
+    end
+    -- # Perform the surrounding operation if symbol is valid
+    if is_nvim_surround_active() then
+        local keys = "<C-o><Plug>(nvim-surround-normal)iw" .. input_symbol_char
+        vim.api.nvim_feedkeys(
+            vim.api.nvim_replace_termcodes(keys, true, false, true),
+            'm', -- 'm' respects remappings, necessary for <Plug> to trigger
+            false
+        )
+        print("[SPECIAL] Surrounded word under cursor with (closing) symbols: " .. input_symbol_char)
+    end
+
+    -- # Restore cursor position after the surrounding operation
+    vim.fn.timer_start(
+        1,
+        function()
+            vim.api.nvim_win_set_cursor(0, pos)
+        end
+    )
+
 end
 
 -- # Note: this "comment" action is based on the native Neovim capability
@@ -1403,6 +1531,8 @@ local function n_special_mode()
         n_special_remove_line_below()
     elseif input_char == "\"" then
         n_special_comment()
+    elseif input_char == "'" then
+        n_special_surround()
     elseif input_code == vim.g.BACKSPACE_CHAR_CODE then
         n_special_undo()
     elseif input_code == vim.g.ENTER_CHAR_CODE then
@@ -1509,6 +1639,8 @@ local function vs_special_mode()
         any_special_copy_back_in()
     elseif input_char == "\"" then
         vs_special_comment()
+    elseif input_char == "'" then
+        vs_special_surround()
     elseif input_char == "i" then
         vs_special_fix_indentation()
     elseif input_code == vim.g.TABULAR_CHAR_CODE then
@@ -1540,6 +1672,8 @@ local function i_special_mode()
         any_special_copy_back_in()
     elseif input_char == "\"" then
         i_special_comment()
+    elseif input_char == "'" then
+        i_special_surround()
     elseif input_code == vim.g.TABULAR_CHAR_CODE then
         i_special_blink_cmp_menu()
     elseif input_char == "T" then

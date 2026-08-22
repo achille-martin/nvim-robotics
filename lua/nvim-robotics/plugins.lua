@@ -271,6 +271,9 @@ vim.call('plug#begin', plugs_install_path)
     -- # using vibe-coded plugin
     Plug 'charlesnicholson/plantuml.nvim'
 
+    -- # Enable word/selection surrounding operation
+    Plug('kylechui/nvim-surround', { ['tag'] = 'v4.*' })
+
 vim.call('plug#end')
 
 -- SETUP/ACTIVATED PLUGINS
@@ -977,3 +980,6 @@ require("plantuml").setup({
     auto_update = true,
     auto_launch_browser = "always",
 })
+
+-- # Define configuration for nvim surround
+require("nvim-surround").setup({})
