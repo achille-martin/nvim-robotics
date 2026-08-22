@@ -795,7 +795,31 @@ require("fzf-lua").setup({
 vim.g.mkdp_echo_preview_url = 1
 
 -- # Set preview page title to file name
-vim.g.mkdp_page_title = '「${name}」'
+vim.g.mkdp_page_title = '[${name}]'
+
+-- # Set Microsoft Edge as default browser
+-- # to open the previewer if in WSL
+if vim.env.WSL_DISTRO_NAME then
+    function _G.open_markdown_preview(url)
+        vim.fn.jobstart(
+            {
+                "/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+                url,
+            },
+            { detach = true }
+        )
+    end
+
+    vim.cmd([[
+        function! MkdpOpenBrowser(url) abort
+            call luaeval('open_markdown_preview(_A)', a:url)
+        endfunction
+    ]])
+
+    vim.g.mkdp_browserfunc = "MkdpOpenBrowser"
+end
+
+
 
 -- # Define configuration for `tabby` plugin
 local theme = {
