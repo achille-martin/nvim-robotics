@@ -56,6 +56,8 @@ print_usage() {
                             the \"unsupported\" release of neovim if necessary
 
         uninstall           Remove all neovim versions from current OS platform
+
+        update              Update existing neovim version to latest
     "
 
     printf "%s" "$multiline_usage_txt"
@@ -233,6 +235,24 @@ perform_uninstall() {
     source_changes "warning"
 }
 
+perform_update() {
+    printf "\n--------------------\n"
+    printf "Starting neovim update process ↺ \n"
+    printf "This a multi-stage process...\n"
+    sleep 1
+
+    perform_uninstall
+    sleep 1
+    perform_install
+
+    printf "\n ...Multi-stage process done"
+    printf "\n ✓ Update done"
+    printf "\n--------------------\n"
+
+    # Highlight post-action requests to the user
+    source_changes "warning"
+}
+
 # ---- MAIN ----
 
 # Ensure that the OS platform is supported
@@ -272,6 +292,17 @@ while true; do
                 exit 1
             else
                 perform_uninstall
+            fi
+            break
+            ;;
+
+        update)
+            if [[ -n "$2" ]]; then
+                printf "ERROR: only one argument allowed\n"
+                print_usage
+                exit 1
+            else
+                perform_update
             fi
             break
             ;;
