@@ -80,7 +80,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd(
     { "BufRead", "BufNewFile" },
     {
-        pattern = "*.rosinstall",
+        pattern = "*.rosinstall*",
         callback = function()
             vim.bo.filetype = "my_custom_rosinstall"
         end,
