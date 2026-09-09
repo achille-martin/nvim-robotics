@@ -103,9 +103,9 @@ local tree_sitter_parsers = {
     "readline",
     "regex",
     "requirements",
+    "rust",
     "sql",
     "ssh_config",
-    "tmux",
     "toml",
     "vim",
     "vimdoc",
@@ -126,6 +126,7 @@ local mason_lsp_servers = {
     "clangd",
     "cmake",
     "cssls",
+    "diagnosticls",
     "docker_language_server",
     "html",
     "jsonls",
@@ -137,6 +138,22 @@ local mason_lsp_servers = {
     "vimls",
     "yamlls",
 }
+
+local mason_dap_servers = {
+    "python",
+}
+
+local custom_dap_config = {
+    "python",
+}
+
+local installation_timeout_ms = 90000
+
+local winresizer_width_step_resize = 5
+local winresizer_height_step_resize = 2
+
+local toggleterm_float_width_percentage = 0.85
+local toggleterm_float_height_percentage = 0.85
 
 -- HANDY ROUTINES
 
@@ -179,14 +196,83 @@ vim.call('plug#begin', plugs_install_path)
             -- # Indicate plugins depending on nvim-lspconfig via indentation
             Plug('mason-org/mason-lspconfig.nvim')
 
+    -- # Provide an API (similar to an adapter) to interface existing debuggers
+    -- # via the Debug Adapter Protocol (DAP)
+    Plug 'mfussenegger/nvim-dap'
+        -- # Indicate plugins depending on nvim-dap
+        -- # and used for visualisation purposes
+        Plug 'nvim-neotest/nvim-nio'
+        Plug 'rcarriga/nvim-dap-ui'
+        -- # Indicate plugins depending on nvim-dap
+        -- # and also on mason.nvim to download DAP servers easily
+        Plug 'jay-babu/mason-nvim-dap.nvim'
+        -- # Indicate plugins depending on nvim-dap
+        -- # to provide extra server capabilities
+        Plug 'mfussenegger/nvim-dap-python'
+
     Plug 'windwp/nvim-autopairs'
+
+    -- # This plugin complements the autopairs plugin
+    -- # so that tags are included in the "pairs"
+    -- # Requires treesitter parsers to work
+    Plug 'windwp/nvim-ts-autotag'
 
     Plug 'scottmckendry/cyberdream.nvim'
 
     -- # Target latest `1.x` release for `blink.cmp`
     Plug('saghen/blink.cmp', { ['tag'] = 'v1.*' })
+        -- # Provide optional snippets for the snippet source
+        Plug 'rafamadriz/friendly-snippets'
+        -- # Provide optional dictionary sources
+        Plug 'archie-judd/blink-cmp-words'
 
     Plug 'ibhagwan/fzf-lua'
+
+    -- # Extend vim's `%` motion
+    -- # to find matching elements (parentheses, keywords,...)
+    Plug 'andymass/vim-matchup'
+
+    -- # Browser previewer for Markdown
+    Plug('iamcco/markdown-preview.nvim',
+        {
+            ['do'] = function()
+                vim.fn['mkdp#util#install']()
+            end,
+            ['for'] = { 'markdown', 'vim-plug' },
+        }
+    )
+
+    -- # Improved tabline (for tabs and not for buffers)
+    Plug 'nanozuki/tabby.nvim'
+
+    -- # Disable memory-heavy features when handling big files
+    Plug 'LunarVim/bigfile.nvim'
+
+    -- # Improved quickfix window and functionalities
+    Plug 'stevearc/quicker.nvim'
+
+    -- # Resize splits easily
+    Plug 'simeji/winresizer'
+
+    -- # Manage persistent terminals better
+    Plug ('akinsho/toggleterm.nvim', { ['tag'] = '*' })
+
+    -- # Show indent lines
+    Plug 'lukas-reineke/indent-blankline.nvim'
+
+    -- # Improved diff view
+    Plug 'sindrets/diffview.nvim'
+
+    -- # Enable PlantUml syntax highlighting
+    -- # By default, create PlantUml files with `.puml` extension
+    Plug 'achille-martin/plantuml-syntax'
+
+    -- # Enable rendering of PlantUml diagrams
+    -- # using vibe-coded plugin
+    Plug 'charlesnicholson/plantuml.nvim'
+
+    -- # Enable word/selection surrounding operation
+    Plug('kylechui/nvim-surround', { ['tag'] = 'v4.*' })
 
 vim.call('plug#end')
 
@@ -195,7 +281,8 @@ vim.call('plug#end')
 -- # List plugins setup/activated
 
 -- # Force use of git rather than cURL to download treesitter plugins
-require("nvim-treesitter.install").prefer_git = true
+-- # NOTE: function seems discontinued in the `main` branch of nvim-treesitter
+-- require("nvim-treesitter.install").prefer_git = true
 
 -- # Configure the nvim-treesitter plugin
 -- # to improve syntax highlighting, indentation, folding,
@@ -206,7 +293,8 @@ require("nvim-treesitter.install").prefer_git = true
 require('nvim-treesitter').setup({})
 
 -- # Install tree-sitter parsers and queries
-require('nvim-treesitter').install(tree_sitter_parsers)
+-- # NOTE: wait 1min max to install all parsers and queries the first time
+require('nvim-treesitter').install(tree_sitter_parsers):wait(installation_timeout_ms)
 
 -- # Specify similar parsers to file types not currently supported:
 -- # * .launch files (used in ROS)
@@ -214,6 +302,7 @@ require('nvim-treesitter').install(tree_sitter_parsers)
 -- # * .urdf files (used in ROS)
 -- # * .xacro files (used in ROS)
 -- # * .world files (used in Gazebo)
+-- # * .dox files (used by Doxygen, but does not provide highlighting)
 vim.filetype.add({
     extension = {
         launch = "xml",
@@ -221,6 +310,7 @@ vim.filetype.add({
         urdf = "xml",
         xacro = "xml",
         world = "xml",
+        dox = "markdown",
     }
 })
 
@@ -409,8 +499,49 @@ vim.diagnostic.config{
     }
 }
 
+-- # Install and load DAP servers
+require("mason-nvim-dap").setup({
+    -- # Handlers required for automatic installation
+    handlers = {},
+    -- # Exclude servers if configured by external plugins
+    automatic_installation = {
+        exclude = custom_dap_config,
+    },
+    -- # Call Mason to check whether the DAP servers are installed
+    ensure_installed = mason_dap_servers,
+})
+
+-- # Initialise custom DAP configuration for specific filetypes
+require("dap-python").setup("python3")
+
+-- # Initialise DAP UI on startup
+-- # and trigger it automatically on specific events
+local dap, dap_ui = require("dap"), require("dapui")
+dap_ui.setup({})
+dap.listeners.before.attach.dapui_config = function()
+	dap_ui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+	dap_ui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+	dap_ui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+	dap_ui.close()
+end
+
 -- # Load the autopair plugin
 require("nvim-autopairs").setup({})
+
+-- # Load the autotag plugin
+require("nvim-ts-autotag").setup({
+    opts = {
+        enable_close = true, -- Auto close tags
+        enable_rename = true, -- Auto rename pairs of tags
+        enable_close_on_slash = false -- Auto close on trailing </
+    },
+})
 
 -- # Improve the cyberdream colorscheme experience
 -- # by referring to the official setup config:
@@ -448,20 +579,22 @@ require("cyberdream").setup({
 })
 
 -- # Improve the blink.cmp completion plugin experience
--- # by tweaking the defaults:
+-- # by tweaking the default settings:
 -- # * Download as little noise as possible
--- #   (i.e. no Rust, no NerdFonts)
+-- #   (i.e. prefer Rust if available otherwise Lua, no NerdFonts)
 -- # * Make sure that the plugin does not disturb
 -- #   normal functionalities (like `<Tab>`)
--- # * Only show completion suggestions on `<Tab>` (under certain conditions),
--- #   or use the special mode `<Ctrl + space><Tab>`
+-- # * Only show completion suggestions on `<Tab>` (under certain conditions)
 -- # * Display ghost text only if the completion menu is visible
 -- # * Use `Tab` or `Enter` to accept the suggestion
 -- # * Use `Ctrl + c` to hide completion menu
 require("blink.cmp").setup({
     -- # General settings
     fuzzy = {
-        implementation = "lua",
+        -- # Rust implementation is significantly faster and better
+        -- # but for some users it is not available
+        -- # therefore, prefer Rust implementation but fallback on Lua
+        implementation = "prefer_rust_with_warning",
         -- # Define sorting priority:
         -- # Primary sort: by fuzzy matching score
         -- # Secondary sort: by sortText field if scores are equal
@@ -475,12 +608,61 @@ require("blink.cmp").setup({
     sources = {
         default = { 'lsp', 'path', 'snippets', 'buffer', 'omni' },
         min_keyword_length = 1,
+        providers = {
+            -- Use the thesaurus source
+            thesaurus = {
+                name = "blink-cmp-words",
+                module = "blink-cmp-words.thesaurus",
+                -- All available options
+                opts = {
+                    -- A score offset applied to returned items.
+                    -- By default the highest score is 0 (item 1 has a score of -1, item 2 of -2 etc..).
+                    score_offset = 0,
+                    -- Default pointers define the lexical relations listed under each definition,
+                    -- see Pointer Symbols below.
+                    -- Default is as below ("antonyms", "similar to" and "also see").
+                    definition_pointers = { "!", "&", "^" },
+                    -- The pointers that are considered similar words when using the thesaurus,
+                    -- see Pointer Symbols below.
+                    -- Default is as below ("similar to", "also see" }
+                    similarity_pointers = { "&", "^" },
+                    -- The depth of similar words to recurse when collecting synonyms. 1 is similar words,
+                    -- 2 is similar words of similar words, etc. Increasing this may slow results.
+                    similarity_depth = 2,
+                },
+            },
+            -- Use the dictionary source
+            dictionary = {
+                name = "blink-cmp-words",
+                module = "blink-cmp-words.dictionary",
+                -- All available options
+                opts = {
+                    -- The number of characters required to trigger completion.
+                    -- Set this higher if completion is slow, 3 is default.
+                    dictionary_search_threshold = 3,
+                    -- See above
+                    score_offset = 0,
+                    -- See above
+                    definition_pointers = { "!", "&", "^" },
+                },
+            },
+        },
+        -- Setup completion by filetype
+        per_filetype = {
+            text = { "dictionary" },
+            markdown = { "thesaurus" },
+        },
     },
     -- # Signature support (experimental)
     -- # Note: a function signature consists of the function prototype.
     -- # It specifies the general information about a function like the name,
     -- # scope and parameters.
-    signature = { enabled = true },
+    signature = {
+        enabled = true,
+        window = {
+            border = "rounded",
+        },
+    },
     completion = {
         -- # Range 'prefix' does a fuzzy match on the text before the cursor
         -- # Range 'full' does a fuzzy match on the text
@@ -495,6 +677,7 @@ require("blink.cmp").setup({
             min_width = 15,
             max_height = 10,
             scrolloff = 1,
+            border = "rounded",
             draw = {
                 columns = {
                     { "label", "label_description", gap = 1 },
@@ -509,6 +692,9 @@ require("blink.cmp").setup({
         documentation = {
             auto_show = true,
             auto_show_delay_ms = 500,
+            window = {
+                border = "rounded",
+            },
         },
     },
     -- # INSERT mode settings
@@ -516,6 +702,7 @@ require("blink.cmp").setup({
         preset = 'super-tab',
         ["<Up>"] = { "select_prev", "fallback" },
         ["<Down>"] = { "select_next", "fallback" },
+        ["<S-Tab>"] = { "select_next", "fallback" },
         ["<CR>"] = { "select_and_accept", "fallback" },
         ['<C-space>'] = {},
         -- # (Experimental) Only allow manual trigger of completion menu
@@ -556,6 +743,7 @@ require("blink.cmp").setup({
             preset = 'super-tab',
             ["<Up>"] = { "select_prev", "fallback" },
             ["<Down>"] = { "select_next", "fallback" },
+            ["<S-Tab>"] = { "select_next", "fallback" },
             ["<CR>"] = { "select_and_accept", "fallback" },
             ['<C-space>'] = {},
             -- # Manually trigger completion menu with `<Tab>`
@@ -572,12 +760,250 @@ require("blink.cmp").setup({
             },
         },
     },
+
 })
 
 require("fzf-lua").setup({
     winopts = {
         preview = {
             layout = "vertical",
+            vertical = "down:60%",
+        },
+    },
+    keymap = {
+        -- # Improving navigation in preview window when using fzf-lua
+        -- # `Shift + Up/Down` to move line by line
+        -- # `Ctrl + Up/Down` to move half a page by half a page
+        builtin = {
+            ["<S-down>"] = "preview-down",
+            ["<S-up>"] = "preview-up",
+            ["<C-down>"] = "preview-half-page-down",
+            ["<C-up>"] = "preview-half-page-up",
+        },
+        fzf = {
+            ["shift-down"] = "preview-down",
+            ["shift-up"] = "preview-up",
+            ["ctrl-down"] = "preview-half-page-down",
+            ["ctrl-up"] = "preview-half-page-up",
+        },
+    },
+})
+
+-- # Enhance Markdown Preview configuration
+
+-- # Display preview page URL in command line when opening preview page
+vim.g.mkdp_echo_preview_url = 1
+
+-- # Set preview page title to file name
+vim.g.mkdp_page_title = '[${name}]'
+
+-- # Set Microsoft Edge as default browser
+-- # to open the previewer if in WSL
+if vim.env.WSL_DISTRO_NAME then
+    function _G.open_markdown_preview(url)
+        vim.fn.jobstart(
+            {
+                "/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+                url,
+            },
+            { detach = true }
+        )
+    end
+
+    vim.cmd([[
+        function! MkdpOpenBrowser(url) abort
+            call luaeval('open_markdown_preview(_A)', a:url)
+        endfunction
+    ]])
+
+    vim.g.mkdp_browserfunc = "MkdpOpenBrowser"
+end
+
+
+
+-- # Define configuration for `tabby` plugin
+local theme = {
+    fill = 'TabLine',
+    head = 'TabLine',
+    current_tab = { fg='#000000', bg='#FFFDD0' },
+    tab = 'TabLine',
+    win = 'TabLine',
+    tail = 'TabLine',
+}
+require('tabby').setup({
+    -- # Only show tabs and not the files inside the tabs
+    line = function(line)
+    return {
+      line.tabs().foreach(function(tab)
+        local hl = tab.is_current() and theme.current_tab or theme.tab
+        return {
+          line.sep('║', hl, theme.fill),
+          tab.is_current(),
+          tab.name(),
+          tab.close_btn('x'),
+          line.sep('║', hl, theme.fill),
+          hl = hl,
+          margin = ' ',
         }
+      end),
+      hl = theme.fill,
+    }
+  end,
+})
+
+-- # Define configuration for `bigfile` plugin
+require('bigfile').setup({
+    -- # Size of the file in MiB
+    filesize = 2,
+    -- # Autocmd pattern or function
+    -- # Refer to https://github.com/LunarVim/bigfile.nvim
+    -- # for more information
+    pattern = { "*" },
+    -- # Features to disable
+    features = {
+        "indent_blankline",
+        "illuminate",
+        "lsp",
+        "treesitter",
+        "syntax",
+        "matchparen",
+        "vimopts",
+        "filetype",
+    },
+})
+-- # NOTE: there is a deprecated warning in `checkhealth` for `bigfile`
+-- # and targeted at Nvim 1.0
+-- # Refer to https://github.com/LunarVim/bigfile.nvim/issues/30
+-- # for more information
+-- # Define configuration for `quicker` plugin
+vim.api.nvim_set_hl(0, 'BrighterLineNr', { fg = '#A9A9A9' })
+require('quicker').setup({
+    opts = {
+        winhighlight = "QuickFixLineNr:BrighterLineNr",
+    },
+    type_icons = {
+        E = "E",
+        W = "W",
+        I = "I",
+        N = "H",
+        H = "H",
+    },
+})
+
+-- # Define configuration for `winresizer` plugin
+-- # NOTE: this plugin does not use the `setup` paradigm
+-- #
+-- # By default:
+-- # * The plugin can be started with `Ctrl + e`
+-- # * Switch modes (resize, move, focus) with `e`
+-- # * The resizing operation needs to be accepted with `Enter`
+-- # * Equalise all window sizes with `=`
+
+-- ## Resize windows using arrow keys
+vim.g.winresizer_keycode_up = vim.g.UP_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_down = vim.g.DOWN_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_left = vim.g.LEFT_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_right = vim.g.RIGHT_ARROW_CHAR_CODE
+
+-- ## Define the step length during resize
+vim.g.winresizer_vert_resize = winresizer_width_step_resize
+vim.g.winresizer_horiz_resize = winresizer_height_step_resize
+
+-- ## Maximise current window width with `Ctrl + arrow right`
+-- ## Maximise current window height with `Ctrl + arrow up`
+vim.g.winresizer_keycode_hfull = vim.g.CTRL_UP_ARROW_CHAR_CODE
+vim.g.winresizer_keycode_vfull = vim.g.CTRL_RIGHT_ARROW_CHAR_CODE
+
+-- # Cancel resize using `Ctrl + c` (ASCII code 3)
+vim.g.winresizer_keycode_cancel = 3
+
+-- # Define configuration for `toggleterm` plugin
+-- # to have a persistent floating terminal
+-- # (to run commands when needed)
+require("toggleterm").setup({
+    direction = 'float',
+    float_opts = {
+        border = "rounded",
+        width = function()
+            return math.floor(vim.o.columns * toggleterm_float_width_percentage)
+        end,
+        height = function()
+            return math.floor(vim.o.lines * toggleterm_float_height_percentage)
+        end,
+    },
+    shade_terminals = false,
+    highlights = {
+        NormalFloat = {
+            guibg = "#070D0B",
+        },
+        FloatBorder = {
+            guifg = "#00A36C",
+        },
+    },
+    hide_numbers = false,
+    autochdir = true,
+    close_on_exit = true,
+    auto_scroll = true,
+    on_open = function(term)
+        -- # Force enter into proper terminal mode
+        vim.schedule(function()
+            if vim.api.nvim_win_is_valid(term.window) then
+                vim.cmd("startinsert")
+            end
+        end)
+        -- # Set title of floating window
+        vim.api.nvim_win_set_config(term.window, {
+            title = " Persistent Floating Terminal ",
+            title_pos = "center",
+        })
+        -- # Display custom statusline, outside of the floating window
+        vim.wo[term.window].statusline = "%!v:lua.Statusline.active()"
+        vim.opt.laststatus = 3
+        -- # Hide winbar
+        vim.wo[term.window].winbar = ""
+    end,
+    on_close = function()
+        -- # Reset statusline display option
+        vim.opt.laststatus = 2
+    end,
+})
+
+-- # Define configuration for indent-blankline
+require("ibl").setup({
+    scope = {
+        -- # Disable scope because distracting
+        enabled = false,
     }
 })
+
+-- # Define configuration for diffview plugin
+require("diffview").setup({
+    -- # Enable LSP features in the diff view on the right side
+    -- # by showing the working tree versions (including local changes if any)
+    -- # of the changed files
+    default_args = {
+        DiffviewOpen = { "--imply-local" },
+    },
+    use_icons = false,
+    show_help_hints = false,
+    file_panel = {
+        listing_styles = "tree",
+        win_config = {
+            position = "bottom",
+            height = 5,
+            win_opts = {},
+        },
+    },
+})
+-- # Set fill characters for diff view
+vim.opt.fillchars:append { diff = " " }
+
+-- # Define configuration for plantuml renderer
+require("plantuml").setup({
+    auto_start = false,
+    auto_update = true,
+    auto_launch_browser = "always",
+})
+
+-- # Define configuration for nvim surround
+require("nvim-surround").setup({})
