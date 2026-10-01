@@ -16,3 +16,6 @@ require("nvim-robotics.plugins")
 -- # so that all visual modifications are effective
 -- # based on this config
 require("nvim-robotics.colorscheme")
+-- # Include experimental configuration
+-- # NOTE: comment out if undesired
+require("nvim-robotics.experimental")

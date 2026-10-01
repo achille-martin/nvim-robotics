@@ -2,6 +2,8 @@
 -- | GENERAL OPTIONS |
 -- -------------------
 
+local M = {}
+
 -- =============== FILETYPE MANAGEMENT ===============
 
 -- AUTOMATIC CONFIG
@@ -71,9 +73,12 @@ vim.api.nvim_create_augroup(
 )
 -- # Define vimscript function to restore cursor position
 -- # when reading a file into the buffer
--- # and centering the screen around the cursor when relevant
--- # but excluding specific file types and buffer types
--- # (vimscript function because lua function slower)
+-- # and centering the screen around the cursor when relevant.
+-- # Excluding specific file types and buffer types.
+-- # Also not restoring cursor position if the cursor has just been moved
+-- # by an external command or plugin for instance.
+-- #
+-- # NOTE: vimscript function because lua function slower.
 vim.api.nvim_exec(
     [[
         function! RestoreCursorPosition()
@@ -82,7 +87,7 @@ vim.api.nvim_exec(
             " and the current file is not for editing commits
             " and the buffer is not the help,
             " or quickfix, or terminal, or even a nofile
-            " Note: the \" mark is the cursor position
+            " NOTE: the \" mark is the cursor position
             " when last exited the file
             if line("'\"")
                 \ && line("'\"") <= line("$")
@@ -91,27 +96,52 @@ vim.api.nvim_exec(
                 \ && &buftype != "nofile"
                 \ && &buftype != "quickfix"
                 \ && &buftype != "terminal"
-                " Adding a short delay helps unfreeze
-                " the first few frames of buffer opening
-                " after jumping to mark
-                " execute "normal! g`\""
-                call timer_start(1, {tid -> execute("normal! g`\"")})
-                " To force centre screen around cursor, uncomment below
-                " call timer_start(1, {tid -> execute("normal! zz")})
+                " Save the position at which the buffer was initially opened
+                let l:initial_line = line(".")
+                let l:initial_col = col(".")
+                " Delay the restore position slightly
+                " so normal buffer-opening operations can finish first
+                call timer_start(
+                    \ 1,
+                    \ {tid -> s:RestoreIfUnchanged(
+                        \ tid, l:initial_line,
+                        \ l:initial_col,
+                        \ )
+                    \ }
+                \ )
                 return 1
             endif
+        endfunction
+
+        function! s:RestoreIfUnchanged(timer_id, initial_line, initial_col)
+            " If something else has already moved the cursor,
+            " do not overwrite the position
+            if line(".") != a:initial_line || col(".") != a:initial_col
+                return
+            endif
+            execute "normal! g`\""
+            " Force centre screen around cursor (uncomment below)
+            " execute "normal! zz"
         endfunction
     ]],
     false
 )
 -- # Create autocommand to restore cursor position
 -- # when reading a file into the buffer
--- # (vimscript used here because does not work in lua otherwise)
-vim.api.nvim_exec(
-    [[
-        autocmd CursorManagement BufReadPost * call RestoreCursorPosition()
-    ]],
-    false
+-- # by looking for marks if they exist
+vim.api.nvim_create_augroup(
+    "CursorManagement",
+    { clear = true }
+)
+vim.api.nvim_create_autocmd(
+    "BufReadPost",
+    {
+        group = "CursorManagement",
+        pattern = "*",
+        callback = function()
+            vim.fn.RestoreCursorPosition()
+        end,
+    }
 )
 -- # Highlight current horizontal cursor line
 -- # Might make screen redrawing slower though
@@ -153,6 +183,15 @@ vim.opt.breakindent = true
 -- # and that no block of text is replaced by a character
 -- # For instance, full link syntax is shown in markdown
 vim.opt.conceallevel = 0
+-- # Stop highlighting on long lines
+vim.opt.synmaxcol = 300
+-- # Define a function to remove trailing Windows-specific characters
+-- # such as `^M`
+function M.remove_trailing_win_chars()
+    local save = vim.fn.winsaveview()
+    vim.cmd([[keeppatterns %s/\r$//ge]])
+    vim.fn.winrestview(save)
+end
 -- # Create group for syntax cleanup
 vim.api.nvim_create_augroup(
     "SyntaxCleanup",
@@ -164,6 +203,9 @@ vim.api.nvim_create_augroup(
 -- # do not flag errors,
 -- # and do not add anything to the search history
 -- # (do not modify the last substitute pattern or substitute string)
+-- #
+-- # BONUS: remove undesirable trailing characters
+-- # like Windows-specific end line characters
 vim.api.nvim_create_autocmd(
     "BufWritePre",
     {
@@ -174,10 +216,31 @@ vim.api.nvim_create_autocmd(
             local curpos = vim.api.nvim_win_get_cursor(0)
             vim.cmd([[keeppatterns %s/\s\+$//ge]])
             vim.api.nvim_win_set_cursor(0, curpos)
+            M.remove_trailing_win_chars()
 	    end,
     }
 )
 
+-- FOLDS
+
+-- # The default mappings for fold manipulation are:
+-- # * `zM` to close all folds
+-- # * `zR` to open all folds
+-- # * `za` to toggle fold at cursor
+
+-- # Select treesitter for fold determination
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- # Do not display fold information, only fold presence
+vim.opt.foldcolumn = "0"
+vim.opt.foldtext = ""
+-- # Define max level for folds
+vim.opt.foldlevel = 99
+-- # Define start level for folds on opening a buffer
+vim.opt.foldlevelstart = 99
+-- # Define max nested fold level
+-- # but it does trigger an error with treesitter on autocommand
+-- vim.opt.foldnestmax = 4
 
 -- =============== WINDOW DISPLAY ===============
 
@@ -224,6 +287,11 @@ vim.opt.splitbelow = false
 -- # When splitting window vertically,
 -- # show newest window to the right
 vim.opt.splitright = true
+-- # Highlight vertical window separators when creating a new split
+vim.opt.fillchars = { vert = '│' }
+-- # Highlight horizontal window separators from the status line
+-- # depending on its state (active or non-active)
+vim.opt.fillchars = "stl:•,stlnc:─"
 
 -- WINDOW TITLE
 
@@ -404,6 +472,31 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+-- =============== TERMINAL MANAGEMENT ===============
+
+-- # Group to force terminal insert mode
+local force_term_insert_group = vim.api.nvim_create_augroup(
+    "ForceTermInsert",
+    { clear = true }
+)
+
+-- # Function execution
+-- # when focusing on a new window or buffer
+vim.api.nvim_create_autocmd(
+    { "WinEnter", "BufEnter" },
+    {
+        group = force_term_insert_group,
+        desc = "Force terminal insert mode",
+        callback = function()
+            vim.schedule(function()
+                if vim.bo.buftype == "terminal" then
+                    vim.cmd("startinsert")
+                end
+            end)
+        end,
+    }
+)
+
 -- =============== CONTROL ===============
 
 -- MOUSE
@@ -528,3 +621,26 @@ vim.opt.pumheight = 0
 -- # More information about matches is provided in the preview window
 vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "preview" }
 
+-- =============== DIAGNOSTICS ===============
+
+-- # Set minimum severity for diagnostic messages
+-- # depending on notification type
+vim.diagnostic.config({
+  -- virtual_text = {
+  --   severity = { min = vim.diagnostic.severity.WARN }
+  -- },
+  virtual_lines = {
+    severity = { min = vim.diagnostic.severity.WARN }
+  },
+  signs = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
+  underline = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
+  jump = {
+    severity = { min = vim.diagnostic.severity.HINT }
+  },
+})
+
+return M

@@ -40,3 +40,22 @@ vim.cmd(
         highlight StatusLine guibg=#FFFDD0 guifg=Black
     ]]
 )
+
+-- # Setting bright colour
+-- # for non active status line
+-- # so that horizontal window separators
+-- # are visible
+vim.cmd(
+    [[
+        highlight StatusLineNC guifg=#FFF8DC
+    ]]
+)
+
+-- # Setting bright colour
+-- # for the vertical window separators
+vim.cmd(
+    [[
+        highlight WinSeparator guifg=#FFF8DC
+    ]]
+)
+

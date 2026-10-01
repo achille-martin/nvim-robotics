@@ -35,6 +35,7 @@ source helper_functions.sh
 # ---- HANDY VARIABLES ----
 
 GIT_REPO_NAME="$DEFAULT_CUSTOM_CONFIG_NAME"
+TARGET_GIT_REPO_BRANCH="$DEFAULT_TARGET_GIT_REPO_BRANCH"
 
 CONFIG_FOLDER="$DEFAULT_CONFIG_FOLDER"
 
@@ -53,9 +54,18 @@ print_usage() {
 
     Purpose: Manage the neovim configuration operations
 
+    Requires: Access to \`helper_functions.sh\`
+
     CMD:
-        quick-setup [CONFIG-NAME]     Setup the \`$DEFAULT_CUSTOM_CONFIG_NAME\` configuration
+        --help, -h                    Show this help
+
+        --branch, -b BRANCH-NAME      Specify the target branch or tag
+                                      to use for \`$GIT_REPO_NAME\`
+                                      By default, the branch used is \`main\`
+
+        quick-setup [CONFIG-NAME]     Setup the \`$GIT_REPO_NAME\` configuration
                                       as it is provided in the repo
+                                      Or update the configuration if already existing
                                       Optional argument: CONFIG-NAME
                                       (default = \`$DEFAULT_CONFIG_NAME\`)
 
@@ -63,8 +73,6 @@ print_usage() {
                                       Optional argument: CONFIG-NAME
                                       If opt arg provided, only cleans up
                                       the configuration related to CONFIG-NAME
-
-        --help, -h                    Show this help
     "
 
     printf "%s" "$multiline_usage_txt"
@@ -75,9 +83,13 @@ install_plugins() {
     if [[ "$1" == "warning" ]];
     then
         printf "\n/ ! \\ ACTION MIGHT BE REQUIRED: Finish installation of third-party Neovim plugins with the following command\n"
-        printf "➤ $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall\n"
+        printf "➤ ($ALIAS --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true) && \
+                  ($ALIAS --headless -c TSUpdate -c qall || true) && \
+                  ($ALIAS -c MasonUpdate -c \"call timer_start(90000, { -> execute('qall') })\" || true)\n"
     fi
-    $ALIAS -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall &> /dev/null
+    install_cmd="$( ($ALIAS --headless -c PlugUpgrade -c PlugInstall -c PlugUpdate -c qall || true) && \
+                    ($ALIAS --headless -c TSUpdate -c qall || true) && \
+                    ($ALIAS -c MasonUpdate -c "call timer_start(90000, { -> execute('qall') })" || true))"
 }
 
 perform_quick_setup() {
@@ -119,9 +131,13 @@ perform_quick_setup() {
     # are only required for the setup of the LSP capabilities
     # of specific languages
     printf "\nInstalling necessary apt dependencies...\n"
-    sudo apt-get update &&
+    sudo apt-get update
     sudo apt-get install git -y
     sudo apt-get install curl -y
+    ## Note: the following apt dependencies
+    ## enables a clipboard
+    sudo apt-get install xclip -y
+    sudo apt-get install xsel -y
     ## Note: the following apt dependencies
     ## improve grep capabilities in neovim
     sudo apt-get install ripgrep -y
@@ -133,6 +149,39 @@ perform_quick_setup() {
     ## Note: the following apt dependencies
     ## are required by nvim-treesitter
     sudo apt-get install tar -y
+    ## Note: the following apt dependencies
+    ## are required to perform JSON data processing
+    sudo apt-get install jq -y
+    ## Note: the following apt dependencies
+    ## help with python pip calls
+    sudo apt-get install python-is-python3
+    ## Note: the following pip dependencies
+    ## help with DAP server setup
+    local apt_cmd=""
+    local apt_cmd_status=""
+    local py3_lib_debugpy="python3 library debugpy"
+    printf "Trying to install $py3_lib_debugpy...\n"
+    apt_cmd="$(sudo apt-get install python3-debugpy -y)"
+    apt_cmd_status="$?"
+    if [[ "$apt_cmd_status" -ne 0 ]];
+    then
+        printf "WARNING: Cannot install $py3_lib_debugpy via apt.\n"
+        printf "Trying to install $py3_lib_debugpy via python3 pip...\n"
+        local pip_cmd=""
+        local pip_cmd_status=""
+        pip_cmd="$(python3 -m pip install --upgrade pip && python3 -m pip install debugpy)"
+        pip_cmd_status="$?"
+        if [[ "$pip_cmd_status" -ne 0 ]];
+        then
+            printf "WARNING: Cannot find or use python3 pip to install $py3_lib_debugpy.\n"
+            printf "Therefore, some functionalities might not be available\n"
+            printf "in this neovim config.\n"
+        else
+            echo "$pip_cmd"
+        fi
+    else
+        echo "$apt_cmd"
+    fi
     # Verify gcc presence on the current OS
     local is_gcc_available="0"
     if [[ "$(which gcc)" ]]; then
@@ -307,27 +356,36 @@ perform_quick_setup() {
     # Store the configuration in a specific folder for nvim to find it
     # depending on the availability of SSH
     printf "\nDownloading configuration at specific location...\n"
-    local ssh_cmd=""
-    local ssh_cmd_status=""
-    local git_clone_cmd_status=""
-    ssh_cmd="$(ssh -T "git@github.com" &> "/dev/null")"
-    ssh_cmd_status="$?"
-    # Note: according to Github docs, the exit status
-    # of the ssh user verification command is usually 1
-    # if it was successful
-    if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
+    # Ensure that the specific location is available to receive the download
+    if [[ -d "$CONFIG_FOLDER/$CONFIG_NAME" ]];
     then
-        git clone "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
-        git_clone_cmd_status="$?"
+        printf "WARNING: directory \`$CONFIG_FOLDER/$CONFIG_NAME\` already exists.\n"
+        printf "Therefore, assuming that the configuration has already been downloaded.\n"
     else
-        git clone "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
-        git_clone_cmd_status="$?";
-    fi
-    # Report any git error to the user
-    if [[ "$git_clone_cmd_status" -ne 0 ]];
-    then
-        printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
-        exit 1
+        # Note: ensure strict host key checking with SSH
+        # in case the channel is not properly set up
+        local ssh_cmd=""
+        local ssh_cmd_status=""
+        local git_clone_cmd_status=""
+        ssh_cmd="$(ssh -o StrictHostKeyChecking=yes -T "git@github.com" &> "/dev/null")"
+        ssh_cmd_status="$?"
+        # Note: according to Github docs, the exit status
+        # of the ssh user verification command is usually 1
+        # if it was successful
+        if [[ "$ssh_cmd_status" -eq 0 || "$ssh_cmd_status" -eq 1 ]];
+        then
+            git clone -b "$TARGET_GIT_REPO_BRANCH" "git@github.com:achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
+            git_clone_cmd_status="$?"
+        else
+            git clone -b "$TARGET_GIT_REPO_BRANCH" "https://github.com/achille-martin/${GIT_REPO_NAME}.git" "$CONFIG_FOLDER/$CONFIG_NAME"
+            git_clone_cmd_status="$?";
+        fi
+        # Report any git error to the user
+        if [[ "$git_clone_cmd_status" -ne 0 ]];
+        then
+            printf "ERROR: Cannot download repo from git. Please review the log messages.\n"
+            exit 1
+        fi
     fi
     printf "...done\n"
 
@@ -433,23 +491,63 @@ then
 fi
 
 # Perform action depending on command entered
-case "$1" in
-    --help|-h)
-        print_usage
-	    exit 1
-        ;;
+while true; do
+    case "$1" in
+        --help|-h)
+            print_usage
+            exit 1
+            ;;
 
-    quick-setup)
-        perform_quick_setup "$2"
-        ;;
+        --branch|-b)
+            if [[ -n "$2" ]];
+            then
+                TARGET_GIT_REPO_BRANCH="$2"
+                shift 2
+            else
+                printf "ERROR: the flag \`--branch|-b\` requires one argument"
+                print_usage
+                exit 1
+            fi
+            ;;
 
-    cleanup)
-        perform_cleanup "$2"
-        ;;
+        quick-setup)
+            if [[ -n "$3" ]]; then
+                printf "ERROR: max one argument allowed for the \`quick-setup\` option\n"
+                print_usage
+                exit 1
+            else
+                if [[ -n "$2" ]]; then
+                    perform_quick_setup "$2"
+                    shift 2
+                else
+                    perform_quick_setup
+                    shift 1
+                fi
+            fi
+            break
+            ;;
 
-    *)
-        printf "ERROR: first argument not valid\n"
-        print_usage
-        exit 1
-        ;;
-esac
+        cleanup)
+            if [[ -n "$3" ]]; then
+                printf "ERROR: max one argument allowed for the \`perform_cleanup\` option\n"
+                print_usage
+                exit 1
+            else
+                if [[ -n "$2" ]]; then
+                    perform_cleanup "$2"
+                    shift 2
+                else
+                   perform_cleanup
+                    shift 1
+                fi
+            fi
+            break
+            ;;
+
+        *)
+            printf "ERROR: command invalid (argument \`"$1"\` not valid)\n"
+            print_usage
+            exit 1
+            ;;
+    esac
+done

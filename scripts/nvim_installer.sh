@@ -45,7 +45,11 @@ print_usage() {
              on various OS platforms
              (supported platforms: Linux Ubuntu x86_64)
 
+    Requires: Access to \`helper_functions.sh\`
+
     CMD:
+        --help, -h          Show this help
+
         install             Install neovim latest version
                             for the current OS platform
                             Note: automatically installs
@@ -53,7 +57,7 @@ print_usage() {
 
         uninstall           Remove all neovim versions from current OS platform
 
-        --help, -h          Show this help
+        update              Update existing neovim version to latest
     "
 
     printf "%s" "$multiline_usage_txt"
@@ -231,6 +235,24 @@ perform_uninstall() {
     source_changes "warning"
 }
 
+perform_update() {
+    printf "\n--------------------\n"
+    printf "Starting neovim update process ↺ \n"
+    printf "This a multi-stage process...\n"
+    sleep 1
+
+    perform_uninstall
+    sleep 1
+    perform_install
+
+    printf "\n ...Multi-stage process done"
+    printf "\n ✓ Update done"
+    printf "\n--------------------\n"
+
+    # Highlight post-action requests to the user
+    source_changes "warning"
+}
+
 # ---- MAIN ----
 
 # Ensure that the OS platform is supported
@@ -245,23 +267,50 @@ then
 fi
 
 # Perform action depending on command entered
-case "$1" in
-    --help|-h)
-        print_usage
-	    exit 1
-        ;;
+while true; do
+    case "$1" in
+        --help|-h)
+            print_usage
+            exit 1
+            ;;
 
-    install)
-        perform_install
-        ;;
+        install)
+            if [[ -n "$2" ]]; then
+                printf "ERROR: only one argument allowed\n"
+                print_usage
+                exit 1
+            else
+                perform_install
+            fi
+            break
+            ;;
 
-    uninstall)
-        perform_uninstall
-        ;;
+        uninstall)
+            if [[ -n "$2" ]]; then
+                printf "ERROR: only one argument allowed\n"
+                print_usage
+                exit 1
+            else
+                perform_uninstall
+            fi
+            break
+            ;;
 
-    *)
-        printf "ERROR: first argument not valid\n"
-        print_usage
-        exit 1
-        ;;
-esac
+        update)
+            if [[ -n "$2" ]]; then
+                printf "ERROR: only one argument allowed\n"
+                print_usage
+                exit 1
+            else
+                perform_update
+            fi
+            break
+            ;;
+
+        *)
+            printf "ERROR: command invalid (argument \`"$1"\` not valid)\n"
+            print_usage
+            exit 1
+            ;;
+    esac
+done
