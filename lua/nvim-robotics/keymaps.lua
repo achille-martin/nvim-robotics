@@ -1326,7 +1326,7 @@ local function n_special_toggle_plantuml_rendering()
         vim.fn.timer_start(
             1,
             function()
-                print("[SPECIAL] Started plantuml server renderer: save `.puml` to show live rendering in browser tab")
+                print("[SPECIAL] Started plantuml server renderer: save `.puml` edits to show rendering in browser tab")
             end
         )
     end
